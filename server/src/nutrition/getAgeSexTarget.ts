@@ -2,9 +2,9 @@
 // Input: nutrient key + user's sex + age
 // Output: that user's daily intake target, including amount, unit, name, and RDA/AI type
 import { nutrientConfig } from "./nutrientConfig.js"
-import dailyIntakeTargets from "./dailyIntakeTargets.json" with { type: "json" }
+import ageSexTargets from "./ageSexTargets.json" with { type: "json" }
 
-export type DailyIntakeTarget = {
+export type AgeSexTarget = {
   nutrientKey: string
   sex: "female" | "male"
   minAge: number
@@ -18,7 +18,7 @@ export function getDailyIntakeTarget(
   sex: "female" | "male",
   age: number
 ) {
-  const target = dailyIntakeTargets.find(
+  const target = ageSexTargets.find(
     (item) =>
       item.nutrientKey === nutrient &&
       item.sex === sex &&

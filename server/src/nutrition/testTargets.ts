@@ -1,9 +1,10 @@
 // Temporary development tests for the nutrition target logic.
 // Used to verify lookup, energy, protein, and macronutrient range calculations.
-import { getDailyIntakeTarget } from "./getDailyIntakeTarget.js"
+import { getDailyIntakeTarget } from "./getAgeSexTarget.js"
 import { calculateEnergyTarget } from "./calculateEnergyTarget.js"
 import { calculateProteinTarget } from "./calculateProteinTarget.js"
 import { getAmountRange } from "./getAmountRange.js"
+
 
 console.log(
   "Vitamin A:",
@@ -44,3 +45,20 @@ console.log(
   "Fat range:",
   getAmountRange("fat", energyTarget)
 )
+
+import ageSexTargets from "./ageSexTargets.json" with { type: "json" }
+import { nutrientConfig } from "./nutrientConfig.js"
+
+const configKeys = new Set(
+  nutrientConfig.map((item) => item.key)
+)
+
+const missingConfigKeys = [
+  ...new Set(
+    ageSexTargets
+      .map((item) => item.nutrientKey)
+      .filter((key) => !configKeys.has(key))
+  )
+]
+
+console.log("Missing config keys:", missingConfigKeys)

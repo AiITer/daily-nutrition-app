@@ -3,89 +3,103 @@
     "nutrientKey": "vitaminA",
     "sex": "female",
     "minAge": 19,
-    "maxAge": 70,
+    "maxAge": null,
     "amount": 700
   },
   {
     "nutrientKey": "vitaminA",
     "sex": "male",
     "minAge": 19,
-    "maxAge": 70,
+    "maxAge": null,
     "amount": 900
+  },
+
+  {
+    "nutrientKey": "vitaminD",
+    "sex": "female",
+    "minAge": 19,
+    "maxAge": 70,
+    "amount": 15
+  },
+  {
+    "nutrientKey": "vitaminD",
+    "sex": "female",
+    "minAge": 71,
+    "maxAge": null,
+    "amount": 20
+  },
+  {
+    "nutrientKey": "vitaminD",
+    "sex": "male",
+    "minAge": 19,
+    "maxAge": 70,
+    "amount": 15
+  },
+  {
+    "nutrientKey": "vitaminD",
+    "sex": "male",
+    "minAge": 71,
+    "maxAge": null,
+    "amount": 20
+  },
+
+  {
+    "nutrientKey": "vitaminE",
+    "sex": "female",
+    "minAge": 19,
+    "maxAge": null,
+    "amount": 15
+  },
+  {
+    "nutrientKey": "vitaminE",
+    "sex": "male",
+    "minAge": 19,
+    "maxAge": null,
+    "amount": 15
+  },
+
+  {
+    "nutrientKey": "vitaminK",
+    "sex": "female",
+    "minAge": 19,
+    "maxAge": null,
+    "amount": 90
+  },
+  {
+    "nutrientKey": "vitaminK",
+    "sex": "male",
+    "minAge": 19,
+    "maxAge": null,
+    "amount": 120
   },
 
   {
     "nutrientKey": "vitaminC",
     "sex": "female",
     "minAge": 19,
-    "maxAge": 70,
+    "maxAge": null,
     "amount": 75
   },
   {
     "nutrientKey": "vitaminC",
     "sex": "male",
     "minAge": 19,
-    "maxAge": 70,
+    "maxAge": null,
     "amount": 90
-  },
-
-  {
-    "nutrientKey": "vitaminD",
-    "sex": "female",
-    "minAge": 19,
-    "maxAge": 70,
-    "amount": 15
-  },
-  {
-    "nutrientKey": "vitaminD",
-    "sex": "male",
-    "minAge": 19,
-    "maxAge": 70,
-    "amount": 15
-  },
-
-  {
-    "nutrientKey": "vitaminE",
-    "sex": "female",
-    "minAge": 19,
-    "maxAge": 70,
-    "amount": 15
-  },
-  {
-    "nutrientKey": "vitaminE",
-    "sex": "male",
-    "minAge": 19,
-    "maxAge": 70,
-    "amount": 15
-  },
-
-  {
-    "nutrientKey": "vitaminK",
-    "sex": "female",
-    "minAge": 19,
-    "maxAge": 70,
-    "amount": 90
-  },
-  {
-    "nutrientKey": "vitaminK",
-    "sex": "male",
-    "minAge": 19,
-    "maxAge": 70,
-    "amount": 120
   },
 
   {
     "nutrientKey": "vitaminB1",
     "sex": "female",
     "minAge": 19,
-    "maxAge": 70,
+    "maxAge": null,
     "amount": 1.1
   },
   {
     "nutrientKey": "vitaminB1",
     "sex": "male",
     "minAge": 19,
-    "maxAge": 70,
+    "maxAge": null,
     "amount": 1.2
   },
 
@@ -93,14 +107,14 @@
     "nutrientKey": "vitaminB2",
     "sex": "female",
     "minAge": 19,
-    "maxAge": 70,
+    "maxAge": null,
     "amount": 1.1
   },
   {
     "nutrientKey": "vitaminB2",
     "sex": "male",
     "minAge": 19,
-    "maxAge": 70,
+    "maxAge": null,
     "amount": 1.3
   },
 
@@ -108,30 +122,15 @@
     "nutrientKey": "vitaminB3",
     "sex": "female",
     "minAge": 19,
-    "maxAge": 70,
+    "maxAge": null,
     "amount": 14
   },
   {
     "nutrientKey": "vitaminB3",
     "sex": "male",
     "minAge": 19,
-    "maxAge": 70,
+    "maxAge": null,
     "amount": 16
-  },
-
-  {
-    "nutrientKey": "vitaminB5",
-    "sex": "female",
-    "minAge": 19,
-    "maxAge": 70,
-    "amount": 5
-  },
-  {
-    "nutrientKey": "vitaminB5",
-    "sex": "male",
-    "minAge": 19,
-    "maxAge": 70,
-    "amount": 5
   },
 
   {
@@ -145,7 +144,7 @@
     "nutrientKey": "vitaminB6",
     "sex": "female",
     "minAge": 51,
-    "maxAge": 70,
+    "maxAge": null,
     "amount": 1.5
   },
   {
@@ -159,37 +158,22 @@
     "nutrientKey": "vitaminB6",
     "sex": "male",
     "minAge": 51,
-    "maxAge": 70,
+    "maxAge": null,
     "amount": 1.7
   },
 
   {
-    "nutrientKey": "vitaminB7",
-    "sex": "female",
-    "minAge": 19,
-    "maxAge": 70,
-    "amount": 30
-  },
-  {
-    "nutrientKey": "vitaminB7",
-    "sex": "male",
-    "minAge": 19,
-    "maxAge": 70,
-    "amount": 30
-  },
-
-  {
     "nutrientKey": "vitaminB9",
     "sex": "female",
     "minAge": 19,
-    "maxAge": 70,
+    "maxAge": null,
     "amount": 400
   },
   {
     "nutrientKey": "vitaminB9",
     "sex": "male",
     "minAge": 19,
-    "maxAge": 70,
+    "maxAge": null,
     "amount": 400
   },
 
@@ -197,32 +181,61 @@
     "nutrientKey": "vitaminB12",
     "sex": "female",
     "minAge": 19,
-    "maxAge": 70,
+    "maxAge": null,
     "amount": 2.4
   },
   {
     "nutrientKey": "vitaminB12",
     "sex": "male",
     "minAge": 19,
-    "maxAge": 70,
+    "maxAge": null,
     "amount": 2.4
+  },
+
+  {
+    "nutrientKey": "vitaminB5",
+    "sex": "female",
+    "minAge": 19,
+    "maxAge": null,
+    "amount": 5
+  },
+  {
+    "nutrientKey": "vitaminB5",
+    "sex": "male",
+    "minAge": 19,
+    "maxAge": null,
+    "amount": 5
+  },
+
+  {
+    "nutrientKey": "vitaminB7",
+    "sex": "female",
+    "minAge": 19,
+    "maxAge": null,
+    "amount": 30
+  },
+  {
+    "nutrientKey": "vitaminB7",
+    "sex": "male",
+    "minAge": 19,
+    "maxAge": null,
+    "amount": 30
   },
 
   {
     "nutrientKey": "choline",
     "sex": "female",
     "minAge": 19,
-    "maxAge": 70,
+    "maxAge": null,
     "amount": 425
   },
   {
     "nutrientKey": "choline",
     "sex": "male",
     "minAge": 19,
-    "maxAge": 70,
+    "maxAge": null,
     "amount": 550
   },
-
   {
     "nutrientKey": "calcium",
     "sex": "female",
@@ -234,7 +247,7 @@
     "nutrientKey": "calcium",
     "sex": "female",
     "minAge": 51,
-    "maxAge": 70,
+    "maxAge": null,
     "amount": 1200
   },
   {
@@ -243,6 +256,87 @@
     "minAge": 19,
     "maxAge": 70,
     "amount": 1000
+  },
+  {
+    "nutrientKey": "calcium",
+    "sex": "male",
+    "minAge": 71,
+    "maxAge": null,
+    "amount": 1200
+  },
+
+  {
+    "nutrientKey": "chromium",
+    "sex": "female",
+    "minAge": 19,
+    "maxAge": 50,
+    "amount": 25
+  },
+  {
+    "nutrientKey": "chromium",
+    "sex": "female",
+    "minAge": 51,
+    "maxAge": null,
+    "amount": 20
+  },
+  {
+    "nutrientKey": "chromium",
+    "sex": "male",
+    "minAge": 19,
+    "maxAge": 50,
+    "amount": 35
+  },
+  {
+    "nutrientKey": "chromium",
+    "sex": "male",
+    "minAge": 51,
+    "maxAge": null,
+    "amount": 30
+  },
+
+  {
+    "nutrientKey": "copper",
+    "sex": "female",
+    "minAge": 19,
+    "maxAge": null,
+    "amount": 900
+  },
+  {
+    "nutrientKey": "copper",
+    "sex": "male",
+    "minAge": 19,
+    "maxAge": null,
+    "amount": 900
+  },
+
+  {
+    "nutrientKey": "fluoride",
+    "sex": "female",
+    "minAge": 19,
+    "maxAge": null,
+    "amount": 3
+  },
+  {
+    "nutrientKey": "fluoride",
+    "sex": "male",
+    "minAge": 19,
+    "maxAge": null,
+    "amount": 4
+  },
+
+  {
+    "nutrientKey": "iodine",
+    "sex": "female",
+    "minAge": 19,
+    "maxAge": null,
+    "amount": 150
+  },
+  {
+    "nutrientKey": "iodine",
+    "sex": "male",
+    "minAge": 19,
+    "maxAge": null,
+    "amount": 150
   },
 
   {
@@ -256,14 +350,14 @@
     "nutrientKey": "iron",
     "sex": "female",
     "minAge": 51,
-    "maxAge": 70,
+    "maxAge": null,
     "amount": 8
   },
   {
     "nutrientKey": "iron",
     "sex": "male",
     "minAge": 19,
-    "maxAge": 70,
+    "maxAge": null,
     "amount": 8
   },
 
@@ -278,7 +372,7 @@
     "nutrientKey": "magnesium",
     "sex": "female",
     "minAge": 31,
-    "maxAge": 70,
+    "maxAge": null,
     "amount": 320
   },
   {
@@ -292,67 +386,270 @@
     "nutrientKey": "magnesium",
     "sex": "male",
     "minAge": 31,
-    "maxAge": 70,
+    "maxAge": null,
     "amount": 420
   },
 
   {
-    "nutrientKey": "zinc",
+    "nutrientKey": "manganese",
     "sex": "female",
     "minAge": 19,
-    "maxAge": 70,
-    "amount": 8
+    "maxAge": null,
+    "amount": 1.8
   },
   {
-    "nutrientKey": "zinc",
+    "nutrientKey": "manganese",
     "sex": "male",
     "minAge": 19,
-    "maxAge": 70,
-    "amount": 11
+    "maxAge": null,
+    "amount": 2.3
   },
 
   {
-    "nutrientKey": "selenium",
+    "nutrientKey": "molybdenum",
     "sex": "female",
     "minAge": 19,
-    "maxAge": 70,
-    "amount": 55
+    "maxAge": null,
+    "amount": 45
   },
   {
-    "nutrientKey": "selenium",
+    "nutrientKey": "molybdenum",
     "sex": "male",
     "minAge": 19,
-    "maxAge": 70,
-    "amount": 55
+    "maxAge": null,
+    "amount": 45
   },
 
   {
-    "nutrientKey": "iodine",
+    "nutrientKey": "phosphorus",
     "sex": "female",
     "minAge": 19,
-    "maxAge": 70,
-    "amount": 150
+    "maxAge": null,
+    "amount": 700
   },
   {
-    "nutrientKey": "iodine",
+    "nutrientKey": "phosphorus",
     "sex": "male",
     "minAge": 19,
-    "maxAge": 70,
-    "amount": 150
+    "maxAge": null,
+    "amount": 700
   },
 
   {
     "nutrientKey": "potassium",
     "sex": "female",
     "minAge": 19,
-    "maxAge": 70,
+    "maxAge": null,
     "amount": 2600
   },
   {
     "nutrientKey": "potassium",
     "sex": "male",
     "minAge": 19,
-    "maxAge": 70,
+    "maxAge": null,
     "amount": 3400
-  }
+  },
+
+  {
+    "nutrientKey": "selenium",
+    "sex": "female",
+    "minAge": 19,
+    "maxAge": null,
+    "amount": 55
+  },
+  {
+    "nutrientKey": "selenium",
+    "sex": "male",
+    "minAge": 19,
+    "maxAge": null,
+    "amount": 55
+  },
+
+  {
+    "nutrientKey": "sodium",
+    "sex": "female",
+    "minAge": 19,
+    "maxAge": 50,
+    "amount": 1500
+  },
+  {
+    "nutrientKey": "sodium",
+    "sex": "female",
+    "minAge": 51,
+    "maxAge": 70,
+    "amount": 1300
+  },
+  {
+    "nutrientKey": "sodium",
+    "sex": "female",
+    "minAge": 71,
+    "maxAge": null,
+    "amount": 1200
+  },
+  {
+    "nutrientKey": "sodium",
+    "sex": "male",
+    "minAge": 19,
+    "maxAge": 50,
+    "amount": 1500
+  },
+  {
+    "nutrientKey": "sodium",
+    "sex": "male",
+    "minAge": 51,
+    "maxAge": 70,
+    "amount": 1300
+  },
+  {
+    "nutrientKey": "sodium",
+    "sex": "male",
+    "minAge": 71,
+    "maxAge": null,
+    "amount": 1200
+  },
+
+  {
+    "nutrientKey": "chloride",
+    "sex": "female",
+    "minAge": 19,
+    "maxAge": 50,
+    "amount": 2300
+  },
+  {
+    "nutrientKey": "chloride",
+    "sex": "female",
+    "minAge": 51,
+    "maxAge": 70,
+    "amount": 2000
+  },
+  {
+    "nutrientKey": "chloride",
+    "sex": "female",
+    "minAge": 71,
+    "maxAge": null,
+    "amount": 1800
+  },
+  {
+    "nutrientKey": "chloride",
+    "sex": "male",
+    "minAge": 19,
+    "maxAge": 50,
+    "amount": 2300
+  },
+  {
+    "nutrientKey": "chloride",
+    "sex": "male",
+    "minAge": 51,
+    "maxAge": 70,
+    "amount": 2000
+  },
+  {
+    "nutrientKey": "chloride",
+    "sex": "male",
+    "minAge": 71,
+    "maxAge": null,
+    "amount": 1800
+  },
+
+  {
+    "nutrientKey": "zinc",
+    "sex": "female",
+    "minAge": 19,
+    "maxAge": null,
+    "amount": 8
+  },
+  {
+    "nutrientKey": "zinc",
+    "sex": "male",
+    "minAge": 19,
+    "maxAge": null,
+    "amount": 11
+  },
+  {
+  "nutrientKey": "fiber",
+  "sex": "female",
+  "minAge": 19,
+  "maxAge": 50,
+  "amount": 25
+},
+{
+  "nutrientKey": "fiber",
+  "sex": "female",
+  "minAge": 51,
+  "maxAge": null,
+  "amount": 21
+},
+{
+  "nutrientKey": "fiber",
+  "sex": "male",
+  "minAge": 19,
+  "maxAge": 50,
+  "amount": 38
+},
+{
+  "nutrientKey": "fiber",
+  "sex": "male",
+  "minAge": 51,
+  "maxAge": null,
+  "amount": 30
+},
+
+{
+  "nutrientKey": "water",
+  "sex": "female",
+  "minAge": 19,
+  "maxAge": null,
+  "amount": 2.7
+},
+{
+  "nutrientKey": "water",
+  "sex": "male",
+  "minAge": 19,
+  "maxAge": null,
+  "amount": 3.7
+},
+
+{
+  "nutrientKey": "linoleicAcid",
+  "sex": "female",
+  "minAge": 19,
+  "maxAge": 50,
+  "amount": 12
+},
+{
+  "nutrientKey": "linoleicAcid",
+  "sex": "female",
+  "minAge": 51,
+  "maxAge": null,
+  "amount": 11
+},
+{
+  "nutrientKey": "linoleicAcid",
+  "sex": "male",
+  "minAge": 19,
+  "maxAge": 50,
+  "amount": 17
+},
+{
+  "nutrientKey": "linoleicAcid",
+  "sex": "male",
+  "minAge": 51,
+  "maxAge": null,
+  "amount": 14
+},
+
+{
+  "nutrientKey": "alphaLinolenicAcid",
+  "sex": "female",
+  "minAge": 19,
+  "maxAge": null,
+  "amount": 1.1
+},
+{
+  "nutrientKey": "alphaLinolenicAcid",
+  "sex": "male",
+  "minAge": 19,
+  "maxAge": null,
+  "amount": 1.6
+}
 ]
