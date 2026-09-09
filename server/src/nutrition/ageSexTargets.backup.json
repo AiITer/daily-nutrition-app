@@ -264,6 +264,36 @@
     "maxAge": null,
     "amount": 1200
   },
+
+  {
+    "nutrientKey": "chromium",
+    "sex": "female",
+    "minAge": 19,
+    "maxAge": 50,
+    "amount": 25
+  },
+  {
+    "nutrientKey": "chromium",
+    "sex": "female",
+    "minAge": 51,
+    "maxAge": null,
+    "amount": 20
+  },
+  {
+    "nutrientKey": "chromium",
+    "sex": "male",
+    "minAge": 19,
+    "maxAge": 50,
+    "amount": 35
+  },
+  {
+    "nutrientKey": "chromium",
+    "sex": "male",
+    "minAge": 51,
+    "maxAge": null,
+    "amount": 30
+  },
+
   {
     "nutrientKey": "copper",
     "sex": "female",
@@ -477,6 +507,50 @@
     "maxAge": null,
     "amount": 1200
   },
+
+  {
+    "nutrientKey": "chloride",
+    "sex": "female",
+    "minAge": 19,
+    "maxAge": 50,
+    "amount": 2300
+  },
+  {
+    "nutrientKey": "chloride",
+    "sex": "female",
+    "minAge": 51,
+    "maxAge": 70,
+    "amount": 2000
+  },
+  {
+    "nutrientKey": "chloride",
+    "sex": "female",
+    "minAge": 71,
+    "maxAge": null,
+    "amount": 1800
+  },
+  {
+    "nutrientKey": "chloride",
+    "sex": "male",
+    "minAge": 19,
+    "maxAge": 50,
+    "amount": 2300
+  },
+  {
+    "nutrientKey": "chloride",
+    "sex": "male",
+    "minAge": 51,
+    "maxAge": 70,
+    "amount": 2000
+  },
+  {
+    "nutrientKey": "chloride",
+    "sex": "male",
+    "minAge": 71,
+    "maxAge": null,
+    "amount": 1800
+  },
+
   {
     "nutrientKey": "zinc",
     "sex": "female",
@@ -492,90 +566,90 @@
     "amount": 11
   },
   {
-    "nutrientKey": "fiber",
-    "sex": "female",
-    "minAge": 19,
-    "maxAge": 50,
-    "amount": 25
-  },
-  {
-    "nutrientKey": "fiber",
-    "sex": "female",
-    "minAge": 51,
-    "maxAge": null,
-    "amount": 21
-  },
-  {
-    "nutrientKey": "fiber",
-    "sex": "male",
-    "minAge": 19,
-    "maxAge": 50,
-    "amount": 38
-  },
-  {
-    "nutrientKey": "fiber",
-    "sex": "male",
-    "minAge": 51,
-    "maxAge": null,
-    "amount": 30
-  },
+  "nutrientKey": "fiber",
+  "sex": "female",
+  "minAge": 19,
+  "maxAge": 50,
+  "amount": 25
+},
+{
+  "nutrientKey": "fiber",
+  "sex": "female",
+  "minAge": 51,
+  "maxAge": null,
+  "amount": 21
+},
+{
+  "nutrientKey": "fiber",
+  "sex": "male",
+  "minAge": 19,
+  "maxAge": 50,
+  "amount": 38
+},
+{
+  "nutrientKey": "fiber",
+  "sex": "male",
+  "minAge": 51,
+  "maxAge": null,
+  "amount": 30
+},
 
-  {
-    "nutrientKey": "water",
-    "sex": "female",
-    "minAge": 19,
-    "maxAge": null,
-    "amount": 2.7
-  },
-  {
-    "nutrientKey": "water",
-    "sex": "male",
-    "minAge": 19,
-    "maxAge": null,
-    "amount": 3.7
-  },
+{
+  "nutrientKey": "water",
+  "sex": "female",
+  "minAge": 19,
+  "maxAge": null,
+  "amount": 2.7
+},
+{
+  "nutrientKey": "water",
+  "sex": "male",
+  "minAge": 19,
+  "maxAge": null,
+  "amount": 3.7
+},
 
-  {
-    "nutrientKey": "linoleicAcid",
-    "sex": "female",
-    "minAge": 19,
-    "maxAge": 50,
-    "amount": 12
-  },
-  {
-    "nutrientKey": "linoleicAcid",
-    "sex": "female",
-    "minAge": 51,
-    "maxAge": null,
-    "amount": 11
-  },
-  {
-    "nutrientKey": "linoleicAcid",
-    "sex": "male",
-    "minAge": 19,
-    "maxAge": 50,
-    "amount": 17
-  },
-  {
-    "nutrientKey": "linoleicAcid",
-    "sex": "male",
-    "minAge": 51,
-    "maxAge": null,
-    "amount": 14
-  },
+{
+  "nutrientKey": "linoleicAcid",
+  "sex": "female",
+  "minAge": 19,
+  "maxAge": 50,
+  "amount": 12
+},
+{
+  "nutrientKey": "linoleicAcid",
+  "sex": "female",
+  "minAge": 51,
+  "maxAge": null,
+  "amount": 11
+},
+{
+  "nutrientKey": "linoleicAcid",
+  "sex": "male",
+  "minAge": 19,
+  "maxAge": 50,
+  "amount": 17
+},
+{
+  "nutrientKey": "linoleicAcid",
+  "sex": "male",
+  "minAge": 51,
+  "maxAge": null,
+  "amount": 14
+},
 
-  {
-    "nutrientKey": "alphaLinolenicAcid",
-    "sex": "female",
-    "minAge": 19,
-    "maxAge": null,
-    "amount": 1.1
-  },
-  {
-    "nutrientKey": "alphaLinolenicAcid",
-    "sex": "male",
-    "minAge": 19,
-    "maxAge": null,
-    "amount": 1.6
-  }
+{
+  "nutrientKey": "alphaLinolenicAcid",
+  "sex": "female",
+  "minAge": 19,
+  "maxAge": null,
+  "amount": 1.1
+},
+{
+  "nutrientKey": "alphaLinolenicAcid",
+  "sex": "male",
+  "minAge": 19,
+  "maxAge": null,
+  "amount": 1.6
+}
 ]

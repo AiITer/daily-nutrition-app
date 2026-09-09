@@ -62,3 +62,31 @@ const missingConfigKeys = [
 ]
 
 console.log("Missing config keys:", missingConfigKeys)
+
+import { normalizeUsdaNutrients } from "./normalizeUsdaNutrients.js"
+
+const testUsdaNutrients = [
+  {
+    nutrientId: 1003,
+    nutrientName: "Protein",
+    unitName: "G",
+    value: 2.57
+  },
+  {
+    nutrientId: 2000,
+    nutrientName: "Total Sugars",
+    unitName: "G",
+    value: 1.7
+  },
+  {
+    nutrientId: 999999,
+    nutrientName: "Unknown",
+    unitName: "G",
+    value: 5
+  }
+]
+
+console.log(
+  "Normalized USDA nutrients:",
+  normalizeUsdaNutrients(testUsdaNutrients)
+)

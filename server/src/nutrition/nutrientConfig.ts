@@ -3,7 +3,7 @@ export type NutrientConfig = {
   key: string
   name: string
   unit: "g" | "mg" | "mcg" | "L" | "kcal"
-  targetType: "RDA" | "AI" | "calculated" | "range"
+  targetType: "RDA" | "AI" | "calculated" | "range" | "monitor"
 }
 
 export const nutrientConfig: NutrientConfig[] = [
@@ -150,12 +150,12 @@ export const nutrientConfig: NutrientConfig[] = [
     unit: "mg",
     targetType: "RDA"
   },
-  {
-    key: "chromium",
-    name: "Chromium",
-    unit: "mcg",
-    targetType: "AI"
-  },
+  // {
+  //   key: "chromium",
+  //   name: "Chromium",
+  //   unit: "mcg",
+  //   targetType: "AI"
+  // },
   {
     key: "copper",
     name: "Copper",
@@ -222,16 +222,40 @@ export const nutrientConfig: NutrientConfig[] = [
     unit: "mg",
     targetType: "AI"
   },
-  {
-    key: "chloride",
-    name: "Chloride",
-    unit: "mg",
-    targetType: "AI"
-  },
+  // {
+  //   key: "chloride",
+  //   name: "Chloride",
+  //   unit: "mg",
+  //   targetType: "AI"
+  // },
   {
     key: "zinc",
     name: "Zinc",
     unit: "mg",
     targetType: "RDA"
-  }
+  },
+  {
+  key: "totalSugar",
+  name: "Total Sugar",
+  unit: "g",
+  targetType: "monitor"
+},
+{
+  key: "saturatedFat",
+  name: "Saturated Fat",
+  unit: "g",
+  targetType: "monitor"
+},
+{
+  key: "transFat",
+  name: "Trans Fat",
+  unit: "g",
+  targetType: "monitor"
+},
+{
+  key: "cholesterol",
+  name: "Cholesterol",
+  unit: "mg",
+  targetType: "monitor"
+}
 ]

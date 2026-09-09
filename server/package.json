@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "test:nutrition": "tsx src/nutrition/testTargets.ts",
     "dev": "tsx watch src/index.ts"
   },
   "keywords": [],
