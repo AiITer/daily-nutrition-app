@@ -1,6 +1,6 @@
 // Temporary development tests for the nutrition target logic.
 // Used to verify lookup, energy, protein, and macronutrient range calculations.
-import { getDailyIntakeTarget } from "./getAgeSexTarget.js"
+import { getAgeSexTarget } from "./getAgeSexTarget.js"
 import { calculateEnergyTarget } from "./calculateEnergyTarget.js"
 import { calculateProteinTarget } from "./calculateProteinTarget.js"
 import { getAmountRange } from "./getAmountRange.js"
@@ -8,7 +8,7 @@ import { getAmountRange } from "./getAmountRange.js"
 
 console.log(
   "Vitamin A:",
-  getDailyIntakeTarget("vitaminA", "female", 35)
+  getAgeSexTarget("vitaminA", "female", 35)
 )
 
 const testProfile = {

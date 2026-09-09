@@ -13,7 +13,7 @@ export type AgeSexTarget = {
   targetType: "RDA" | "AI"
 }
 
-export function getDailyIntakeTarget(
+export function getAgeSexTarget(
   nutrient: string,
   sex: "female" | "male",
   age: number
