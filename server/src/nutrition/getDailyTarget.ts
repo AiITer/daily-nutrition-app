@@ -34,7 +34,7 @@ export function getDailyTarget(
 
   if (nutrientKey === "energy") {
     return {
-      type: "target",
+      type: "target" as const,
       amount: calculateEnergyTarget(profile),
       unit: "kcal"
     }
@@ -47,7 +47,7 @@ export function getDailyTarget(
     )
 
     return {
-      type: "target",
+      type: "target" as const,
       amount: protein.amount,
       unit: "g"
     }
@@ -68,7 +68,7 @@ export function getDailyTarget(
     }
 
     return {
-      type: "range",
+      type: "range" as const,
       minAmount: range.minAmount,
       maxAmount: range.maxAmount,
       unit: "g"
@@ -86,7 +86,7 @@ export function getDailyTarget(
   }
 
   return {
-    type: "target",
+    type: "target" as const,
     amount: target.amount,
     unit: target.unit
   }
