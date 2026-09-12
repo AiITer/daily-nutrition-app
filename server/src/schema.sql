@@ -31,5 +31,6 @@ CREATE TABLE IF NOT EXISTS food_entries (
   amount REAL NOT NULL,
   unit TEXT NOT NULL,
   grams REAL NOT NULL,
+  nutrients JSONB NOT NULL DEFAULT '[]',
   created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );

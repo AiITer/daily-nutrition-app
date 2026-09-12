@@ -7,6 +7,7 @@ export async function createFoodEntry(
   amount: number,
   unit: string,
   grams: number,
+  nutrients: unknown[],
 ) {
   const result = await db.query(
     `
@@ -16,12 +17,21 @@ export async function createFoodEntry(
       fdc_id,
       amount,
       unit,
-      grams
+      grams,
+      nutrients
     )
-    VALUES ($1, $2, $3, $4, $5, $6)
+    VALUES ($1, $2, $3, $4, $5, $6, $7)
     RETURNING *
     `,
-    [daySessionId, foodName, fdcId, amount, unit, grams],
+    [
+      daySessionId,
+      foodName,
+      fdcId,
+      amount,
+      unit,
+      grams,
+      JSON.stringify(nutrients),
+    ],
   );
 
   return result.rows[0];

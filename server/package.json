@@ -11,7 +11,9 @@
     "db:test-user": "tsx src/createTestUser.ts",
     "db:test-account": "tsx src/testCreateAccount.ts",
     "db:test-day": "tsx src/testCreateDaySession.ts",
-    "db:test-food": "tsx src/testCreateFoodEntry.ts"
+    "db:test-food": "tsx src/testCreateFoodEntry.ts",
+    "db:test-food-list": "tsx src/testGetFoodEntries.ts",
+    "db:test-daily-status": "tsx src/testDailyNutritionStatus.ts"
   },
   "keywords": [],
   "author": "",
