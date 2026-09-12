@@ -10,6 +10,9 @@ import {
   convertFoodAmountToGrams,
   type FoodUnit,
 } from "./nutrition/convertFoodAmountToGrams.js";
+import { getDailyNutritionStatus } from "./nutrition/getDailyNutritionStatus.js";
+import { getProfileByDaySession } from "./users/getProfileByDaySession.js";
+import { createDaySession } from "./days/createDaySession.js";
 
 const app = express();
 const port = Number(process.env.PORT) || 3000;
@@ -155,6 +158,83 @@ app.get("/api/foods/search", async (req, res) => {
     usdaDescription: selectedFood.description,
     nutrients: nutritionSummary,
   });
+});
+
+app.get("/api/days/:daySessionId/nutrition", async (req, res) => {
+  try {
+    const daySessionId = Number(req.params.daySessionId);
+
+    if (!Number.isInteger(daySessionId)) {
+      return res.status(400).json({
+        error: "Invalid day session ID",
+      });
+    }
+
+    const dbProfile = await getProfileByDaySession(daySessionId);
+
+    if (!dbProfile) {
+      return res.status(404).json({
+        error: "Profile not found",
+      });
+    }
+
+    const profile = {
+      age: dbProfile.age,
+      sex: dbProfile.sex,
+      heightCm: dbProfile.height_cm,
+      weightKg: dbProfile.weight_kg,
+      activityLevel: dbProfile.activity_level,
+    };
+
+    const nutritionStatus = await getDailyNutritionStatus(
+      daySessionId,
+      profile,
+    );
+
+    res.json({
+      daySessionId,
+      nutrients: nutritionStatus,
+    });
+  } catch (error) {
+    console.error("Failed to get daily nutrition status:", error);
+
+    res.status(500).json({
+      error: "Failed to get daily nutrition status",
+    });
+  }
+});
+
+app.post("/api/users/:userId/days", async (req, res) => {
+  try {
+    const userId = Number(req.params.userId);
+
+    if (!Number.isInteger(userId)) {
+      return res.status(400).json({
+        error: "Invalid user ID",
+      });
+    }
+
+    const sessionDate =
+      typeof req.body.sessionDate === "string"
+        ? req.body.sessionDate
+        : new Date().toISOString().slice(0, 10);
+
+    const daySession = await createDaySession(userId, sessionDate);
+
+    res.status(201).json(daySession);
+  } catch (error: any) {
+    if (error.code === "23505") {
+      return res.status(409).json({
+        error: "Day session already exists for this date",
+      });
+    }
+
+    console.error("Failed to create day session:", error);
+
+    res.status(500).json({
+      error: "Failed to create day session",
+    });
+  }
 });
 
 app.get("/api/debug/usda", async (req, res) => {

@@ -16,10 +16,7 @@ export async function getDailyNutritionSummary(daySessionId: number) {
     [daySessionId],
   );
 
-  const totals: Record<
-    string,
-    { nutrientKey: string; amount: number; unit: string }
-  > = {};
+  const totals: Record<string, NutrientIntake> = {};
 
   for (const row of result.rows) {
     const nutrients = row.nutrients as NutrientIntake[];
