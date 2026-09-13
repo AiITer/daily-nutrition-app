@@ -13,6 +13,8 @@ import {
 import { getDailyNutritionStatus } from "./nutrition/getDailyNutritionStatus.js";
 import { getProfileByDaySession } from "./users/getProfileByDaySession.js";
 import { createDaySession } from "./days/createDaySession.js";
+import { createFoodEntry } from "./foods/createFoodEntry.js";
+import { processFood } from "./foods/processFood.js";
 
 const app = express();
 const port = Number(process.env.PORT) || 3000;
@@ -22,6 +24,87 @@ app.use(express.json());
 
 app.get("/api/health", (_req, res) => {
   res.json({ status: "ok" });
+});
+
+app.post("/api/days/:daySessionId/foods", async (req, res) => {
+  try {
+    const daySessionId = Number(req.params.daySessionId);
+
+    if (!Number.isInteger(daySessionId)) {
+      return res.status(400).json({
+        error: "Invalid day session ID",
+      });
+    }
+
+    const { foodName, amount, unit } = req.body;
+
+    if (
+      typeof foodName !== "string" ||
+      typeof amount !== "number" ||
+      typeof unit !== "string"
+    ) {
+      return res.status(400).json({
+        error: "foodName, amount, and unit are required",
+      });
+    }
+
+    const apiKey = process.env.USDA_API_KEY;
+
+    if (!apiKey) {
+      return res.status(500).json({
+        error: "USDA API key is not configured",
+      });
+    }
+
+    const processedFood = await processFood(
+      foodName,
+      amount,
+      unit as FoodUnit,
+      apiKey,
+    );
+
+    const foodEntry = await createFoodEntry(
+      daySessionId,
+      processedFood.foodName,
+      processedFood.fdcId,
+      processedFood.amount,
+      processedFood.unit,
+      processedFood.grams,
+      processedFood.nutrients,
+    );
+
+    const dbProfile = await getProfileByDaySession(daySessionId);
+
+    if (!dbProfile) {
+      return res.status(404).json({
+        error: "Profile not found",
+      });
+    }
+
+    const profile = {
+      age: dbProfile.age,
+      sex: dbProfile.sex,
+      heightCm: dbProfile.height_cm,
+      weightKg: dbProfile.weight_kg,
+      activityLevel: dbProfile.activity_level,
+    };
+
+    const nutritionStatus = await getDailyNutritionStatus(
+      daySessionId,
+      profile,
+    );
+
+    res.status(201).json({
+      foodEntry,
+      nutritionStatus,
+    });
+  } catch (error) {
+    console.error("Failed to add food:", error);
+
+    res.status(500).json({
+      error: "Failed to add food",
+    });
+  }
 });
 
 app.get("/api/foods/search", async (req, res) => {
