@@ -15,6 +15,8 @@ import { getProfileByDaySession } from "./users/getProfileByDaySession.js";
 import { createDaySession } from "./days/createDaySession.js";
 import { createFoodEntry } from "./foods/createFoodEntry.js";
 import { processFood } from "./foods/processFood.js";
+import { registerUser } from "./auth/registerUser.js";
+import { loginUser } from "./auth/loginUser.js";
 
 const app = express();
 const port = Number(process.env.PORT) || 3000;
@@ -24,6 +26,66 @@ app.use(express.json());
 
 app.get("/api/health", (_req, res) => {
   res.json({ status: "ok" });
+});
+
+app.post("/api/auth/login", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (typeof email !== "string" || typeof password !== "string") {
+      return res.status(400).json({
+        error: "Email and password are required",
+      });
+    }
+
+    const user = await loginUser(email.trim().toLowerCase(), password);
+
+    if (!user) {
+      return res.status(401).json({
+        error: "Invalid email or password",
+      });
+    }
+
+    res.json({
+      user,
+    });
+  } catch (error) {
+    console.error("Failed to login:", error);
+
+    res.status(500).json({
+      error: "Failed to login",
+    });
+  }
+});
+
+app.post("/api/auth/register", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (typeof email !== "string" || typeof password !== "string") {
+      return res.status(400).json({
+        error: "Email and password are required",
+      });
+    }
+
+    const user = await registerUser(email.trim().toLowerCase(), password);
+
+    res.status(201).json({
+      user,
+    });
+  } catch (error: any) {
+    if (error.code === "23505") {
+      return res.status(409).json({
+        error: "Email is already registered",
+      });
+    }
+
+    console.error("Failed to register user:", error);
+
+    res.status(500).json({
+      error: "Failed to register user",
+    });
+  }
 });
 
 app.post("/api/days/:daySessionId/foods", async (req, res) => {
