@@ -17,6 +17,14 @@ import { createFoodEntry } from "./foods/createFoodEntry.js";
 import { processFood } from "./foods/processFood.js";
 import { registerUser } from "./auth/registerUser.js";
 import { loginUser } from "./auth/loginUser.js";
+import { createToken } from "./auth/createToken.js";
+import { requireAuth } from "./auth/requireAuth.js";
+import {
+  createProfile,
+  type Sex,
+  type ActivityLevel,
+} from "./users/createProfile.js";
+import { db } from "./db.js";
 
 const app = express();
 const port = Number(process.env.PORT) || 3000;
@@ -26,6 +34,150 @@ app.use(express.json());
 
 app.get("/api/health", (_req, res) => {
   res.json({ status: "ok" });
+});
+
+app.get("/api/profile", requireAuth, async (req, res) => {
+  try {
+    const userId = res.locals.userId;
+
+    const result = await db.query(
+      `
+        SELECT
+          age,
+          sex,
+          height_cm,
+          weight_kg,
+          activity_level
+        FROM profiles
+        WHERE user_id = $1
+        `,
+      [userId],
+    );
+
+    const profile = result.rows[0];
+
+    if (!profile) {
+      return res.status(404).json({
+        error: "Profile not found",
+      });
+    }
+
+    res.json({
+      profile,
+    });
+  } catch (error) {
+    console.error("Failed to get profile:", error);
+
+    res.status(500).json({
+      error: "Failed to get profile",
+    });
+  }
+});
+
+app.post("/api/profile", requireAuth, async (req, res) => {
+  try {
+    const userId = res.locals.userId;
+
+    const { age, sex, heightCm, weightKg, activityLevel } = req.body;
+
+    if (
+      typeof age !== "number" ||
+      typeof sex !== "string" ||
+      typeof heightCm !== "number" ||
+      typeof weightKg !== "number" ||
+      typeof activityLevel !== "string"
+    ) {
+      return res.status(400).json({
+        error: "Invalid profile data",
+      });
+    }
+
+    const profile = await createProfile(
+      userId,
+      age,
+      sex as Sex,
+      heightCm,
+      weightKg,
+      activityLevel as ActivityLevel,
+    );
+
+    res.status(201).json({
+      profile,
+    });
+  } catch (error: any) {
+    if (error.code === "23505") {
+      return res.status(409).json({
+        error: "Profile already exists",
+      });
+    }
+
+    console.error("Failed to create profile:", error);
+
+    res.status(500).json({
+      error: "Failed to create profile",
+    });
+  }
+});
+
+app.put("/api/profile", requireAuth, async (req, res) => {
+  try {
+    const userId = res.locals.userId;
+
+    const { age, sex, heightCm, weightKg, activityLevel } = req.body;
+
+    if (
+      typeof age !== "number" ||
+      typeof sex !== "string" ||
+      typeof heightCm !== "number" ||
+      typeof weightKg !== "number" ||
+      typeof activityLevel !== "string"
+    ) {
+      return res.status(400).json({
+        error: "Invalid profile data",
+      });
+    }
+
+    const result = await db.query(
+      `
+        UPDATE profiles
+        SET
+          age = $1,
+          sex = $2,
+          height_cm = $3,
+          weight_kg = $4,
+          activity_level = $5
+        WHERE user_id = $6
+        RETURNING *
+        `,
+      [age, sex, heightCm, weightKg, activityLevel, userId],
+    );
+
+    const profile = result.rows[0];
+
+    if (!profile) {
+      return res.status(404).json({
+        error: "Profile not found",
+      });
+    }
+
+    res.json({
+      profile,
+    });
+  } catch (error) {
+    console.error("Failed to update profile:", error);
+
+    res.status(500).json({
+      error: "Failed to update profile",
+    });
+  }
+});
+
+app.get("/api/me", requireAuth, async (req, res) => {
+  const userId = res.locals.userId;
+
+  res.json({
+    userId,
+  });
 });
 
 app.post("/api/auth/login", async (req, res) => {
@@ -46,8 +198,11 @@ app.post("/api/auth/login", async (req, res) => {
       });
     }
 
+    const token = createToken(user.id);
+
     res.json({
       user,
+      token,
     });
   } catch (error) {
     console.error("Failed to login:", error);
@@ -349,15 +504,9 @@ app.get("/api/days/:daySessionId/nutrition", async (req, res) => {
   }
 });
 
-app.post("/api/users/:userId/days", async (req, res) => {
+app.post("/api/days", requireAuth, async (req, res) => {
   try {
-    const userId = Number(req.params.userId);
-
-    if (!Number.isInteger(userId)) {
-      return res.status(400).json({
-        error: "Invalid user ID",
-      });
-    }
+    const userId = res.locals.userId;
 
     const sessionDate =
       typeof req.body.sessionDate === "string"

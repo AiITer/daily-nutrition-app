@@ -1,8 +1,8 @@
 import { db } from "../db.js";
 
-type Sex = "female" | "male";
+export type Sex = "female" | "male";
 
-type ActivityLevel = "inactive" | "lowActive" | "active" | "veryActive";
+export type ActivityLevel = "inactive" | "lowActive" | "active" | "veryActive";
 
 export async function createProfile(
   userId: number,
