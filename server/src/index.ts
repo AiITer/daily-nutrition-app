@@ -36,6 +36,112 @@ app.get("/api/health", (_req, res) => {
   res.json({ status: "ok" });
 });
 
+app.get("/api/days", requireAuth, async (req, res) => {
+  try {
+    const userId = res.locals.userId;
+
+    const result = await db.query(
+      `
+        SELECT
+          id,
+          session_date,
+          created_at
+        FROM day_sessions
+        WHERE user_id = $1
+        ORDER BY session_date DESC
+        `,
+      [userId],
+    );
+
+    res.json({
+      days: result.rows,
+    });
+  } catch (error) {
+    console.error("Failed to get day history:", error);
+
+    res.status(500).json({
+      error: "Failed to get day history",
+    });
+  }
+});
+
+app.get("/api/days/:daySessionId", requireAuth, async (req, res) => {
+  try {
+    const userId = res.locals.userId;
+    const daySessionId = Number(req.params.daySessionId);
+
+    if (!Number.isInteger(daySessionId)) {
+      return res.status(400).json({
+        error: "Invalid day session ID",
+      });
+    }
+
+    const dayResult = await db.query(
+      `
+        SELECT id, session_date, created_at
+        FROM day_sessions
+        WHERE id = $1
+          AND user_id = $2
+        `,
+      [daySessionId, userId],
+    );
+
+    const day = dayResult.rows[0];
+
+    if (!day) {
+      return res.status(404).json({
+        error: "Day session not found",
+      });
+    }
+
+    const foodResult = await db.query(
+      `
+        SELECT
+          id,
+          food_name,
+          fdc_id,
+          amount,
+          unit,
+          grams,
+          nutrients,
+          created_at
+        FROM food_entries
+        WHERE day_session_id = $1
+        ORDER BY created_at ASC
+        `,
+      [daySessionId],
+    );
+
+    const profile = await getProfileByDaySession(daySessionId);
+
+    if (!profile) {
+      return res.status(404).json({
+        error: "Profile not found",
+      });
+    }
+
+    const nutritionStatus = await getDailyNutritionStatus(daySessionId, {
+      age: profile.age,
+      sex: profile.sex,
+      heightCm: profile.height_cm,
+      weightKg: profile.weight_kg,
+      activityLevel: profile.activity_level,
+    });
+
+    res.json({
+      day,
+      foods: foodResult.rows,
+      nutritionStatus,
+    });
+  } catch (error) {
+    console.error("Failed to get day details:", error);
+
+    res.status(500).json({
+      error: "Failed to get day details",
+    });
+  }
+});
+
 app.get("/api/profile", requireAuth, async (req, res) => {
   try {
     const userId = res.locals.userId;
@@ -243,13 +349,30 @@ app.post("/api/auth/register", async (req, res) => {
   }
 });
 
-app.post("/api/days/:daySessionId/foods", async (req, res) => {
+app.post("/api/days/:daySessionId/foods", requireAuth, async (req, res) => {
   try {
+    const userId = res.locals.userId;
     const daySessionId = Number(req.params.daySessionId);
 
     if (!Number.isInteger(daySessionId)) {
       return res.status(400).json({
         error: "Invalid day session ID",
+      });
+    }
+
+    const dayResult = await db.query(
+      `
+  SELECT id
+  FROM day_sessions
+  WHERE id = $1
+    AND user_id = $2
+  `,
+      [daySessionId, userId],
+    );
+
+    if (!dayResult.rows[0]) {
+      return res.status(404).json({
+        error: "Day session not found",
       });
     }
 
@@ -460,13 +583,30 @@ app.get("/api/foods/search", async (req, res) => {
   });
 });
 
-app.get("/api/days/:daySessionId/nutrition", async (req, res) => {
+app.get("/api/days/:daySessionId/nutrition", requireAuth, async (req, res) => {
   try {
+    const userId = res.locals.userId;
     const daySessionId = Number(req.params.daySessionId);
 
     if (!Number.isInteger(daySessionId)) {
       return res.status(400).json({
         error: "Invalid day session ID",
+      });
+    }
+
+    const dayResult = await db.query(
+      `
+  SELECT id
+  FROM day_sessions
+  WHERE id = $1
+    AND user_id = $2
+  `,
+      [daySessionId, userId],
+    );
+
+    if (!dayResult.rows[0]) {
+      return res.status(404).json({
+        error: "Day session not found",
       });
     }
 
