@@ -36,6 +36,41 @@ app.get("/api/health", (_req, res) => {
   res.json({ status: "ok" });
 });
 
+app.get("/api/history/foods", requireAuth, async (req, res) => {
+  try {
+    const userId = res.locals.userId;
+
+    const result = await db.query(
+      `
+        SELECT
+          f.id,
+          f.food_name,
+          f.amount,
+          f.unit,
+          f.grams,
+          f.created_at,
+          d.session_date
+        FROM food_entries f
+        JOIN day_sessions d
+          ON d.id = f.day_session_id
+        WHERE d.user_id = $1
+        ORDER BY f.created_at DESC
+        `,
+      [userId],
+    );
+
+    res.json({
+      foods: result.rows,
+    });
+  } catch (error) {
+    console.error("Failed to get food history:", error);
+
+    res.status(500).json({
+      error: "Failed to get food history",
+    });
+  }
+});
+
 app.get("/api/days", requireAuth, async (req, res) => {
   try {
     const userId = res.locals.userId;

@@ -5,6 +5,10 @@ function App() {
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
   const [profile, setProfile] = useState<any>(null);
+  const [days, setDays] = useState<any[]>([]);
+  const [foodHistory, setFoodHistory] = useState<any[]>([]);
+  const [historyTab, setHistoryTab] = useState<"foods" | "nutrition" | null>(null);
+  const [selectedDay, setSelectedDay] = useState<any>(null);
 
   async function handleLogin() {
     try {
@@ -44,11 +48,58 @@ function App() {
 
       setProfile(profileData.profile);
 
+      const daysResponse = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/days`,
+        {
+          headers: {
+            Authorization: `Bearer ${data.token}`,
+          },
+        },
+      );
+
+      const daysData = await daysResponse.json();
+      setDays(daysData.days);
+
+      const foodHistoryResponse = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/history/foods`,
+        {
+          headers: {
+            Authorization: `Bearer ${data.token}`,
+          },
+        },
+      );
+
+      const foodHistoryData = await foodHistoryResponse.json();
+
+      setFoodHistory(foodHistoryData.foods);
+
       setMessage("Login successful");
     } catch (error) {
       console.error(error);
       setMessage("Unable to connect to server");
     }
+  }
+
+  async function loadDayDetails(daySessionId: number) {
+    const token = localStorage.getItem("token");
+
+    const response = await fetch(
+      `${import.meta.env.VITE_API_URL}/api/days/${daySessionId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      setMessage(data.error ?? "Failed to load day");
+      return;
+    }
+
+    setSelectedDay(data);
   }
 
   return (
@@ -82,6 +133,50 @@ function App() {
           <p>Activity: {profile.activity_level}</p>
         </div>
       )}
+      <div>
+        <h2>History</h2>
+
+        <button onClick={() => setHistoryTab("foods")}>Food Entries</button>
+
+        <button onClick={() => setHistoryTab("nutrition")}>
+          Daily Nutrition
+        </button>
+        {historyTab === "foods" && (
+          <div>
+            {foodHistory.map((food) => (
+              <div key={food.id}>
+                <p>
+                  {food.food_name} — {food.amount} {food.unit}
+                </p>
+
+                <p>{new Date(food.created_at).toLocaleString()}</p>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {historyTab === "nutrition" && (
+          <div>
+            {days.map((day) => (
+              <button key={day.id} onClick={() => loadDayDetails(day.id)}>
+                {day.session_date.slice(0, 10)}
+              </button>
+            ))}
+
+            {selectedDay && (
+              <div>
+                <h3>{selectedDay.day.session_date.slice(0, 10)}</h3>
+
+                {selectedDay.nutritionStatus.map((nutrient: any) => (
+                  <p key={nutrient.nutrientKey}>
+                    {nutrient.nutrientKey}: {nutrient.consumed} {nutrient.unit}
+                  </p>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
