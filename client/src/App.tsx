@@ -1,8 +1,8 @@
 import { useState } from "react";
 
 function App() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("luna@example.com");
+  const [password, setPassword] = useState("test123456");
   const [message, setMessage] = useState("");
   const [profile, setProfile] = useState<any>(null);
   const [days, setDays] = useState<any[]>([]);
@@ -80,6 +80,16 @@ function App() {
     }
   }
 
+  function handleLogout() {
+    localStorage.removeItem("token");
+    setProfile(null);
+    setDays([]);
+    setFoodHistory([]);
+    setSelectedDay(null);
+    setHistoryTab(null);
+    setMessage("Logged out");
+  }
+
   async function loadDayDetails(daySessionId: number) {
     const token = localStorage.getItem("token");
 
@@ -121,6 +131,7 @@ function App() {
       />
 
       <button onClick={handleLogin}>Log in</button>
+      {profile && <button onClick={handleLogout}>Log out</button>}
 
       <p>{message}</p>
       {profile && (
@@ -133,50 +144,53 @@ function App() {
           <p>Activity: {profile.activity_level}</p>
         </div>
       )}
-      <div>
-        <h2>History</h2>
+      {profile && (
+        <div>
+          <h2>History</h2>
 
-        <button onClick={() => setHistoryTab("foods")}>Food Entries</button>
+          <button onClick={() => setHistoryTab("foods")}>Food Entries</button>
 
-        <button onClick={() => setHistoryTab("nutrition")}>
-          Daily Nutrition
-        </button>
-        {historyTab === "foods" && (
-          <div>
-            {foodHistory.map((food) => (
-              <div key={food.id}>
-                <p>
-                  {food.food_name} — {food.amount} {food.unit}
-                </p>
-
-                <p>{new Date(food.created_at).toLocaleString()}</p>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {historyTab === "nutrition" && (
-          <div>
-            {days.map((day) => (
-              <button key={day.id} onClick={() => loadDayDetails(day.id)}>
-                {day.session_date.slice(0, 10)}
-              </button>
-            ))}
-
-            {selectedDay && (
-              <div>
-                <h3>{selectedDay.day.session_date.slice(0, 10)}</h3>
-
-                {selectedDay.nutritionStatus.map((nutrient: any) => (
-                  <p key={nutrient.nutrientKey}>
-                    {nutrient.nutrientKey}: {nutrient.consumed} {nutrient.unit}
+          <button onClick={() => setHistoryTab("nutrition")}>
+            Daily Nutrition
+          </button>
+          {historyTab === "foods" && (
+            <div>
+              {foodHistory.map((food) => (
+                <div key={food.id}>
+                  <p>
+                    {food.food_name} — {food.amount} {food.unit}
                   </p>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
-      </div>
+
+                  <p>{new Date(food.created_at).toLocaleString()}</p>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {historyTab === "nutrition" && (
+            <div>
+              {days.map((day) => (
+                <button key={day.id} onClick={() => loadDayDetails(day.id)}>
+                  {day.session_date.slice(0, 10)}
+                </button>
+              ))}
+
+              {selectedDay && (
+                <div>
+                  <h3>{selectedDay.day.session_date.slice(0, 10)}</h3>
+
+                  {selectedDay.nutritionStatus.map((nutrient: any) => (
+                    <p key={nutrient.nutrientKey}>
+                      {nutrient.nutrientKey}: {nutrient.consumed}{" "}
+                      {nutrient.unit}
+                    </p>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
