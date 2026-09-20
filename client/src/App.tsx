@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type AppStage =
   | "checkingSession"
@@ -8,6 +8,8 @@ type AppStage =
   | "app";
 
 const [appStage, setAppStage] = useState<AppStage>("checkingSession");
+const [registrationSuccess, setRegistrationSuccess] = useState(false);
+const [authMode, setAuthMode] = useState<"login" | "register">("login");
 
 function App() {
   const [email, setEmail] = useState("luna@example.com");
@@ -16,7 +18,9 @@ function App() {
   const [profile, setProfile] = useState<any>(null);
   const [days, setDays] = useState<any[]>([]);
   const [foodHistory, setFoodHistory] = useState<any[]>([]);
-  const [historyTab, setHistoryTab] = useState<"foods" | "nutrition" | null>(null);
+  const [historyTab, setHistoryTab] = useState<"foods" | "nutrition" | null>(
+    null,
+  );
   const [selectedDay, setSelectedDay] = useState<any>(null);
 
   const [profileAge, setProfileAge] = useState("");
@@ -26,30 +30,69 @@ function App() {
   const [profileActivity, setProfileActivity] = useState("");
   const [isEditingProfile, setIsEditingProfile] = useState(false);
 
+  useEffect(() => {
+    async function restoreSession() {
+      const token = localStorage.getItem("token");
 
-  async function handleRegister() {
-    const response = await fetch(
-      `${import.meta.env.VITE_API_URL}/api/auth/register`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email,
-          password,
-        }),
-      },
-    );
+      if (!token) {
+        setAppStage("loggedOut");
+        return;
+      }
 
-    const data = await response.json();
+      try {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/me`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
-    if (!response.ok) {
-      setMessage(data.error ?? "Registration failed");
-      return;
+        if (!response.ok) {
+          localStorage.removeItem("token");
+          setAppStage("loggedOut");
+          return;
+        }
+
+        await loadUserData(token);
+
+        setAppStage("app");
+      } catch {
+        setMessage("Failed to restore session");
+        setAppStage("loggedOut");
+      }
     }
 
-    setMessage("Registration successful. Please log in.");
+    restoreSession();
+  }, []);
+
+  async function handleRegister() {
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/auth/register`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email,
+            password,
+          }),
+        },
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setMessage(data.error ?? "Registration failed");
+        return;
+      }
+
+      setRegistrationSuccess(true);
+      setAuthMode("login");
+      setMessage("");
+    } catch {
+      setMessage("Registration failed");
+    }
   }
 
   async function handleLogin() {
@@ -77,88 +120,95 @@ function App() {
 
       localStorage.setItem("token", data.token);
 
-      await loadUserData(data.token,false)
-    } catch {
-      setMessage("Login failed")
-    }
-  }
-    async function loadUserData(token: string, isWelcome: boolean) {
-      const profileResponse = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/profile`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
+      await loadUserData(data.token);
 
-      if (profileResponse.status === 404) {
-        setProfile(null);
-
-        if (isWelcome) {
-          setAppStage("newUserWelcome");
-        } else {
-          setAppStage("app");
-        }
+      if (registrationSuccess) {
+        setAppStage("newUserWelcome");
+        setRegistrationSuccess(false);
       } else {
-        const profileData = await profileResponse.json();
-
-        if (!profileResponse.ok) {
-          setMessage(profileData.error ?? "Failed to load profile");
-          return;
-        }
-
-        setProfile(profileData.profile);
         setAppStage("app");
       }
 
-      const daysResponse = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/days`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
-
-      const daysData = await daysResponse.json();
-
-      if (!daysResponse.ok) {
-        setMessage(daysData.error ?? "Failed to load days");
-        return;
-      }
-
-      setDays(daysData.days);
-
-      const foodHistoryResponse = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/history/foods`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
-
-      const foodHistoryData = await foodHistoryResponse.json();
-
-      if (!foodHistoryResponse.ok) {
-        setMessage(foodHistoryData.error ?? "Failed to load food history");
-        return;
-      }
-
-      setFoodHistory(foodHistoryData.foods);
+      setMessage("");
+    } catch {
+      setMessage("Login failed");
     }
-      
-    
+  }
+
+  async function loadUserData(token: string) {
+    const profileResponse = await fetch(
+      `${import.meta.env.VITE_API_URL}/api/profile`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+
+    if (profileResponse.status === 404) {
+      setProfile(null);
+    } else {
+      const profileData = await profileResponse.json();
+
+      if (!profileResponse.ok) {
+        setMessage(profileData.error ?? "Failed to load profile");
+        return;
+      }
+
+      setProfile(profileData.profile);
+    }
+
+    const daysResponse = await fetch(
+      `${import.meta.env.VITE_API_URL}/api/days`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+
+    const daysData = await daysResponse.json();
+
+    if (!daysResponse.ok) {
+      setMessage(daysData.error ?? "Failed to load days");
+      return;
+    }
+
+    setDays(daysData.days);
+
+    const foodHistoryResponse = await fetch(
+      `${import.meta.env.VITE_API_URL}/api/history/foods`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+
+    const foodHistoryData = await foodHistoryResponse.json();
+
+    if (!foodHistoryResponse.ok) {
+      setMessage(foodHistoryData.error ?? "Failed to load food history");
+      return;
+    }
+
+    setFoodHistory(foodHistoryData.foods);
+  }
 
   function handleLogout() {
     localStorage.removeItem("token");
+
+    setAppStage("loggedOut");
     setProfile(null);
+
     setDays([]);
     setFoodHistory([]);
     setSelectedDay(null);
     setHistoryTab(null);
-    setProfileSetupMode("hidden");
+
+    setIsEditingProfile(false);
+    setRegistrationSuccess(false);
+
     setMessage("Logged out");
   }
 
@@ -191,7 +241,7 @@ function App() {
     }
 
     setProfile(data.profile);
-    setProfileSetupMode("hidden");
+    setAppStage("app");
     setMessage("Profile created");
   }
 
@@ -269,7 +319,7 @@ function App() {
         <button onClick={handleRegister}>Create account</button>
       )}
 
-      {profileSetupMode === "welcome" && (
+      {appStage === "newUserWelcome" && (
         <div>
           <h2>Welcome to Daily Nutrition</h2>
 
@@ -281,18 +331,18 @@ function App() {
           </p>
 
           <div>
-            <button type="button" onClick={() => setProfileSetupMode("hidden")}>
+            <button type="button" onClick={() => setAppStage("app")}>
               Skip for now
             </button>
 
-            <button type="button" onClick={() => setProfileSetupMode("form")}>
+            <button type="button" onClick={() => setAppStage("profileSetup")}>
               Complete Profile
             </button>
           </div>
         </div>
       )}
 
-      {profileSetupMode === "form" && (
+      {appStage === "profileSetup" && (
         <div>
           <h2>Complete your profile</h2>
 
@@ -409,17 +459,19 @@ function App() {
           </div>
 
           <div>
-            <button type="button" onClick={() => setProfileSetupMode("hidden")}>
+            <button type="button" onClick={() => setAppStage("app")}>
               Skip for now
             </button>
 
-            <button onClick={handleCreateProfile}>Save Profile</button>
+            <button onClick={handleCreateProfile}>Finish</button>
           </div>
         </div>
       )}
 
-      {profile && <button onClick={handleLogout}>Log out</button>}
-      {profile && <button onClick={handleStartNewDay}>Start New Day</button>}
+      {appStage === "app" && <button onClick={handleLogout}>Log out</button>}
+      {appStage === "app" && (
+        <button onClick={handleStartNewDay}>Start New Day</button>
+      )}
 
       <p>{message}</p>
       {profile && !isEditingProfile && (
