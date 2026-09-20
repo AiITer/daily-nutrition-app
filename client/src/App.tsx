@@ -7,11 +7,10 @@ type AppStage =
   | "profileSetup"
   | "app";
 
-const [appStage, setAppStage] = useState<AppStage>("checkingSession");
-const [registrationSuccess, setRegistrationSuccess] = useState(false);
-const [authMode, setAuthMode] = useState<"login" | "register">("login");
-
 function App() {
+  const [appStage, setAppStage] = useState<AppStage>("checkingSession");
+  const [registrationSuccess, setRegistrationSuccess] = useState(false);
+  const [authMode, setAuthMode] = useState<"login" | "register">("login");
   const [email, setEmail] = useState("luna@example.com");
   const [password, setPassword] = useState("test123456");
   const [message, setMessage] = useState("");
@@ -209,7 +208,7 @@ function App() {
     setIsEditingProfile(false);
     setRegistrationSuccess(false);
 
-    setMessage("Logged out");
+    setMessage("");
   }
 
   async function handleCreateProfile() {
@@ -291,32 +290,51 @@ function App() {
 
   return (
     <div>
-      <h1>Daily Nutrition</h1>
+      {appStage === "checkingSession" && (
+        <div>
+          <p>Loading...</p>
+        </div>
+      )}
+      {appStage === "loggedOut" && (
+        <div>
+          <h1>Daily Nutrition</h1>
+          <input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(event) => setEmail(event.target.value)}
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(event) => setPassword(event.target.value)}
+          />
+        
+          {authMode === "login" ? (
+            <>
+              <button onClick={handleLogin}>Log in</button>
 
-      <input
-        type="email"
-        placeholder="Email"
-        value={email}
-        onChange={(event) => setEmail(event.target.value)}
-      />
+              <p>
+                Don't have an account?{" "}
+                <button type="button" onClick={() => setAuthMode("register")}>
+                  Register
+                </button>
+              </p>
+            </>
+          ) : (
+            <>
+              <button onClick={handleRegister}>Create account</button>
 
-      <input
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(event) => setPassword(event.target.value)}
-      />
-
-      <div>
-        <button onClick={() => setAuthMode("login")}>Log in</button>
-
-        <button onClick={() => setAuthMode("register")}>Register</button>
-      </div>
-
-      {authMode === "login" ? (
-        <button onClick={handleLogin}>Log in</button>
-      ) : (
-        <button onClick={handleRegister}>Create account</button>
+              <p>
+                Already have an account?{" "}
+                <button type="button" onClick={() => setAuthMode("login")}>
+                  Log in
+                </button>
+              </p>
+            </>
+          )}
+        </div>
       )}
 
       {appStage === "newUserWelcome" && (
