@@ -13,6 +13,7 @@ import {
 import { getDailyNutritionStatus } from "./nutrition/getDailyNutritionStatus.js";
 import { getProfileByDaySession } from "./users/getProfileByDaySession.js";
 import { createDaySession } from "./days/createDaySession.js";
+import { getMealNutritionSummary } from "./nutrition/getMealNutritionSummary.js";
 import { createFoodEntry } from "./foods/createFoodEntry.js";
 import { processFood } from "./foods/processFood.js";
 import { registerUser } from "./auth/registerUser.js";
@@ -176,6 +177,206 @@ app.get("/api/days/:daySessionId", requireAuth, async (req, res) => {
     });
   }
 });
+
+app.post(
+  "/api/days/:daySessionId/meal-sessions",
+  requireAuth,
+  async (req, res) => {
+    try {
+      const userId = res.locals.userId;
+      const daySessionId = Number(req.params.daySessionId);
+
+      const dayResult = await db.query(
+        `
+        SELECT id
+        FROM day_sessions
+        WHERE id = $1 AND user_id = $2
+        `,
+        [daySessionId, userId],
+      );
+
+      if (!dayResult.rows[0]) {
+        return res.status(404).json({
+          error: "Day session not found",
+        });
+      }
+
+      const mealSessionResult = await db.query(
+        `
+        INSERT INTO meal_sessions (day_session_id)
+        VALUES ($1)
+        RETURNING
+          id,
+          day_session_id,
+          meal_session_id,
+          food_name,
+          fdc_id,
+          amount,
+          unit,
+          grams,
+          created_at,
+          nutrients
+        `,
+        [daySessionId],
+      );
+
+      return res.status(201).json({
+        mealSession: mealSessionResult.rows[0],
+      });
+    } catch (error) {
+      console.error(error);
+
+      return res.status(500).json({
+        error: "Failed to create meal session",
+      });
+    }
+  },
+);
+
+app.get("/api/meal-sessions/:mealSessionId", requireAuth, async (req, res) => {
+  try {
+    const userId = res.locals.userId;
+    const mealSessionId = Number(req.params.mealSessionId);
+
+    const mealSessionResult = await db.query(
+      `
+        SELECT ms.*
+        FROM meal_sessions ms
+        JOIN day_sessions ds
+          ON ms.day_session_id = ds.id
+        WHERE ms.id = $1
+          AND ds.user_id = $2
+        `,
+      [mealSessionId, userId],
+    );
+
+    if (!mealSessionResult.rows[0]) {
+      return res.status(404).json({
+        error: "Meal session not found",
+      });
+    }
+
+    const foodsResult = await db.query(
+      `
+        SELECT
+          id,
+          day_session_id,
+          meal_session_id,
+          food_name,
+          fdc_id,
+          amount,
+          unit,
+          grams,
+          created_at,
+          nutrients
+        FROM food_entries
+        WHERE meal_session_id = $1
+        ORDER BY created_at ASC
+        `,
+      [mealSessionId],
+    );
+
+    const nutrition = await getMealNutritionSummary(mealSessionId);
+
+    const daySessionId = mealSessionResult.rows[0].day_session_id;
+
+    const profileResult = await db.query(
+      `
+  SELECT
+    age,
+    sex,
+    height_cm,
+    weight_kg,
+    activity_level
+  FROM profiles
+  WHERE user_id = $1
+  `,
+      [userId],
+    );
+
+    let currentNutritionStatus = null;
+
+    if (profileResult.rows[0]) {
+      const profileRow = profileResult.rows[0];
+
+      const profile = {
+        age: profileRow.age,
+        sex: profileRow.sex,
+        heightCm: profileRow.height_cm,
+        weightKg: profileRow.weight_kg,
+        activityLevel: profileRow.activity_level,
+      };
+
+      currentNutritionStatus = await getDailyNutritionStatus(
+        daySessionId,
+        profile,
+      );
+    }
+
+    return res.json({
+      mealSession: mealSessionResult.rows[0],
+      foods: foodsResult.rows,
+      nutrition,
+      currentNutritionStatus,
+    });
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).json({
+      error: "Failed to load meal session",
+    });
+  }
+});
+
+app.get(
+  "/api/days/:daySessionId/meal-sessions",
+  requireAuth,
+  async (req, res) => {
+    try {
+      const userId = res.locals.userId;
+      const daySessionId = Number(req.params.daySessionId);
+
+      const dayResult = await db.query(
+        `
+        SELECT id
+        FROM day_sessions
+        WHERE id = $1
+          AND user_id = $2
+        `,
+        [daySessionId, userId],
+      );
+
+      if (!dayResult.rows[0]) {
+        return res.status(404).json({
+          error: "Day session not found",
+        });
+      }
+
+      const mealSessionsResult = await db.query(
+        `
+        SELECT
+          id,
+          day_session_id,
+          created_at
+        FROM meal_sessions
+        WHERE day_session_id = $1
+        ORDER BY created_at ASC
+        `,
+        [daySessionId],
+      );
+
+      return res.json({
+        mealSessions: mealSessionsResult.rows,
+      });
+    } catch (error) {
+      console.error(error);
+
+      return res.status(500).json({
+        error: "Failed to load meal sessions",
+      });
+    }
+  },
+);
 
 app.get("/api/profile", requireAuth, async (req, res) => {
   try {
@@ -411,15 +612,31 @@ app.post("/api/days/:daySessionId/foods", requireAuth, async (req, res) => {
       });
     }
 
-    const { foodName, amount, unit } = req.body;
+    const { foodName, amount, unit, mealSessionId } = req.body;
+
+    const mealSessionResult = await db.query(
+      `
+  SELECT id
+  FROM meal_sessions
+  WHERE id = $1 AND day_session_id = $2
+  `,
+      [mealSessionId, daySessionId],
+    );
+
+    if (!mealSessionResult.rows[0]) {
+      return res.status(404).json({
+        error: "Meal session not found",
+      });
+    }
 
     if (
       typeof foodName !== "string" ||
       typeof amount !== "number" ||
-      typeof unit !== "string"
+      typeof unit !== "string" ||
+      typeof mealSessionId !== "number"
     ) {
       return res.status(400).json({
-        error: "foodName, amount, and unit are required",
+        error: "foodName, amount, unit, and mealSessionId are required",
       });
     }
 
@@ -440,6 +657,7 @@ app.post("/api/days/:daySessionId/foods", requireAuth, async (req, res) => {
 
     const foodEntry = await createFoodEntry(
       daySessionId,
+      mealSessionId,
       processedFood.foodName,
       processedFood.fdcId,
       processedFood.amount,

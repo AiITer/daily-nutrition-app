@@ -2,6 +2,7 @@ import { db } from "../db.js";
 
 export async function createFoodEntry(
   daySessionId: number,
+  mealSessionId: number,
   foodName: string,
   fdcId: number | null,
   amount: number,
@@ -13,6 +14,7 @@ export async function createFoodEntry(
     `
     INSERT INTO food_entries (
       day_session_id,
+      meal_session_id,
       food_name,
       fdc_id,
       amount,
@@ -20,11 +22,22 @@ export async function createFoodEntry(
       grams,
       nutrients
     )
-    VALUES ($1, $2, $3, $4, $5, $6, $7)
-    RETURNING *
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+    RETURNING
+      id,
+      day_session_id,
+      meal_session_id,
+      food_name,
+      fdc_id,
+      amount,
+      unit,
+      grams,
+      created_at,
+      nutrients
     `,
     [
       daySessionId,
+      mealSessionId,
       foodName,
       fdcId,
       amount,

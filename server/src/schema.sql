@@ -24,8 +24,19 @@ CREATE TABLE IF NOT EXISTS day_sessions (
   UNIQUE (user_id, session_date)
 );
 
+CREATE TABLE meal_sessions (
+  id SERIAL PRIMARY KEY,
+  day_session_id INTEGER NOT NULL
+    REFERENCES day_sessions(id)
+    ON DELETE CASCADE,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
 CREATE TABLE IF NOT EXISTS food_entries (
   id SERIAL PRIMARY KEY,
+  meal_session_id INTEGER
+  REFERENCES meal_sessions(id)
+  ON DELETE CASCADE,
   day_session_id INTEGER NOT NULL REFERENCES day_sessions(id) ON DELETE CASCADE,
   food_name TEXT NOT NULL,
   fdc_id INTEGER,
@@ -35,3 +46,4 @@ CREATE TABLE IF NOT EXISTS food_entries (
   nutrients JSONB NOT NULL DEFAULT '[]',
   created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );
+

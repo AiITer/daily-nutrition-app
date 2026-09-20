@@ -1,0 +1,12 @@
+CREATE TABLE meals (
+  id SERIAL PRIMARY KEY,
+  day_session_id INTEGER NOT NULL
+    REFERENCES day_sessions(id)
+    ON DELETE CASCADE,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+ALTER TABLE food_entries
+ADD COLUMN meal_id INTEGER
+REFERENCES meals(id)
+ON DELETE CASCADE;

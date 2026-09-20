@@ -13,7 +13,8 @@
     "db:test-day": "tsx src/testCreateDaySession.ts",
     "db:test-food": "tsx src/testCreateFoodEntry.ts",
     "db:test-food-list": "tsx src/testGetFoodEntries.ts",
-    "db:test-daily-status": "tsx src/testDailyNutritionStatus.ts"
+    "db:test-daily-status": "tsx src/testDailyNutritionStatus.ts",
+    "migrate": "tsx src/runMigrations.ts"
   },
   "keywords": [],
   "author": "",
