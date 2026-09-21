@@ -1009,6 +1009,82 @@ app.get("/api/foods/search", async (req, res) => {
   });
 });
 
+app.delete("/api/foods/:foodEntryId", requireAuth, async (req, res) => {
+  try {
+    const userId = res.locals.userId;
+    const foodEntryId = Number(req.params.foodEntryId);
+
+    const result = await db.query(
+      `
+        DELETE FROM food_entries
+        USING day_sessions
+        WHERE food_entries.id = $1
+          AND food_entries.day_session_id = day_sessions.id
+          AND day_sessions.user_id = $2
+          AND day_sessions.finished_at IS NULL
+        RETURNING food_entries.id
+        `,
+      [foodEntryId, userId],
+    );
+
+    if (!result.rows[0]) {
+      return res.status(404).json({
+        error: "Food entry not found or day is already finished",
+      });
+    }
+
+    return res.json({
+      deletedFoodEntryId: result.rows[0].id,
+    });
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).json({
+      error: "Failed to delete food",
+    });
+  }
+});
+
+app.delete(
+  "/api/meal-sessions/:mealSessionId",
+  requireAuth,
+  async (req, res) => {
+    try {
+      const userId = res.locals.userId;
+      const mealSessionId = Number(req.params.mealSessionId);
+
+      const result = await db.query(
+        `
+          DELETE FROM meal_sessions
+          USING day_sessions
+          WHERE meal_sessions.id = $1
+            AND meal_sessions.day_session_id = day_sessions.id
+            AND day_sessions.user_id = $2
+            AND day_sessions.finished_at IS NULL
+          RETURNING meal_sessions.id
+        `,
+        [mealSessionId, userId],
+      );
+
+      if (!result.rows[0]) {
+        return res.status(404).json({
+          error: "Meal not found or day is already finished",
+        });
+      }
+
+      return res.json({
+        deletedMealSessionId: result.rows[0].id,
+      });
+    } catch (error) {
+      console.error(error);
+
+      return res.status(500).json({
+        error: "Failed to delete meal",
+      });
+    }
+  },
+);
+
 app.get("/api/days/:daySessionId/nutrition", requireAuth, async (req, res) => {
   try {
     const userId = res.locals.userId;
@@ -1074,10 +1150,22 @@ app.post("/api/days", requireAuth, async (req, res) => {
   try {
     const userId = res.locals.userId;
 
-    const sessionDate =
-      typeof req.body.sessionDate === "string"
-        ? req.body.sessionDate
-        : new Date().toISOString().slice(0, 10);
+    const timeZone = String(req.body.timeZone ?? "");
+    if (!timeZone) {
+      return res.status(400).json({
+        error: "timeZone is required",
+      });
+    }
+
+    const { localDate, localHour } = getLocalDateAndHour(timeZone);
+
+    if (localHour < 5) {
+      return res.status(400).json({
+        error: "A new day cannot be started before 5 AM local time",
+      });
+    }
+
+    const sessionDate = localDate;
 
     const daySession = await createDaySession(userId, sessionDate);
 

@@ -31,7 +31,8 @@ function App() {
   const [expandedRemainingMealId, setExpandedRemainingMealId] = useState<
     number | null
     >(null);
-  const [finishedDayId, setFinishedDayId] = useState<number | null>(null);
+  const [nowDayId, setNowDayId] = useState<number | null>(null);
+  const [previousDayId, setPreviousDayId] = useState<number | null>(null);
   const [canStartNewDay, setCanStartNewDay] = useState(false);
   const [historyTab, setHistoryTab] = useState<"foods" | "nutrition" | null>(
     null,
@@ -205,12 +206,22 @@ function App() {
     );
 
     const currentDayData = await currentDayResponse.json();
+    console.log(
+      "current day response:",
+      currentDayResponse.status,
+      currentDayResponse.ok,
+    );
 
     if (currentDayResponse.ok) {
       setCanStartNewDay(currentDayData.canStartNewDay);
+      setNowDayId(currentDayData.nowDay ? currentDayData.nowDay.id : null);
+      setPreviousDayId(
+        currentDayData.previousDay ? currentDayData.previousDay.id : null,
+      );
+      console.log("setting nowDayId to:", currentDayData.nowDay?.id);
 
       if (currentDayData.activeDay) {
-        setActiveDayId(currentDayData.activeDay.id);
+        setActiveDayId(currentDayData.activeDay.id);        
         await loadMealSessions(currentDayData.activeDay.id);
       } else {
         setActiveDayId(null);
@@ -218,6 +229,8 @@ function App() {
         setMealDetails({});
       }
     }
+    console.log("currentDayData:", currentDayData);
+    console.log("nowDay:", currentDayData.nowDay);
     const foodHistoryResponse = await fetch(
       `${import.meta.env.VITE_API_URL}/api/history/foods`,
       {
@@ -291,7 +304,9 @@ function App() {
     if (!canStartNewDay) {
       return;
     }
+    
     const token = localStorage.getItem("token");
+    const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
     const response = await fetch(`${import.meta.env.VITE_API_URL}/api/days`, {
       method: "POST",
@@ -299,7 +314,9 @@ function App() {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({}),
+      body: JSON.stringify({
+        timeZone,
+      }),
     });
 
     const data = await response.json();
@@ -399,44 +416,66 @@ function App() {
     setMessage("New meal created");
   }
 
-  async function handleAddFood(mealSessionId: number) {
-    if (activeDayId === null) {
-      setMessage("No active day");
+  async function handleDeleteFood(foodEntryId: number, mealSessionId: number) {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
       return;
     }
 
-    const token = localStorage.getItem("token");
-
     const response = await fetch(
-      `${import.meta.env.VITE_API_URL}/api/days/${activeDayId}/foods`,
+      `${import.meta.env.VITE_API_URL}/api/foods/${foodEntryId}`,
       {
-        method: "POST",
+        method: "DELETE",
         headers: {
-          "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          foodName,
-          amount: Number(foodAmount),
-          unit: foodUnit,
-          mealSessionId,
-        }),
       },
     );
 
     const data = await response.json();
 
     if (!response.ok) {
-      setMessage(data.error ?? "Failed to add food");
+      setMessage(data.error ?? "Failed to delete food");
       return;
     }
 
     await loadMealDetails(mealSessionId);
 
-    setFoodName("");
-    setFoodAmount("");
-    setAddingMealId(null);
-    setMessage("Food added");
+    setMessage("Food deleted");
+  }
+
+  async function handleDeleteMeal(mealSessionId: number) {
+    if (activeDayId === null) {
+      return;
+    }
+
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      return;
+    }
+
+    const response = await fetch(
+      `${import.meta.env.VITE_API_URL}/api/meal-sessions/${mealSessionId}`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      setMessage(data.error ?? "Failed to delete meal");
+      return;
+    }
+
+    await loadMealSessions(activeDayId);
+
+    setMessage("Meal deleted");
   }
 
   async function loadDayDetails(daySessionId: number) {
@@ -461,12 +500,60 @@ function App() {
     setSelectedDay(data);
   }
 
+  async function handleAddFood(mealSessionId: number) {
+    if (activeDayId === null) {
+      return;
+    }
+
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      return;
+    }
+
+    const response = await fetch(
+      `${import.meta.env.VITE_API_URL}/api/days/${activeDayId}/foods`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          foodName,
+          amount: Number(foodAmount),
+          unit: foodUnit,
+          mealSessionId,
+        }),
+      },
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      setMessage(data.error ?? "Failed to add food");
+      return;
+    }
+
+    await loadMealDetails(mealSessionId);
+
+    setFoodName("");
+    setFoodAmount("");
+    setAddingMealId(null);
+
+    setMessage("Food added");
+  }
+
   async function handleFinishDay() {
     if (activeDayId === null) {
       return;
     }
 
     const token = localStorage.getItem("token");
+
+    if (!token) {
+      return;
+    }
 
     const response = await fetch(
       `${import.meta.env.VITE_API_URL}/api/days/${activeDayId}/finish`,
@@ -485,14 +572,21 @@ function App() {
       return;
     }
 
-    setFinishedDayId(activeDayId);
     setActiveDayId(null);
     setMealSessions([]);
     setMealDetails({});
     setExpandedRemainingMealId(null);
 
+    await loadUserData(token);
+
     setMessage("Day finished");
   }
+
+  console.log("render state:", {
+    activeDayId,
+    nowDayId,
+    previousDayId,
+  });
 
   return (
     <div>
@@ -705,13 +799,23 @@ function App() {
           {mealSessions.map((meal, index) => (
             <div key={meal.id}>
               <h3>Meal {index + 1}</h3>
-
+              <button type="button" onClick={() => handleDeleteMeal(meal.id)}>
+                Delete Meal
+              </button>
               {mealDetails[meal.id]?.foods?.map((food: any) => (
-                <p key={food.id}>
-                  {food.food_name} — {food.amount} {food.unit}
-                </p>
-              ))}
+                <div key={food.id}>
+                  <span>
+                    {food.food_name} — {food.amount} {food.unit}
+                  </span>
 
+                  <button
+                    type="button"
+                    onClick={() => handleDeleteFood(food.id, meal.id)}
+                  >
+                    Delete Food
+                  </button>
+                </div>
+              ))}
               {mealDetails[meal.id]?.nutrition && (
                 <div>
                   <h4>Meal Nutrition</h4>
@@ -728,7 +832,6 @@ function App() {
                     ))}
                 </div>
               )}
-
               {mealDetails[meal.id]?.currentNutritionStatus && (
                 <div>
                   <button
@@ -762,10 +865,6 @@ function App() {
                     </div>
                   )}
                 </div>
-              )}
-
-              {appStage === "app" && activeDayId !== null && (
-                <button onClick={handleFinishDay}>Finish the Day</button>
               )}
 
               {addingMealId === meal.id ? (
@@ -810,6 +909,20 @@ function App() {
             </div>
           ))}
         </div>
+      )}
+
+      {appStage === "app" && activeDayId !== null && (
+        <button onClick={handleFinishDay}>Finish the Day</button>
+      )}
+      {activeDayId === null && nowDayId !== null && (
+        <button onClick={() => loadDayDetails(nowDayId)}>
+          View Today's Summary
+        </button>
+      )}
+      {activeDayId === null && nowDayId === null && previousDayId !== null && (
+        <button onClick={() => loadDayDetails(previousDayId)}>
+          View Previous Day Summary
+        </button>
       )}
 
       <p>{message}</p>

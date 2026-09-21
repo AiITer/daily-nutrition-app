@@ -54,6 +54,14 @@ External nutrition data is accessed through the backend.
 - meal_sessions
 - food_entries
 
+### Data-model note: food ownership path
+
+`food_entries` currently stores both `day_session_id` and `meal_session_id`. This reflects the evolution of the project: foods originally belonged directly to a day, and the meal layer was added later.
+
+In the current conceptual hierarchy, the cleaner relationship is `Day → Meal → Food`, so `meal_session_id` is the more natural direct parent relationship and a food's day could be derived through its meal. Keeping `day_session_id` on `food_entries` is therefore somewhat redundant, but it remains useful for existing daily aggregation and ownership queries.
+
+For V1, this redundancy is intentionally retained to avoid unnecessary schema migration and query refactoring. A future cleanup could remove the direct day reference from `food_entries` and derive day ownership through `meal_sessions`, provided all daily-summary and authorization queries are updated accordingly.
+
 ## Profile
 
 The user profile includes:
