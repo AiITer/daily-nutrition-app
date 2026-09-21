@@ -16,13 +16,14 @@ CREATE TABLE IF NOT EXISTS profiles (
   created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE IF NOT EXISTS day_sessions (
+day_sessions (
   id SERIAL PRIMARY KEY,
   user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   session_date DATE NOT NULL,
-  created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
-  UNIQUE (user_id, session_date)
-);
+  finished_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  UNIQUE(user_id, session_date)
+)
 
 CREATE TABLE meal_sessions (
   id SERIAL PRIMARY KEY,

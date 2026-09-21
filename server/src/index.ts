@@ -30,11 +30,152 @@ import { db } from "./db.js";
 const app = express();
 const port = Number(process.env.PORT) || 3000;
 
+function getLocalDateAndHour(timeZone: string, now = new Date()) {
+  const formatter = new Intl.DateTimeFormat("en-CA", {
+    timeZone,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    hourCycle: "h23",
+  });
+
+  const parts = formatter.formatToParts(now);
+
+  const values = Object.fromEntries(
+    parts.map((part) => [part.type, part.value]),
+  );
+
+  return {
+    localDate: `${values.year}-${values.month}-${values.day}`,
+    localHour: Number(values.hour),
+  };
+}
+
+function getPreviousDate(dateString: string) {
+  const date = new Date(`${dateString}T00:00:00Z`);
+
+  date.setUTCDate(date.getUTCDate() - 1);
+
+  return date.toISOString().slice(0, 10);
+}
+
 app.use(cors());
 app.use(express.json());
 
 app.get("/api/health", (_req, res) => {
   res.json({ status: "ok" });
+});
+
+app.get("/api/days/current", requireAuth, async (req, res) => {
+  try {
+    const userId = res.locals.userId;
+    const timeZone = String(req.query.timeZone ?? "");
+
+    if (!timeZone) {
+      return res.status(400).json({
+        error: "timeZone is required",
+      });
+    }
+
+    const { localDate, localHour } = getLocalDateAndHour(timeZone);
+    const previousDate = getPreviousDate(localDate);
+
+    const activeResult = await db.query(
+      `
+        SELECT
+          id,
+          user_id,
+          session_date,
+          finished_at,
+          created_at
+        FROM day_sessions
+        WHERE user_id = $1
+          AND finished_at IS NULL
+        ORDER BY session_date DESC
+        LIMIT 1
+        `,
+      [userId],
+    );
+
+    let activeDay = activeResult.rows[0] ?? null;
+
+    if (
+      activeDay &&
+      localHour >= 5 &&
+      activeDay.session_date.toISOString().slice(0, 10) < localDate
+    ) {
+      const closeResult = await db.query(
+        `
+          UPDATE day_sessions
+          SET finished_at = NOW()
+          WHERE id = $1
+          RETURNING
+            id,
+            user_id,
+            session_date,
+            finished_at,
+            created_at
+          `,
+        [activeDay.id],
+      );
+
+      activeDay = null;
+    }
+
+    const todayResult = await db.query(
+      `
+        SELECT
+          id,
+          user_id,
+          session_date,
+          finished_at,
+          created_at
+        FROM day_sessions
+        WHERE user_id = $1
+          AND session_date = $2
+        LIMIT 1
+        `,
+      [userId, localDate],
+    );
+
+    const nowDay = todayResult.rows[0] ?? null;
+
+    const previousResult = await db.query(
+      `
+        SELECT
+          id,
+          user_id,
+          session_date,
+          finished_at,
+          created_at
+        FROM day_sessions
+        WHERE user_id = $1
+          AND session_date = $2
+        LIMIT 1
+        `,
+      [userId, previousDate],
+    );
+
+    const previousDay = previousResult.rows[0] ?? null;
+
+    const canStartNewDay = localHour >= 5 && nowDay === null;
+
+    return res.json({
+      localDate,
+      localHour,
+      activeDay,
+      nowDay,
+      previousDay,
+      canStartNewDay,
+    });
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).json({
+      error: "Failed to load current day state",
+    });
+  }
 });
 
 app.get("/api/history/foods", requireAuth, async (req, res) => {
@@ -174,6 +315,45 @@ app.get("/api/days/:daySessionId", requireAuth, async (req, res) => {
 
     res.status(500).json({
       error: "Failed to get day details",
+    });
+  }
+});
+
+app.post("/api/days/:daySessionId/finish", requireAuth, async (req, res) => {
+  try {
+    const userId = res.locals.userId;
+    const daySessionId = Number(req.params.daySessionId);
+
+    const result = await db.query(
+      `
+        UPDATE day_sessions
+        SET finished_at = NOW()
+        WHERE id = $1
+          AND user_id = $2
+        RETURNING
+          id,
+          user_id,
+          session_date,
+          finished_at,
+          created_at
+        `,
+      [daySessionId, userId],
+    );
+
+    if (!result.rows[0]) {
+      return res.status(404).json({
+        error: "Day session not found",
+      });
+    }
+
+    return res.json({
+      daySession: result.rows[0],
+    });
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).json({
+      error: "Failed to finish day",
     });
   }
 });

@@ -51,6 +51,7 @@ External nutrition data is accessed through the backend.
 - users
 - profiles
 - day_sessions
+- meal_sessions
 - food_entries
 
 ## Profile
@@ -67,13 +68,19 @@ These values are used only where required by the official nutrition reference.
 
 ## Daily Sessions
 
-A day is defined by the user, not by midnight or a fixed 24-hour window.
+Day sessions follow the calendar for history and daily nutrition tracking, but the app uses a 5:00 AM rollover boundary to avoid forcing late-night users into a new day at midnight.
 
-The user starts a new day manually.
+The user always starts a new day manually. The app never creates a new day session automatically, because starting a day should be an intentional action rather than a task imposed by the app.
 
-All food entries remain part of the current day until the user starts another day.
+A new day cannot be started before 5:00 AM local time. Before 5:00 AM, the previous calendar day's session remains the active session if it has not been finished.
 
-Starting a new day archives the previous session and begins a fresh calculation.
+Users can finish the day manually at any time. Finishing the day closes the session and makes its final daily summary available.
+
+If the user does not finish the day manually, the previous day's session is automatically considered closed after 5:00 AM local time. V1 may implement this with lazy auto-close: if the website is not open at 5:00 AM, the session is closed the next time the user opens the app or makes a relevant request after the cutoff.
+
+After a previous day has been closed, the interface can show a **View Previous Day Summary** action. The next day's session is still not created until the user chooses **Start New Day**.
+
+Each day session remains associated with its calendar date for history, so users can review nutrition records by date without custom session boundaries making the calendar ambiguous.
 
 ## Nutrition Reference
 
@@ -130,7 +137,9 @@ The app keeps a running summary based on the foods logged in the current day ses
 
 Users can add more food at any time, and nutrient totals are recalculated automatically.
 
-Before starting a new day, users can review the current summary and add any missing food entries.
+Users can choose **Finish the Day** to close the current session and view its final summary. If they do not finish manually, the previous day's session is considered closed after the 5:00 AM local cutoff.
+
+After a session has closed, the app can surface a **View Previous Day Summary** action when the user returns.
 
 The summary reflects only foods recorded by the user.
 

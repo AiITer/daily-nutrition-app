@@ -28,6 +28,11 @@ function App() {
   const [foodAmount, setFoodAmount] = useState("");
   const [foodUnit, setFoodUnit] = useState("g");
   const [mealDetails, setMealDetails] = useState<Record<number, any>>({});
+  const [expandedRemainingMealId, setExpandedRemainingMealId] = useState<
+    number | null
+    >(null);
+  const [finishedDayId, setFinishedDayId] = useState<number | null>(null);
+  const [canStartNewDay, setCanStartNewDay] = useState(false);
   const [historyTab, setHistoryTab] = useState<"foods" | "nutrition" | null>(
     null,
   );
@@ -187,17 +192,32 @@ function App() {
     }
 
     setDays(daysData.days);
-    const today = new Date().toISOString().slice(0, 10);
 
-    const todayDay = daysData.days.find(
-      (day: any) => day.session_date.slice(0, 10) === today,
+    const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+    const currentDayResponse = await fetch(
+      `${import.meta.env.VITE_API_URL}/api/days/current?timeZone=${encodeURIComponent(timeZone)}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
     );
 
-    if (todayDay) {
-      setActiveDayId(todayDay.id);
-      await loadMealSessions(todayDay.id);
-    }
+    const currentDayData = await currentDayResponse.json();
 
+    if (currentDayResponse.ok) {
+      setCanStartNewDay(currentDayData.canStartNewDay);
+
+      if (currentDayData.activeDay) {
+        setActiveDayId(currentDayData.activeDay.id);
+        await loadMealSessions(currentDayData.activeDay.id);
+      } else {
+        setActiveDayId(null);
+        setMealSessions([]);
+        setMealDetails({});
+      }
+    }
     const foodHistoryResponse = await fetch(
       `${import.meta.env.VITE_API_URL}/api/history/foods`,
       {
@@ -268,6 +288,9 @@ function App() {
   }
 
   async function handleStartNewDay() {
+    if (!canStartNewDay) {
+      return;
+    }
     const token = localStorage.getItem("token");
 
     const response = await fetch(`${import.meta.env.VITE_API_URL}/api/days`, {
@@ -288,6 +311,8 @@ function App() {
 
     setActiveDayId(data.id);
     setMealSessions([]);
+    setMealDetails({});
+    setCanStartNewDay(false);
     setMessage("New day started");
   }
 
@@ -329,6 +354,7 @@ function App() {
     );
 
     const data = await response.json();
+    console.log("meal details", mealSessionId, data);
 
     if (!response.ok) {
       setMessage(data.error ?? "Failed to load meal details");
@@ -433,6 +459,39 @@ function App() {
     }
 
     setSelectedDay(data);
+  }
+
+  async function handleFinishDay() {
+    if (activeDayId === null) {
+      return;
+    }
+
+    const token = localStorage.getItem("token");
+
+    const response = await fetch(
+      `${import.meta.env.VITE_API_URL}/api/days/${activeDayId}/finish`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      setMessage(data.error ?? "Failed to finish day");
+      return;
+    }
+
+    setFinishedDayId(activeDayId);
+    setActiveDayId(null);
+    setMealSessions([]);
+    setMealDetails({});
+    setExpandedRemainingMealId(null);
+
+    setMessage("Day finished");
   }
 
   return (
@@ -635,7 +694,9 @@ function App() {
 
       {appStage === "app" && <button onClick={handleLogout}>Log out</button>}
       {appStage === "app" && (
-        <button onClick={handleStartNewDay}>Start New Day</button>
+        <button onClick={handleStartNewDay} disabled={!canStartNewDay}>
+          Start New Day
+        </button>
       )}
 
       {appStage === "app" && activeDayId !== null && (
@@ -670,20 +731,41 @@ function App() {
 
               {mealDetails[meal.id]?.currentNutritionStatus && (
                 <div>
-                  <h4>Daily Remaining</h4>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setExpandedRemainingMealId(
+                        expandedRemainingMealId === meal.id ? null : meal.id,
+                      )
+                    }
+                  >
+                    {expandedRemainingMealId === meal.id
+                      ? "Hide Daily Remaining"
+                      : "View Daily Remaining"}
+                  </button>
 
-                  {mealDetails[meal.id].currentNutritionStatus
-                    .filter((nutrient: any) =>
-                      keyNutrients.includes(nutrient.nutrientKey),
-                    )
-                    .map((nutrient: any) => (
-                      <p key={nutrient.nutrientKey}>
-                        {nutrient.nutrientKey}:{" "}
-                        {formatNumber(nutrient.remaining)} {nutrient.unit}{" "}
-                        remaining
-                      </p>
-                    ))}
+                  {expandedRemainingMealId === meal.id && (
+                    <div>
+                      <h4>Daily Remaining</h4>
+
+                      {mealDetails[meal.id].currentNutritionStatus
+                        .filter((nutrient: any) =>
+                          keyNutrients.includes(nutrient.nutrientKey),
+                        )
+                        .map((nutrient: any) => (
+                          <p key={nutrient.nutrientKey}>
+                            {nutrient.nutrientKey}:{" "}
+                            {formatNumber(nutrient.remaining)} {nutrient.unit}{" "}
+                            remaining
+                          </p>
+                        ))}
+                    </div>
+                  )}
                 </div>
+              )}
+
+              {appStage === "app" && activeDayId !== null && (
+                <button onClick={handleFinishDay}>Finish the Day</button>
               )}
 
               {addingMealId === meal.id ? (
