@@ -208,14 +208,7 @@ app.post(
         RETURNING
           id,
           day_session_id,
-          meal_session_id,
-          food_name,
-          fdc_id,
-          amount,
-          unit,
-          grams,
-          created_at,
-          nutrients
+          created_at
         `,
         [daySessionId],
       );

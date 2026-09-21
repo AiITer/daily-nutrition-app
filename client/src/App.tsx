@@ -7,6 +7,10 @@ type AppStage =
   | "profileSetup"
   | "app";
 
+function formatNumber(value: number) {
+  return Number(value.toFixed(2));
+}
+
 function App() {
   const [appStage, setAppStage] = useState<AppStage>("checkingSession");
   const [registrationSuccess, setRegistrationSuccess] = useState(false);
@@ -17,6 +21,13 @@ function App() {
   const [profile, setProfile] = useState<any>(null);
   const [days, setDays] = useState<any[]>([]);
   const [foodHistory, setFoodHistory] = useState<any[]>([]);
+  const [activeDayId, setActiveDayId] = useState<number | null>(null);
+  const [mealSessions, setMealSessions] = useState<any[]>([]);
+  const [addingMealId, setAddingMealId] = useState<number | null>(null);
+  const [foodName, setFoodName] = useState("");
+  const [foodAmount, setFoodAmount] = useState("");
+  const [foodUnit, setFoodUnit] = useState("g");
+  const [mealDetails, setMealDetails] = useState<Record<number, any>>({});
   const [historyTab, setHistoryTab] = useState<"foods" | "nutrition" | null>(
     null,
   );
@@ -28,6 +39,8 @@ function App() {
   const [profileWeight, setProfileWeight] = useState("");
   const [profileActivity, setProfileActivity] = useState("");
   const [isEditingProfile, setIsEditingProfile] = useState(false);
+
+  const keyNutrients = ["energy", "protein", "fiber"];
 
   useEffect(() => {
     async function restoreSession() {
@@ -174,6 +187,16 @@ function App() {
     }
 
     setDays(daysData.days);
+    const today = new Date().toISOString().slice(0, 10);
+
+    const todayDay = daysData.days.find(
+      (day: any) => day.session_date.slice(0, 10) === today,
+    );
+
+    if (todayDay) {
+      setActiveDayId(todayDay.id);
+      await loadMealSessions(todayDay.id);
+    }
 
     const foodHistoryResponse = await fetch(
       `${import.meta.env.VITE_API_URL}/api/history/foods`,
@@ -263,7 +286,131 @@ function App() {
       return;
     }
 
+    setActiveDayId(data.id);
+    setMealSessions([]);
     setMessage("New day started");
+  }
+
+  async function loadMealSessions(daySessionId: number) {
+    const token = localStorage.getItem("token");
+
+    const response = await fetch(
+      `${import.meta.env.VITE_API_URL}/api/days/${daySessionId}/meal-sessions`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      setMessage(data.error ?? "Failed to load meals");
+      return;
+    }
+
+    setMealSessions(data.mealSessions);
+    for (const meal of data.mealSessions) {
+      await loadMealDetails(meal.id);
+    }
+  }
+
+  async function loadMealDetails(mealSessionId: number) {
+    const token = localStorage.getItem("token");
+
+    const response = await fetch(
+      `${import.meta.env.VITE_API_URL}/api/meal-sessions/${mealSessionId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      setMessage(data.error ?? "Failed to load meal details");
+      return;
+    }
+
+    setMealDetails((current) => ({
+      ...current,
+      [mealSessionId]: data,
+    }));
+  }
+
+  async function handleNewMeal() {
+    if (activeDayId === null) {
+      setMessage("Start a day first");
+      return;
+    }
+
+    const token = localStorage.getItem("token");
+
+    const response = await fetch(
+      `${import.meta.env.VITE_API_URL}/api/days/${activeDayId}/meal-sessions`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({}),
+      },
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      setMessage(data.error ?? "Failed to create meal");
+      return;
+    }
+
+    await loadMealSessions(activeDayId);
+
+    setMessage("New meal created");
+  }
+
+  async function handleAddFood(mealSessionId: number) {
+    if (activeDayId === null) {
+      setMessage("No active day");
+      return;
+    }
+
+    const token = localStorage.getItem("token");
+
+    const response = await fetch(
+      `${import.meta.env.VITE_API_URL}/api/days/${activeDayId}/foods`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          foodName,
+          amount: Number(foodAmount),
+          unit: foodUnit,
+          mealSessionId,
+        }),
+      },
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      setMessage(data.error ?? "Failed to add food");
+      return;
+    }
+
+    await loadMealDetails(mealSessionId);
+
+    setFoodName("");
+    setFoodAmount("");
+    setAddingMealId(null);
+    setMessage("Food added");
   }
 
   async function loadDayDetails(daySessionId: number) {
@@ -310,7 +457,7 @@ function App() {
             value={password}
             onChange={(event) => setPassword(event.target.value)}
           />
-        
+
           {authMode === "login" ? (
             <>
               <button onClick={handleLogin}>Log in</button>
@@ -489,6 +636,98 @@ function App() {
       {appStage === "app" && <button onClick={handleLogout}>Log out</button>}
       {appStage === "app" && (
         <button onClick={handleStartNewDay}>Start New Day</button>
+      )}
+
+      {appStage === "app" && activeDayId !== null && (
+        <div>
+          <button onClick={handleNewMeal}>New Meal</button>
+          {mealSessions.map((meal, index) => (
+            <div key={meal.id}>
+              <h3>Meal {index + 1}</h3>
+
+              {mealDetails[meal.id]?.foods?.map((food: any) => (
+                <p key={food.id}>
+                  {food.food_name} — {food.amount} {food.unit}
+                </p>
+              ))}
+
+              {mealDetails[meal.id]?.nutrition && (
+                <div>
+                  <h4>Meal Nutrition</h4>
+
+                  {mealDetails[meal.id].nutrition
+                    .filter((nutrient: any) =>
+                      keyNutrients.includes(nutrient.nutrientKey),
+                    )
+                    .map((nutrient: any) => (
+                      <p key={nutrient.nutrientKey}>
+                        {nutrient.nutrientKey}: {nutrient.amount}{" "}
+                        {nutrient.unit}
+                      </p>
+                    ))}
+                </div>
+              )}
+
+              {mealDetails[meal.id]?.currentNutritionStatus && (
+                <div>
+                  <h4>Daily Remaining</h4>
+
+                  {mealDetails[meal.id].currentNutritionStatus
+                    .filter((nutrient: any) =>
+                      keyNutrients.includes(nutrient.nutrientKey),
+                    )
+                    .map((nutrient: any) => (
+                      <p key={nutrient.nutrientKey}>
+                        {nutrient.nutrientKey}:{" "}
+                        {formatNumber(nutrient.remaining)} {nutrient.unit}{" "}
+                        remaining
+                      </p>
+                    ))}
+                </div>
+              )}
+
+              {addingMealId === meal.id ? (
+                <div>
+                  <input
+                    type="text"
+                    placeholder="Food"
+                    value={foodName}
+                    onChange={(event) => setFoodName(event.target.value)}
+                  />
+
+                  <input
+                    type="number"
+                    placeholder="Amount"
+                    value={foodAmount}
+                    onChange={(event) => setFoodAmount(event.target.value)}
+                  />
+
+                  <select
+                    value={foodUnit}
+                    onChange={(event) => setFoodUnit(event.target.value)}
+                  >
+                    <option value="g">g</option>
+                    <option value="mL">mL</option>
+                    <option value="L">L</option>
+                    <option value="tsp">tsp</option>
+                  </select>
+
+                  <button onClick={() => handleAddFood(meal.id)}>
+                    Save Food
+                  </button>
+
+                  <button type="button" onClick={() => setAddingMealId(null)}>
+                    Cancel
+                  </button>
+                </div>
+              ) : (
+                <button onClick={() => setAddingMealId(meal.id)}>
+                  Add Food
+                </button>
+              )}
+            </div>
+          ))}
+        </div>
       )}
 
       <p>{message}</p>
