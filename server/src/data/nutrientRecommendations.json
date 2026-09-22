@@ -545,7 +545,7 @@
       "source": "CNF 2026"
     }
   ],
-  "folate": [
+  "vitaminB9": [
     {
       "foodName": "Lentils, mature seeds, boiled",
       "displayName": "Cooked lentils",
@@ -629,7 +629,7 @@
       "source": "CNF 2026"
     }
   ],
-  "thiamin": [
+  "vitaminB1": [
     {
       "foodName": "Seeds, flaxseed (linseed), whole and ground",
       "displayName": "Flaxseed",
@@ -671,7 +671,7 @@
       "source": "CNF 2026"
     }
   ],
-  "riboflavin": [
+  "vitaminB2": [
     {
       "foodName": "Nuts, almonds, dry roasted, unblanched",
       "displayName": "Dry-roasted almonds",
@@ -713,7 +713,7 @@
       "source": "CNF 2026"
     }
   ],
-  "niacin": [
+  "vitaminB3": [
     {
       "foodName": "Fish, tuna, yellowfin, baked or broiled",
       "displayName": "Cooked yellowfin tuna",
