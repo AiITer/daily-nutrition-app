@@ -27,6 +27,7 @@ function App() {
   const [foodName, setFoodName] = useState("");
   const [foodAmount, setFoodAmount] = useState("");
   const [foodUnit, setFoodUnit] = useState("g");
+  const [foodMessage, setFoodMessage] = useState("");
   const [mealDetails, setMealDetails] = useState<Record<number, any>>({});
   const [expandedRemainingMealId, setExpandedRemainingMealId] = useState<
     number | null
@@ -353,9 +354,9 @@ function App() {
     }
 
     setMealSessions(data.mealSessions);
-    for (const meal of data.mealSessions) {
-      await loadMealDetails(meal.id);
-    }
+    await Promise.all(
+      data.mealSessions.map((meal: any) => loadMealDetails(meal.id)),
+    );
   }
 
   async function loadMealDetails(mealSessionId: number) {
@@ -371,7 +372,6 @@ function App() {
     );
 
     const data = await response.json();
-    console.log("meal details", mealSessionId, data);
 
     if (!response.ok) {
       setMessage(data.error ?? "Failed to load meal details");
@@ -531,7 +531,14 @@ function App() {
     const data = await response.json();
 
     if (!response.ok) {
-      setMessage(data.error ?? "Failed to add food");
+      if (data.error === "Failed to add food") {
+        setFoodMessage(
+          "This food is not supported yet. Please try another food name.",
+        );
+      } else {
+        setFoodMessage(data.error ?? "Failed to add food");
+      }
+
       return;
     }
 
@@ -540,8 +547,8 @@ function App() {
     setFoodName("");
     setFoodAmount("");
     setAddingMealId(null);
+    setFoodMessage("");
 
-    setMessage("Food added");
   }
 
   async function handleFinishDay() {
@@ -582,11 +589,46 @@ function App() {
     setMessage("Day finished");
   }
 
-  console.log("render state:", {
-    activeDayId,
-    nowDayId,
-    previousDayId,
-  });
+  async function handleUpdateProfile() {
+    const token = localStorage.getItem("token");
+
+    const response = await fetch(
+      `${import.meta.env.VITE_API_URL}/api/profile`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          age: Number(profileAge),
+          sex: profileSex,
+          heightCm: Number(profileHeight),
+          weightKg: Number(profileWeight),
+          activityLevel: profileActivity,
+        }),
+      },
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      setMessage(data.error ?? "Failed to update profile");
+      return;
+    }
+
+    setProfile(data.profile);
+    setIsEditingProfile(false);
+    setMessage("Profile updated");
+  }
+
+  function handleCancelAddFood() {
+    setAddingMealId(null);
+    setFoodName("");
+    setFoodAmount("");
+    setFoodUnit("g");
+    setFoodMessage("");
+  }
 
   return (
     <div>
@@ -816,54 +858,40 @@ function App() {
                   </button>
                 </div>
               ))}
-              {mealDetails[meal.id]?.nutrition && (
+              {mealDetails[meal.id]?.nutrition?.length > 0 && (
                 <div>
                   <h4>Meal Nutrition</h4>
 
-                  {mealDetails[meal.id].nutrition
+                  {mealDetails[meal.id]?.nutrition
                     .filter((nutrient: any) =>
                       keyNutrients.includes(nutrient.nutrientKey),
                     )
-                    .map((nutrient: any) => (
-                      <p key={nutrient.nutrientKey}>
-                        {nutrient.nutrientKey}: {nutrient.amount}{" "}
-                        {nutrient.unit}
-                      </p>
-                    ))}
-                </div>
-              )}
-              {mealDetails[meal.id]?.currentNutritionStatus && (
-                <div>
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setExpandedRemainingMealId(
-                        expandedRemainingMealId === meal.id ? null : meal.id,
-                      )
-                    }
-                  >
-                    {expandedRemainingMealId === meal.id
-                      ? "Hide Daily Remaining"
-                      : "View Daily Remaining"}
-                  </button>
+                    .map((nutrient: any) => {
+                      const status = mealDetails[
+                        meal.id
+                      ]?.nutritionStatusThroughMeal?.find(
+                        (item: any) =>
+                          item.nutrientKey === nutrient.nutrientKey,
+                      );
 
-                  {expandedRemainingMealId === meal.id && (
-                    <div>
-                      <h4>Daily Remaining</h4>
+                      return (
+                        <div key={nutrient.nutrientKey}>
+                          <strong>{nutrient.nutrientKey}</strong>
 
-                      {mealDetails[meal.id].currentNutritionStatus
-                        .filter((nutrient: any) =>
-                          keyNutrients.includes(nutrient.nutrientKey),
-                        )
-                        .map((nutrient: any) => (
-                          <p key={nutrient.nutrientKey}>
-                            {nutrient.nutrientKey}:{" "}
-                            {formatNumber(nutrient.remaining)} {nutrient.unit}{" "}
-                            remaining
+                          <p>
+                            This meal: {formatNumber(nutrient.amount)}{" "}
+                            {nutrient.unit}
                           </p>
-                        ))}
-                    </div>
-                  )}
+
+                          {status?.target !== undefined && (
+                            <p>
+                              Daily target: {formatNumber(status.target)}{" "}
+                              {status.unit}
+                            </p>
+                          )}
+                        </div>
+                      );
+                    })}
                 </div>
               )}
 
@@ -897,9 +925,10 @@ function App() {
                     Save Food
                   </button>
 
-                  <button type="button" onClick={() => setAddingMealId(null)}>
+                  <button type="button" onClick={handleCancelAddFood}>
                     Cancel
                   </button>
+                  {foodMessage && <p>{foodMessage}</p>}
                 </div>
               ) : (
                 <button onClick={() => setAddingMealId(meal.id)}>
@@ -923,6 +952,33 @@ function App() {
         <button onClick={() => loadDayDetails(previousDayId)}>
           View Previous Day Summary
         </button>
+      )}
+      {selectedDay && (
+        <div>
+          <h3>Daily Summary</h3>
+          <p>{selectedDay.day.session_date.slice(0, 10)}</p>
+
+          {selectedDay.nutritionStatus
+            .filter((nutrient: any) =>
+              keyNutrients.includes(nutrient.nutrientKey),
+            )
+            .map((nutrient: any) => (
+              <div key={nutrient.nutrientKey}>
+                <strong>{nutrient.nutrientKey}</strong>
+
+                <p>
+                  Consumed: {formatNumber(nutrient.consumed)} {nutrient.unit}
+                </p>
+
+                {nutrient.target !== undefined && (
+                  <p>
+                    Daily target: {formatNumber(nutrient.target)}{" "}
+                    {nutrient.unit}
+                  </p>
+                )}
+              </div>
+            ))}
+        </div>
       )}
 
       <p>{message}</p>
@@ -949,6 +1005,54 @@ function App() {
           >
             Edit Profile
           </button>
+        </div>
+      )}
+      {profile && isEditingProfile && (
+        <div>
+          <h2>Edit Profile</h2>
+
+          <input
+            type="number"
+            placeholder="Age"
+            value={profileAge}
+            onChange={(event) => setProfileAge(event.target.value)}
+          />
+
+          <select
+            value={profileSex}
+            onChange={(event) => setProfileSex(event.target.value)}
+          >
+            <option value="female">Female</option>
+            <option value="male">Male</option>
+          </select>
+
+          <input
+            type="number"
+            placeholder="Height (cm)"
+            value={profileHeight}
+            onChange={(event) => setProfileHeight(event.target.value)}
+          />
+
+          <input
+            type="number"
+            placeholder="Weight (kg)"
+            value={profileWeight}
+            onChange={(event) => setProfileWeight(event.target.value)}
+          />
+
+          <select
+            value={profileActivity}
+            onChange={(event) => setProfileActivity(event.target.value)}
+          >
+            <option value="inactive">Inactive</option>
+            <option value="lowActive">Low active</option>
+            <option value="active">Active</option>
+            <option value="veryActive">Very active</option>
+          </select>
+
+          <button onClick={handleUpdateProfile}>Save</button>
+
+          <button onClick={() => setIsEditingProfile(false)}>Cancel</button>
         </div>
       )}
       {profile && (
@@ -984,14 +1088,30 @@ function App() {
 
               {selectedDay && (
                 <div>
-                  <h3>{selectedDay.day.session_date.slice(0, 10)}</h3>
+                  <h3>Daily Summary</h3>
+                  <p>{selectedDay.day.session_date.slice(0, 10)}</p>
 
-                  {selectedDay.nutritionStatus.map((nutrient: any) => (
-                    <p key={nutrient.nutrientKey}>
-                      {nutrient.nutrientKey}: {nutrient.consumed}{" "}
-                      {nutrient.unit}
-                    </p>
-                  ))}
+                  {selectedDay.nutritionStatus
+                    .filter((nutrient: any) =>
+                      keyNutrients.includes(nutrient.nutrientKey),
+                    )
+                    .map((nutrient: any) => (
+                      <div key={nutrient.nutrientKey}>
+                        <strong>{nutrient.nutrientKey}</strong>
+
+                        <p>
+                          Consumed: {formatNumber(nutrient.consumed)}{" "}
+                          {nutrient.unit}
+                        </p>
+
+                        {nutrient.target !== undefined && (
+                          <p>
+                            Daily target: {formatNumber(nutrient.target)}{" "}
+                            {nutrient.unit}
+                          </p>
+                        )}
+                      </div>
+                    ))}
                 </div>
               )}
             </div>

@@ -25,6 +25,7 @@ import {
   type Sex,
   type ActivityLevel,
 } from "./users/createProfile.js";
+import { getNutritionStatusThroughMeal } from "./nutrition/getNutritionStatusThroughMeal.js";
 import { db } from "./db.js";
 
 const app = express();
@@ -468,29 +469,29 @@ app.get("/api/meal-sessions/:mealSessionId", requireAuth, async (req, res) => {
     );
 
     let currentNutritionStatus = null;
+    let profile = null;
 
     if (profileResult.rows[0]) {
       const profileRow = profileResult.rows[0];
 
-      const profile = {
+      profile = {
         age: profileRow.age,
         sex: profileRow.sex,
         heightCm: profileRow.height_cm,
         weightKg: profileRow.weight_kg,
         activityLevel: profileRow.activity_level,
       };
-
-      currentNutritionStatus = await getDailyNutritionStatus(
-        daySessionId,
-        profile,
-      );
     }
 
+    const nutritionStatusThroughMeal = profile
+      ? await getNutritionStatusThroughMeal(mealSessionId, profile)
+      : null;
+    
     return res.json({
       mealSession: mealSessionResult.rows[0],
       foods: foodsResult.rows,
       nutrition,
-      currentNutritionStatus,
+      nutritionStatusThroughMeal,
     });
   } catch (error) {
     console.error(error);
