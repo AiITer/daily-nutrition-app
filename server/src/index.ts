@@ -26,6 +26,7 @@ import {
   type ActivityLevel,
 } from "./users/createProfile.js";
 import { getNutritionStatusThroughMeal } from "./nutrition/getNutritionStatusThroughMeal.js";
+import { getNutrientRecommendations } from "./recommendations/getNutrientRecommendations.js";
 import { db } from "./db.js";
 
 const app = express();
@@ -66,6 +67,29 @@ app.use(express.json());
 
 app.get("/api/health", (_req, res) => {
   res.json({ status: "ok" });
+});
+
+app.get("/api/recommendations/:nutrientKey", requireAuth, (req, res) => {
+  const nutrientKey = req.params.nutrientKey;
+
+  if (typeof nutrientKey !== "string") {
+    return res.status(400).json({
+      error: "Invalid nutrient key",
+    });
+  }
+
+  const recommendations = getNutrientRecommendations(nutrientKey);
+
+  if (!recommendations) {
+    return res.status(404).json({
+      error: "Recommendations not found for this nutrient",
+    });
+  }
+
+  return res.json({
+    nutrientKey,
+    recommendations,
+  });
 });
 
 app.get("/api/days/current", requireAuth, async (req, res) => {

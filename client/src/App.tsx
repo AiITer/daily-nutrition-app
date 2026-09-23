@@ -7,8 +7,36 @@ type AppStage =
   | "profileSetup"
   | "app";
 
+type RecommendationSection = "nutrition" | "remaining";
+
 function formatNumber(value: number) {
   return Number(value.toFixed(2));
+}
+
+function getDailyNeedText(status: any) {
+  if (!status) {
+    return null;
+  }
+
+  if (status.targetType === "target" && status.target !== undefined) {
+    return `${formatNumber(status.target)} ${status.unit}`;
+  }
+
+  if (
+    status.targetType === "range" &&
+    status.minTarget !== undefined &&
+    status.maxTarget !== undefined
+  ) {
+    return `${formatNumber(status.minTarget)}-${formatNumber(
+      status.maxTarget,
+    )} ${status.unit}`;
+  }
+
+  if (status.targetType === "monitor") {
+    return "No minimum target";
+  }
+
+  return null;
 }
 
 function App() {
@@ -32,6 +60,17 @@ function App() {
   const [expandedRemainingMealId, setExpandedRemainingMealId] = useState<
     number | null
     >(null);
+  const [expandedRecommendation, setExpandedRecommendation] = useState<{
+    mealId: number;
+    nutrientKey: string;
+    section: RecommendationSection;
+  } | null>(null);
+
+  const [recommendations, setRecommendations] = useState<any[]>([]);
+  const [showAllRecommendations, setShowAllRecommendations] = useState(false);
+  const [expandedNutrientGroups, setExpandedNutrientGroups] = useState<
+    Record<string, boolean>
+  >({});
   const [nowDayId, setNowDayId] = useState<number | null>(null);
   const [previousDayId, setPreviousDayId] = useState<number | null>(null);
   const [canStartNewDay, setCanStartNewDay] = useState(false);
@@ -47,7 +86,122 @@ function App() {
   const [profileActivity, setProfileActivity] = useState("");
   const [isEditingProfile, setIsEditingProfile] = useState(false);
 
-  const keyNutrients = ["energy", "protein", "fiber"];
+  const macronutrientPriority = [
+    "protein",
+    "carbohydrate",
+    "fat",
+    "fiber",
+    "totalSugar",
+    "linoleicAcid",
+    "alphaLinolenicAcid",
+    "water",
+    "saturatedFat",
+    "transFat",
+    "cholesterol",
+  ];
+
+  const vitaminPriority = [
+    "vitaminD",
+    "vitaminB12",
+    "vitaminC",
+    "vitaminA",
+    "vitaminB9",
+    "vitaminB6",
+    "vitaminE",
+    "vitaminK",
+    "vitaminB1",
+    "vitaminB2",
+    "vitaminB3",
+    "vitaminB5",
+    "vitaminB7",
+    "choline",
+  ];
+
+  const mineralPriority = [
+    "iron",
+    "calcium",
+    "potassium",
+    "magnesium",
+    "zinc",
+    "selenium",
+    "phosphorus",
+    "iodine",
+    "copper",
+    "manganese",
+    "molybdenum",
+    "sodium",
+    "fluoride",
+  ];
+
+  const recommendationNutrientKeys = [
+    "energy",
+    "protein",
+    "fiber",
+    "calcium",
+    "iron",
+    "potassium",
+    "magnesium",
+    "zinc",
+    "selenium",
+    "vitaminA",
+    "vitaminC",
+    "vitaminD",
+    "vitaminE",
+    "vitaminK",
+    "vitaminB1",
+    "vitaminB2",
+    "vitaminB3",
+    "vitaminB6",
+    "vitaminB9",
+    "vitaminB12",
+  ];
+
+  const nutrientDisplayNames: Record<string, string> = {
+    protein: "Protein",
+    carbohydrate: "Carbohydrate",
+    fat: "Fat",
+    fiber: "Fiber",
+    totalSugar: "Total Sugar",
+    linoleicAcid: "Linoleic Acid",
+    alphaLinolenicAcid: "Alpha-Linolenic Acid",
+    water: "Water",
+    saturatedFat: "Saturated Fat",
+    transFat: "Trans Fat",
+    cholesterol: "Cholesterol",
+
+    vitaminA: "Vitamin A",
+    vitaminC: "Vitamin C",
+    vitaminD: "Vitamin D",
+    vitaminE: "Vitamin E",
+    vitaminK: "Vitamin K",
+    vitaminB1: "Vitamin B1",
+    vitaminB2: "Vitamin B2",
+    vitaminB3: "Vitamin B3",
+    vitaminB5: "Vitamin B5",
+    vitaminB6: "Vitamin B6",
+    vitaminB7: "Vitamin B7",
+    vitaminB9: "Vitamin B9",
+    vitaminB12: "Vitamin B12",
+    choline: "Choline",
+
+    calcium: "Calcium",
+    copper: "Copper",
+    fluoride: "Fluoride",
+    iodine: "Iodine",
+    iron: "Iron",
+    magnesium: "Magnesium",
+    manganese: "Manganese",
+    molybdenum: "Molybdenum",
+    phosphorus: "Phosphorus",
+    potassium: "Potassium",
+    selenium: "Selenium",
+    sodium: "Sodium",
+    zinc: "Zinc",
+  };
+
+  function getNutrientDisplayName(nutrientKey: string) {
+    return nutrientDisplayNames[nutrientKey] ?? nutrientKey;
+  }
 
   useEffect(() => {
     async function restoreSession() {
@@ -82,6 +236,18 @@ function App() {
 
     restoreSession();
   }, []);
+
+  function toggleNutrientGroup(
+    mealId: number,
+    group: "macronutrients" | "vitamins" | "minerals",
+  ) {
+    const key = `${mealId}-${group}`;
+
+    setExpandedNutrientGroups((current) => ({
+      ...current,
+      [key]: !current[key],
+    }));
+  }
 
   async function handleRegister() {
     try {
@@ -268,6 +434,55 @@ function App() {
     setMessage("");
   }
 
+  async function loadRecommendations(
+    mealId: number,
+    nutrientKey: string,
+    section: RecommendationSection,
+  ) {
+    const isAlreadyOpen =
+      expandedRecommendation?.mealId === mealId &&
+      expandedRecommendation?.nutrientKey === nutrientKey &&
+      expandedRecommendation?.section === section;
+
+    if (isAlreadyOpen) {
+      setExpandedRecommendation(null);
+      setRecommendations([]);
+      setShowAllRecommendations(false);
+      return;
+    }
+
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      return;
+    }
+
+    const response = await fetch(
+      `${import.meta.env.VITE_API_URL}/api/recommendations/${nutrientKey}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      setMessage(data.error ?? "Failed to load recommendations");
+      return;
+    }
+
+    setExpandedRecommendation({
+      mealId,
+      nutrientKey,
+      section,
+    });
+
+    setRecommendations(data.recommendations);
+    setShowAllRecommendations(false);
+  }
+
   async function handleCreateProfile() {
     const token = localStorage.getItem("token");
 
@@ -331,6 +546,7 @@ function App() {
     setMealSessions([]);
     setMealDetails({});
     setCanStartNewDay(false);
+    setSelectedDay(null);
     setMessage("New day started");
   }
 
@@ -372,6 +588,7 @@ function App() {
     );
 
     const data = await response.json();
+    console.log("meal nutrition:", data.nutrition);
 
     if (!response.ok) {
       setMessage(data.error ?? "Failed to load meal details");
@@ -863,37 +1080,487 @@ function App() {
                   <h4>Meal Nutrition</h4>
 
                   {mealDetails[meal.id]?.nutrition
-                    .filter((nutrient: any) =>
-                      keyNutrients.includes(nutrient.nutrientKey),
+                    ?.filter(
+                      (nutrient: any) => nutrient.nutrientKey === "energy",
                     )
                     .map((nutrient: any) => {
                       const status = mealDetails[
                         meal.id
                       ]?.nutritionStatusThroughMeal?.find(
-                        (item: any) =>
-                          item.nutrientKey === nutrient.nutrientKey,
+                        (item: any) => item.nutrientKey === "energy",
                       );
 
                       return (
                         <div key={nutrient.nutrientKey}>
-                          <strong>{nutrient.nutrientKey}</strong>
+                          <strong>Energy</strong>
 
                           <p>
-                            This meal: {formatNumber(nutrient.amount)}{" "}
+                            Consumed: {formatNumber(nutrient.amount)}{" "}
                             {nutrient.unit}
                           </p>
 
-                          {status?.target !== undefined && (
-                            <p>
-                              Daily target: {formatNumber(status.target)}{" "}
-                              {status.unit}
-                            </p>
+                          {getDailyNeedText(status) && (
+                            <p>Daily Need: {getDailyNeedText(status)}</p>
                           )}
+
+                          <button
+                            type="button"
+                            onClick={() =>
+                              loadRecommendations(
+                                meal.id,
+                                "energy",
+                                "nutrition",
+                              )
+                            }
+                          >
+                            Food Suggestions
+                          </button>
+
+                          {expandedRecommendation?.mealId === meal.id &&
+                            expandedRecommendation?.nutrientKey === "energy" &&
+                            expandedRecommendation?.section === "nutrition" && (
+                              <div>
+                                {recommendations
+                                  .slice(0, showAllRecommendations ? 5 : 3)
+                                  .map((recommendation: any) => (
+                                    <div key={recommendation.foodId}>
+                                      <strong>
+                                        {recommendation.displayName}
+                                      </strong>
+
+                                      <p>
+                                        {formatNumber(
+                                          recommendation.nutrientAmountPer100Units,
+                                        )}{" "}
+                                        {recommendation.unit} per 100{" "}
+                                        {recommendation.basisUnit}
+                                      </p>
+                                    </div>
+                                  ))}
+
+                                {recommendations.length > 3 && (
+                                  <button
+                                    type="button"
+                                    onClick={() =>
+                                      setShowAllRecommendations(
+                                        !showAllRecommendations,
+                                      )
+                                    }
+                                  >
+                                    {showAllRecommendations ? "Less" : "More"}
+                                  </button>
+                                )}
+                              </div>
+                            )}
                         </div>
                       );
                     })}
+
+                  <div>
+                    <h5>Macronutrients</h5>
+
+                    {(expandedNutrientGroups[`${meal.id}-macronutrients`]
+                      ? macronutrientPriority
+                      : macronutrientPriority.slice(0, 5)
+                    ).map((nutrientKey) => {
+                      const nutrient = mealDetails[meal.id]?.nutrition?.find(
+                        (item: any) => item.nutrientKey === nutrientKey,
+                      );
+
+                      if (!nutrient) {
+                        return null;
+                      }
+
+                      const status = mealDetails[
+                        meal.id
+                      ]?.nutritionStatusThroughMeal?.find(
+                        (item: any) => item.nutrientKey === nutrientKey,
+                      );
+
+                      const dailyNeed = getDailyNeedText(status);
+
+                      return (
+                        <div key={nutrientKey}>
+                          <strong>{getNutrientDisplayName(nutrientKey)}</strong>
+
+                          <p>
+                            Consumed: {formatNumber(nutrient.amount)}{" "}
+                            {nutrient.unit}
+                          </p>
+
+                          {status?.targetType === "monitor" ? (
+                            <p>{dailyNeed}</p>
+                          ) : (
+                            dailyNeed && <p>Daily Need: {dailyNeed}</p>
+                          )}
+
+                          {recommendationNutrientKeys.includes(nutrientKey) && (
+                            <button
+                              type="button"
+                              onClick={() =>
+                                loadRecommendations(
+                                  meal.id,
+                                  nutrientKey,
+                                  "nutrition",
+                                )
+                              }
+                            >
+                              Food Suggestions
+                            </button>
+                          )}
+
+                          {expandedRecommendation?.mealId === meal.id &&
+                            expandedRecommendation?.nutrientKey ===
+                              nutrientKey &&
+                            expandedRecommendation?.section === "nutrition" && (
+                              <div>
+                                {recommendations
+                                  .slice(0, showAllRecommendations ? 5 : 3)
+                                  .map((recommendation: any) => (
+                                    <div key={recommendation.foodId}>
+                                      <strong>
+                                        {recommendation.displayName}
+                                      </strong>
+
+                                      <p>
+                                        {formatNumber(
+                                          recommendation.nutrientAmountPer100Units,
+                                        )}{" "}
+                                        {recommendation.unit} per 100{" "}
+                                        {recommendation.basisUnit}
+                                      </p>
+                                    </div>
+                                  ))}
+
+                                {recommendations.length > 3 && (
+                                  <button
+                                    type="button"
+                                    onClick={() =>
+                                      setShowAllRecommendations(
+                                        !showAllRecommendations,
+                                      )
+                                    }
+                                  >
+                                    {showAllRecommendations ? "Less" : "More"}
+                                  </button>
+                                )}
+                              </div>
+                            )}
+                        </div>
+                      );
+                    })}
+
+                    <button
+                      type="button"
+                      onClick={() =>
+                        toggleNutrientGroup(meal.id, "macronutrients")
+                      }
+                    >
+                      {expandedNutrientGroups[`${meal.id}-macronutrients`]
+                        ? "See Less"
+                        : "See More"}
+                    </button>
+                  </div>
+                  <div>
+                    <h5>Vitamins</h5>
+
+                    {(expandedNutrientGroups[`${meal.id}-vitamins`]
+                      ? vitaminPriority
+                      : vitaminPriority.slice(0, 5)
+                    ).map((nutrientKey) => {
+                      const nutrient = mealDetails[meal.id]?.nutrition?.find(
+                        (item: any) => item.nutrientKey === nutrientKey,
+                      );
+
+                      if (!nutrient) {
+                        return null;
+                      }
+
+                      const status = mealDetails[
+                        meal.id
+                      ]?.nutritionStatusThroughMeal?.find(
+                        (item: any) => item.nutrientKey === nutrientKey,
+                      );
+
+                      const dailyNeed = getDailyNeedText(status);
+
+                      return (
+                        <div key={nutrientKey}>
+                          <strong>{getNutrientDisplayName(nutrientKey)}</strong>
+
+                          <p>
+                            Consumed: {formatNumber(nutrient.amount)}{" "}
+                            {nutrient.unit}
+                          </p>
+
+                          {dailyNeed && <p>Daily Need: {dailyNeed}</p>}
+
+                          {recommendationNutrientKeys.includes(nutrientKey) && (
+                            <button
+                              type="button"
+                              onClick={() =>
+                                loadRecommendations(
+                                  meal.id,
+                                  nutrientKey,
+                                  "nutrition",
+                                )
+                              }
+                            >
+                              Food Suggestions
+                            </button>
+                          )}
+
+                          {expandedRecommendation?.mealId === meal.id &&
+                            expandedRecommendation?.nutrientKey ===
+                              nutrientKey &&
+                            expandedRecommendation?.section === "nutrition" && (
+                              <div>
+                                {recommendations
+                                  .slice(0, showAllRecommendations ? 5 : 3)
+                                  .map((recommendation: any) => (
+                                    <div key={recommendation.foodId}>
+                                      <strong>
+                                        {recommendation.displayName}
+                                      </strong>
+
+                                      <p>
+                                        {formatNumber(
+                                          recommendation.nutrientAmountPer100Units,
+                                        )}{" "}
+                                        {recommendation.unit} per 100{" "}
+                                        {recommendation.basisUnit}
+                                      </p>
+                                    </div>
+                                  ))}
+
+                                {recommendations.length > 3 && (
+                                  <button
+                                    type="button"
+                                    onClick={() =>
+                                      setShowAllRecommendations(
+                                        !showAllRecommendations,
+                                      )
+                                    }
+                                  >
+                                    {showAllRecommendations ? "Less" : "More"}
+                                  </button>
+                                )}
+                              </div>
+                            )}
+                        </div>
+                      );
+                    })}
+
+                    <button
+                      type="button"
+                      onClick={() => toggleNutrientGroup(meal.id, "vitamins")}
+                    >
+                      {expandedNutrientGroups[`${meal.id}-vitamins`]
+                        ? "See Less"
+                        : "See More"}
+                    </button>
+                  </div>
+                  <div>
+                    <h5>Minerals</h5>
+
+                    {(expandedNutrientGroups[`${meal.id}-minerals`]
+                      ? mineralPriority
+                      : mineralPriority.slice(0, 5)
+                    ).map((nutrientKey) => {
+                      const nutrient = mealDetails[meal.id]?.nutrition?.find(
+                        (item: any) => item.nutrientKey === nutrientKey,
+                      );
+
+                      if (!nutrient) {
+                        return null;
+                      }
+
+                      const status = mealDetails[
+                        meal.id
+                      ]?.nutritionStatusThroughMeal?.find(
+                        (item: any) => item.nutrientKey === nutrientKey,
+                      );
+
+                      const dailyNeed = getDailyNeedText(status);
+
+                      return (
+                        <div key={nutrientKey}>
+                          <strong>{getNutrientDisplayName(nutrientKey)}</strong>
+
+                          <p>
+                            Consumed: {formatNumber(nutrient.amount)}{" "}
+                            {nutrient.unit}
+                          </p>
+
+                          {dailyNeed && <p>Daily Need: {dailyNeed}</p>}
+
+                          {recommendationNutrientKeys.includes(nutrientKey) && (
+                            <button
+                              type="button"
+                              onClick={() =>
+                                loadRecommendations(
+                                  meal.id,
+                                  nutrientKey,
+                                  "nutrition",
+                                )
+                              }
+                            >
+                              Food Suggestions
+                            </button>
+                          )}
+
+                          {expandedRecommendation?.mealId === meal.id &&
+                            expandedRecommendation?.nutrientKey ===
+                              nutrientKey &&
+                            expandedRecommendation?.section === "nutrition" && (
+                              <div>
+                                {recommendations
+                                  .slice(0, showAllRecommendations ? 5 : 3)
+                                  .map((recommendation: any) => (
+                                    <div key={recommendation.foodId}>
+                                      <strong>
+                                        {recommendation.displayName}
+                                      </strong>
+
+                                      <p>
+                                        {formatNumber(
+                                          recommendation.nutrientAmountPer100Units,
+                                        )}{" "}
+                                        {recommendation.unit} per 100{" "}
+                                        {recommendation.basisUnit}
+                                      </p>
+                                    </div>
+                                  ))}
+
+                                {recommendations.length > 3 && (
+                                  <button
+                                    type="button"
+                                    onClick={() =>
+                                      setShowAllRecommendations(
+                                        !showAllRecommendations,
+                                      )
+                                    }
+                                  >
+                                    {showAllRecommendations ? "Less" : "More"}
+                                  </button>
+                                )}
+                              </div>
+                            )}
+                        </div>
+                      );
+                    })}
+
+                    <button
+                      type="button"
+                      onClick={() => toggleNutrientGroup(meal.id, "minerals")}
+                    >
+                      {expandedNutrientGroups[`${meal.id}-minerals`]
+                        ? "See Less"
+                        : "See More"}
+                    </button>
+                  </div>
                 </div>
               )}
+
+              <button
+                type="button"
+                onClick={() => {
+                  setExpandedRemainingMealId(
+                    expandedRemainingMealId === meal.id ? null : meal.id,
+                  );
+
+                  setExpandedRecommendation(null);
+                  setRecommendations([]);
+                  setShowAllRecommendations(false);
+                }}
+              >
+                {expandedRemainingMealId === meal.id
+                  ? "Hide Daily Remaining"
+                  : "View Daily Remaining"}
+              </button>
+
+              {expandedRemainingMealId === meal.id &&
+                mealDetails[meal.id]?.nutritionStatusThroughMeal?.length >
+                  0 && (
+                  <div>
+                    <h4>Daily Remaining After This Meal</h4>
+
+                    {mealDetails[meal.id].nutritionStatusThroughMeal
+                      .filter(
+                        (nutrient: any) =>
+                          keyNutrients.includes(nutrient.nutrientKey) &&
+                          nutrient.remaining !== undefined,
+                      )
+                      .map((nutrient: any) => (
+                        <div key={nutrient.nutrientKey}>
+                          <strong>{nutrient.nutrientKey}</strong>
+
+                          <p>
+                            Remaining: {formatNumber(nutrient.remaining)}{" "}
+                            {nutrient.unit}
+                          </p>
+
+                          <button
+                            type="button"
+                            onClick={() =>
+                              loadRecommendations(
+                                meal.id,
+                                nutrient.nutrientKey,
+                                "remaining",
+                              )
+                            }
+                          >
+                            See Food Suggestions
+                          </button>
+
+                          {expandedRecommendation?.mealId === meal.id &&
+                            expandedRecommendation?.nutrientKey ===
+                              nutrient.nutrientKey &&
+                            expandedRecommendation?.section === "remaining" &&
+                            recommendations.length > 0 && (
+                              <div>
+                                {recommendations
+                                  .slice(
+                                    0,
+                                    showAllRecommendations
+                                      ? recommendations.length
+                                      : 3,
+                                  )
+                                  .map((recommendation: any) => (
+                                    <div key={recommendation.foodId}>
+                                      <strong>
+                                        {recommendation.displayName}
+                                      </strong>
+
+                                      <p>
+                                        {formatNumber(
+                                          recommendation.recommendation
+                                            .nutrientAmountPer100Units,
+                                        )}{" "}
+                                        {recommendation.unit} per 100{" "}
+                                        {recommendation.basisUnit}
+                                      </p>
+                                    </div>
+                                  ))}
+
+                                {recommendations.length > 3 && (
+                                  <button
+                                    type="button"
+                                    onClick={() =>
+                                      setShowAllRecommendations(
+                                        !showAllRecommendations,
+                                      )
+                                    }
+                                  >
+                                    {showAllRecommendations ? "Less" : "More"}
+                                  </button>
+                                )}
+                              </div>
+                            )}
+                        </div>
+                      ))}
+                  </div>
+                )}
 
               {addingMealId === meal.id ? (
                 <div>
@@ -978,6 +1645,9 @@ function App() {
                 )}
               </div>
             ))}
+          <button type="button" onClick={() => setSelectedDay(null)}>
+            Back
+          </button>
         </div>
       )}
 

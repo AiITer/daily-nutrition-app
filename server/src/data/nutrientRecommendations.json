@@ -3,40 +3,45 @@
     {
       "foodName": "Chicken, broiler, breast, meat, roasted",
       "displayName": "Roasted chicken breast",
-      "nutrientAmountPer100g": 31.02,
+      "nutrientAmountPer100Units": 31.02,
       "unit": "g",
+      "basisUnit": "g",
       "foodId": "842",
       "source": "CNF 2026"
     },
     {
       "foodName": "Fish, salmon, sockeye (red), baked or broiled",
       "displayName": "Baked sockeye salmon",
-      "nutrientAmountPer100g": 26.48,
+      "nutrientAmountPer100Units": 26.48,
       "unit": "g",
+      "basisUnit": "g",
       "foodId": "3053",
       "source": "CNF 2026"
     },
     {
       "foodName": "Egg, chicken, whole, cooked, boiled in shell, hard-cooked",
       "displayName": "Hard-boiled egg",
-      "nutrientAmountPer100g": 11.8,
+      "nutrientAmountPer100Units": 11.8,
       "unit": "g",
+      "basisUnit": "g",
       "foodId": "130",
       "source": "CNF 2026"
     },
     {
       "foodName": "Yogourt (yogurt), Greek style, fat free, 0-0.5% M.F., plain",
       "displayName": "Plain fat-free Greek yogurt",
-      "nutrientAmountPer100g": 10.53,
+      "nutrientAmountPer100Units": 10.53,
       "unit": "g",
+      "basisUnit": "g",
       "foodId": "6979",
       "source": "CNF 2026"
     },
     {
       "foodName": "Tofu, regular, firm or extra firm (prepared with magnesium chloride and calcium sulphate or calcium chloride)",
       "displayName": "Firm tofu",
-      "nutrientAmountPer100g": 9.04,
+      "nutrientAmountPer100Units": 9.04,
       "unit": "g",
+      "basisUnit": "g",
       "foodId": "3404",
       "source": "CNF 2026"
     }
@@ -45,40 +50,45 @@
     {
       "foodName": "Seeds, chia seeds, dried",
       "displayName": "Chia seeds",
-      "nutrientAmountPer100g": 34.4,
+      "nutrientAmountPer100Units": 34.4,
       "unit": "g",
+      "basisUnit": "g",
       "foodId": "2511",
       "source": "CNF 2026"
     },
     {
       "foodName": "Beans, black turtle, mature seeds, boiled",
-      "displayName": "Cooked black turtle beans",
-      "nutrientAmountPer100g": 8.3,
+      "displayName": "Cooked black beans",
+      "nutrientAmountPer100Units": 8.3,
       "unit": "g",
+      "basisUnit": "g",
       "foodId": "3253",
       "source": "CNF 2026"
     },
     {
       "foodName": "Avocado, raw, all commercial varieties",
       "displayName": "Avocado",
-      "nutrientAmountPer100g": 6.7,
+      "nutrientAmountPer100Units": 6.7,
       "unit": "g",
+      "basisUnit": "g",
       "foodId": "1511",
       "source": "CNF 2026"
     },
     {
       "foodName": "Raspberry, raw",
       "displayName": "Raspberries",
-      "nutrientAmountPer100g": 6.5,
+      "nutrientAmountPer100Units": 6.5,
       "unit": "g",
+      "basisUnit": "g",
       "foodId": "1747",
       "source": "CNF 2026"
     },
     {
       "foodName": "Lentils, mature seeds, boiled",
       "displayName": "Cooked lentils",
-      "nutrientAmountPer100g": 4.2,
+      "nutrientAmountPer100Units": 4.2,
       "unit": "g",
+      "basisUnit": "g",
       "foodId": "3393",
       "source": "CNF 2026"
     }
@@ -87,40 +97,45 @@
     {
       "foodName": "Cheese, parmesan, hard",
       "displayName": "Parmesan cheese",
-      "nutrientAmountPer100g": 1184.0,
+      "nutrientAmountPer100Units": 1184,
       "unit": "mg",
+      "basisUnit": "g",
       "foodId": "40",
       "source": "CNF 2026"
     },
     {
       "foodName": "Seeds, sesame butter, from whole seed, paste",
-      "displayName": "Whole-seed sesame paste",
-      "nutrientAmountPer100g": 960.0,
+      "displayName": "Whole-seed tahini",
+      "nutrientAmountPer100Units": 960,
       "unit": "mg",
+      "basisUnit": "g",
       "foodId": "2596",
       "source": "CNF 2026"
     },
     {
       "foodName": "Yogourt (yogurt), Greek style, 2% M.F., plain",
       "displayName": "Plain 2% Greek yogurt",
-      "nutrientAmountPer100g": 283.0,
+      "nutrientAmountPer100Units": 283,
       "unit": "mg",
+      "basisUnit": "g",
       "foodId": "7469",
       "source": "CNF 2026"
     },
     {
       "foodName": "Fish, sardine, Pacific, canned in tomato sauce, drained with bones",
       "displayName": "Canned sardines with bones",
-      "nutrientAmountPer100g": 240.0,
+      "nutrientAmountPer100Units": 240,
       "unit": "mg",
+      "basisUnit": "g",
       "foodId": "3054",
       "source": "CNF 2026"
     },
     {
       "foodName": "Tofu, regular, medium firm or firm (prepared with calcium sulphate)",
       "displayName": "Calcium-set tofu",
-      "nutrientAmountPer100g": 171.0,
+      "nutrientAmountPer100Units": 171,
       "unit": "mg",
+      "basisUnit": "g",
       "foodId": "3418",
       "source": "CNF 2026"
     }
@@ -128,41 +143,46 @@
   "iron": [
     {
       "foodName": "Seeds, sesame butter, from whole seed, paste",
-      "displayName": "Whole-seed sesame paste",
-      "nutrientAmountPer100g": 19.2,
+      "displayName": "Whole-seed tahini",
+      "nutrientAmountPer100Units": 19.2,
       "unit": "mg",
+      "basisUnit": "g",
       "foodId": "2596",
       "source": "CNF 2026"
     },
     {
       "foodName": "Mollusks, oyster, eastern (blue point), wild, boiled or steamed",
-      "displayName": "Cooked eastern oysters",
-      "nutrientAmountPer100g": 9.21,
+      "displayName": "Cooked oysters",
+      "nutrientAmountPer100Units": 9.21,
       "unit": "mg",
+      "basisUnit": "g",
       "foodId": "3120",
       "source": "CNF 2026"
     },
     {
       "foodName": "Seeds, pumpkin and squash seed kernels, roasted",
-      "displayName": "Roasted pumpkin seed kernels",
-      "nutrientAmountPer100g": 8.07,
+      "displayName": "Roasted pumpkin seeds",
+      "nutrientAmountPer100Units": 8.07,
       "unit": "mg",
+      "basisUnit": "g",
       "foodId": "2517",
       "source": "CNF 2026"
     },
     {
       "foodName": "Tofu, regular, medium firm or firm (prepared with calcium sulphate)",
       "displayName": "Calcium-set tofu",
-      "nutrientAmountPer100g": 5.36,
+      "nutrientAmountPer100Units": 5.36,
       "unit": "mg",
+      "basisUnit": "g",
       "foodId": "3418",
       "source": "CNF 2026"
     },
     {
       "foodName": "Lentils, mature seeds, boiled",
       "displayName": "Cooked lentils",
-      "nutrientAmountPer100g": 3.33,
+      "nutrientAmountPer100Units": 3.33,
       "unit": "mg",
+      "basisUnit": "g",
       "foodId": "3393",
       "source": "CNF 2026"
     }
@@ -171,40 +191,45 @@
     {
       "foodName": "Beans, white, mature seeds, boiled",
       "displayName": "Cooked white beans",
-      "nutrientAmountPer100g": 561.0,
+      "nutrientAmountPer100Units": 561,
       "unit": "mg",
+      "basisUnit": "g",
       "foodId": "3386",
       "source": "CNF 2026"
     },
     {
       "foodName": "Potato, Russet, flesh and skin, baked",
       "displayName": "Baked Russet potato with skin",
-      "nutrientAmountPer100g": 550.0,
+      "nutrientAmountPer100Units": 550,
       "unit": "mg",
+      "basisUnit": "g",
       "foodId": "5706",
       "source": "CNF 2026"
     },
     {
       "foodName": "Avocado, raw, all commercial varieties",
       "displayName": "Avocado",
-      "nutrientAmountPer100g": 485.0,
+      "nutrientAmountPer100Units": 485,
       "unit": "mg",
+      "basisUnit": "g",
       "foodId": "1511",
       "source": "CNF 2026"
     },
     {
       "foodName": "Spinach, boiled, drained",
       "displayName": "Cooked spinach",
-      "nutrientAmountPer100g": 466.0,
+      "nutrientAmountPer100Units": 466,
       "unit": "mg",
+      "basisUnit": "g",
       "foodId": "2214",
       "source": "CNF 2026"
     },
     {
       "foodName": "Fish, salmon, sockeye (red), baked or broiled",
       "displayName": "Baked sockeye salmon",
-      "nutrientAmountPer100g": 436.0,
+      "nutrientAmountPer100Units": 436,
       "unit": "mg",
+      "basisUnit": "g",
       "foodId": "3053",
       "source": "CNF 2026"
     }
@@ -212,41 +237,46 @@
   "magnesium": [
     {
       "foodName": "Seeds, pumpkin and squash seed kernels, roasted",
-      "displayName": "Roasted pumpkin seed kernels",
-      "nutrientAmountPer100g": 550.0,
+      "displayName": "Roasted pumpkin seeds",
+      "nutrientAmountPer100Units": 550,
       "unit": "mg",
+      "basisUnit": "g",
       "foodId": "2517",
       "source": "CNF 2026"
     },
     {
       "foodName": "Seeds, flaxseed (linseed), whole and ground",
       "displayName": "Flaxseed",
-      "nutrientAmountPer100g": 392.0,
+      "nutrientAmountPer100Units": 392,
       "unit": "mg",
+      "basisUnit": "g",
       "foodId": "4528",
       "source": "CNF 2026"
     },
     {
       "foodName": "Nuts, almonds, dry roasted, unblanched",
       "displayName": "Dry-roasted almonds",
-      "nutrientAmountPer100g": 279.0,
+      "nutrientAmountPer100Units": 279,
       "unit": "mg",
+      "basisUnit": "g",
       "foodId": "2536",
       "source": "CNF 2026"
     },
     {
       "foodName": "Spinach, boiled, drained",
       "displayName": "Cooked spinach",
-      "nutrientAmountPer100g": 87.0,
+      "nutrientAmountPer100Units": 87,
       "unit": "mg",
+      "basisUnit": "g",
       "foodId": "2214",
       "source": "CNF 2026"
     },
     {
       "foodName": "Beans, black, mature seeds, boiled",
       "displayName": "Cooked black beans",
-      "nutrientAmountPer100g": 70.0,
+      "nutrientAmountPer100Units": 70,
       "unit": "mg",
+      "basisUnit": "g",
       "foodId": "3377",
       "source": "CNF 2026"
     }
@@ -254,83 +284,93 @@
   "zinc": [
     {
       "foodName": "Mollusks, oyster, eastern (blue point), wild, boiled or steamed",
-      "displayName": "Cooked eastern oysters",
-      "nutrientAmountPer100g": 78.6,
+      "displayName": "Cooked oysters",
+      "nutrientAmountPer100Units": 78.6,
       "unit": "mg",
+      "basisUnit": "g",
       "foodId": "3120",
       "source": "CNF 2026"
     },
     {
       "foodName": "Beef, chuck, blade roast, boneless, lean, cooked, braised",
       "displayName": "Braised lean beef roast",
-      "nutrientAmountPer100g": 11.46,
+      "nutrientAmountPer100Units": 11.46,
       "unit": "mg",
+      "basisUnit": "g",
       "foodId": "5949",
       "source": "CNF 2026"
     },
     {
       "foodName": "Seeds, pumpkin and squash seeds, whole, roasted",
-      "displayName": "Whole roasted pumpkin seeds",
-      "nutrientAmountPer100g": 10.3,
+      "displayName": "Roasted pumpkin seeds",
+      "nutrientAmountPer100Units": 10.3,
       "unit": "mg",
+      "basisUnit": "g",
       "foodId": "2645",
       "source": "CNF 2026"
     },
     {
       "foodName": "Cheese, cheddar, medium",
       "displayName": "Medium cheddar cheese",
-      "nutrientAmountPer100g": 4.58,
+      "nutrientAmountPer100Units": 4.58,
       "unit": "mg",
+      "basisUnit": "g",
       "foodId": "7737",
       "source": "CNF 2026"
     },
     {
       "foodName": "Chickpeas (garbanzo beans, bengal gram), mature seeds, boiled",
       "displayName": "Cooked chickpeas",
-      "nutrientAmountPer100g": 1.53,
+      "nutrientAmountPer100Units": 1.53,
       "unit": "mg",
+      "basisUnit": "g",
       "foodId": "3390",
       "source": "CNF 2026"
     }
   ],
   "selenium": [
     {
-      "foodName": "Fish, tuna, yellowfin, baked or broiled",
-      "displayName": "Cooked yellowfin tuna",
-      "nutrientAmountPer100g": 108.2,
+      "foodName": "Fish, tuna, light, canned in water, drained, unsalted",
+      "displayName": "Canned light tuna",
+      "nutrientAmountPer100Units": 80.4,
       "unit": "mcg",
-      "foodId": "3167",
+      "basisUnit": "g",
+      "foodId": "3131",
       "source": "CNF 2026"
     },
     {
       "foodName": "Fish, salmon, atlantic, wild, baked or broiled",
-      "displayName": "Baked wild Atlantic salmon",
-      "nutrientAmountPer100g": 46.8,
+      "displayName": "Baked salmon",
+      "nutrientAmountPer100Units": 46.8,
       "unit": "mcg",
+      "basisUnit": "g",
       "foodId": "3156",
       "source": "CNF 2026"
     },
     {
       "foodName": "Egg, chicken, whole, cooked, boiled in shell, hard-cooked",
       "displayName": "Hard-boiled egg",
-      "nutrientAmountPer100g": 34.2,
+      "nutrientAmountPer100Units": 34.2,
       "unit": "mcg",
+      "basisUnit": "g",
       "foodId": "130",
       "source": "CNF 2026"
     },
     {
       "foodName": "Chicken, broiler, breast, meat, roasted",
       "displayName": "Roasted chicken breast",
-      "nutrientAmountPer100g": 27.6,
+      "nutrientAmountPer100Units": 27.6,
       "unit": "mcg",
+      "basisUnit": "g",
       "foodId": "842",
       "source": "CNF 2026"
     },
     {
       "foodName": "Yogourt (yogurt), Greek style, fat free, 0-0.5% M.F., plain",
       "displayName": "Plain fat-free Greek yogurt",
-      "nutrientAmountPer100g": 8.2,
+      "nutrientAmountPer100Units": 8.2,
       "unit": "mcg",
+      "basisUnit": "g",
       "foodId": "6979",
       "source": "CNF 2026"
     }
@@ -339,40 +379,45 @@
     {
       "foodName": "Sweet potato, baked, skin removed after baking",
       "displayName": "Baked sweet potato",
-      "nutrientAmountPer100g": 961.0,
+      "nutrientAmountPer100Units": 961,
       "unit": "mcg",
+      "basisUnit": "g",
       "foodId": "2241",
       "source": "CNF 2026"
     },
     {
       "foodName": "Carrot, raw",
       "displayName": "Raw carrots",
-      "nutrientAmountPer100g": 835.0,
+      "nutrientAmountPer100Units": 835,
       "unit": "mcg",
+      "basisUnit": "g",
       "foodId": "2380",
       "source": "CNF 2026"
     },
     {
       "foodName": "Spinach, frozen, boiled, drained",
-      "displayName": "Cooked frozen spinach",
-      "nutrientAmountPer100g": 603.0,
+      "displayName": "Cooked spinach",
+      "nutrientAmountPer100Units": 603,
       "unit": "mcg",
+      "basisUnit": "g",
       "foodId": "2217",
       "source": "CNF 2026"
     },
     {
       "foodName": "Egg, chicken, whole, cooked, boiled in shell, hard-cooked",
       "displayName": "Hard-boiled egg",
-      "nutrientAmountPer100g": 191.0,
+      "nutrientAmountPer100Units": 191,
       "unit": "mcg",
+      "basisUnit": "g",
       "foodId": "130",
       "source": "CNF 2026"
     },
     {
       "foodName": "Kale, boiled, drained",
       "displayName": "Cooked kale",
-      "nutrientAmountPer100g": 146.0,
+      "nutrientAmountPer100Units": 146,
       "unit": "mcg",
+      "basisUnit": "g",
       "foodId": "2105",
       "source": "CNF 2026"
     }
@@ -381,40 +426,45 @@
     {
       "foodName": "Pepper, sweet, red, raw",
       "displayName": "Raw red bell pepper",
-      "nutrientAmountPer100g": 127.7,
+      "nutrientAmountPer100Units": 127.7,
       "unit": "mg",
+      "basisUnit": "g",
       "foodId": "2484",
       "source": "CNF 2026"
     },
     {
       "foodName": "Kiwi fruit, raw",
       "displayName": "Kiwi",
-      "nutrientAmountPer100g": 92.7,
+      "nutrientAmountPer100Units": 92.7,
       "unit": "mg",
+      "basisUnit": "g",
       "foodId": "1585",
       "source": "CNF 2026"
     },
     {
       "foodName": "Broccoli, boiled, drained",
       "displayName": "Cooked broccoli",
-      "nutrientAmountPer100g": 64.9,
+      "nutrientAmountPer100Units": 64.9,
       "unit": "mg",
+      "basisUnit": "g",
       "foodId": "2375",
       "source": "CNF 2026"
     },
     {
       "foodName": "Strawberry, raw",
       "displayName": "Strawberries",
-      "nutrientAmountPer100g": 58.8,
+      "nutrientAmountPer100Units": 58.8,
       "unit": "mg",
+      "basisUnit": "g",
       "foodId": "1749",
       "source": "CNF 2026"
     },
     {
       "foodName": "Orange, all commercial varieties, raw",
       "displayName": "Orange",
-      "nutrientAmountPer100g": 53.2,
+      "nutrientAmountPer100Units": 53.2,
       "unit": "mg",
+      "basisUnit": "g",
       "foodId": "1722",
       "source": "CNF 2026"
     }
@@ -423,40 +473,45 @@
     {
       "foodName": "Fish, salmon, sockeye (red), baked or broiled",
       "displayName": "Baked sockeye salmon",
-      "nutrientAmountPer100g": 16.7,
+      "nutrientAmountPer100Units": 16.7,
       "unit": "mcg",
+      "basisUnit": "g",
       "foodId": "3053",
       "source": "CNF 2026"
     },
     {
-      "foodName": "Fish, mackerel, Pacific and jack, mixed species, baked or broiled",
-      "displayName": "Baked Pacific mackerel",
-      "nutrientAmountPer100g": 11.4,
+      "foodName": "Fish, mackerel, jack, canned, drained solids",
+      "displayName": "Canned mackerel",
+      "nutrientAmountPer100Units": 7.3,
       "unit": "mcg",
-      "foodId": "3148",
+      "basisUnit": "g",
+      "foodId": "3023",
       "source": "CNF 2026"
     },
     {
       "foodName": "Fish, trout, rainbow, wild, baked or broiled",
-      "displayName": "Baked wild rainbow trout",
-      "nutrientAmountPer100g": 7.0,
+      "displayName": "Baked rainbow trout",
+      "nutrientAmountPer100Units": 7,
       "unit": "mcg",
+      "basisUnit": "g",
       "foodId": "3206",
       "source": "CNF 2026"
     },
     {
       "foodName": "Milk, fluid, partly skimmed, 2% M.F.",
       "displayName": "2% milk",
-      "nutrientAmountPer100g": 1.9,
+      "nutrientAmountPer100Units": 1.96,
       "unit": "mcg",
+      "basisUnit": "mL",
       "foodId": "61",
       "source": "CNF 2026"
     },
     {
       "foodName": "Egg, chicken, whole, cooked, boiled in shell, hard-cooked",
       "displayName": "Hard-boiled egg",
-      "nutrientAmountPer100g": 1.4,
+      "nutrientAmountPer100Units": 1.4,
       "unit": "mcg",
+      "basisUnit": "g",
       "foodId": "130",
       "source": "CNF 2026"
     }
@@ -465,40 +520,45 @@
     {
       "foodName": "Seeds, sunflower seed kernels, dry roasted",
       "displayName": "Dry-roasted sunflower seeds",
-      "nutrientAmountPer100g": 26.1,
+      "nutrientAmountPer100Units": 26.1,
       "unit": "mg",
+      "basisUnit": "g",
       "foodId": "2527",
       "source": "CNF 2026"
     },
     {
       "foodName": "Nuts, almonds, dry roasted, unblanched",
       "displayName": "Dry-roasted almonds",
-      "nutrientAmountPer100g": 23.9,
+      "nutrientAmountPer100Units": 23.9,
       "unit": "mg",
+      "basisUnit": "g",
       "foodId": "2536",
       "source": "CNF 2026"
     },
     {
       "foodName": "Peanut butter, smooth type, fat, sugar and salt added",
       "displayName": "Smooth peanut butter",
-      "nutrientAmountPer100g": 9.1,
+      "nutrientAmountPer100Units": 9.1,
       "unit": "mg",
+      "basisUnit": "g",
       "foodId": "3399",
       "source": "CNF 2026"
     },
     {
       "foodName": "Spinach, frozen, boiled, drained",
-      "displayName": "Cooked frozen spinach",
-      "nutrientAmountPer100g": 3.54,
+      "displayName": "Cooked spinach",
+      "nutrientAmountPer100Units": 3.54,
       "unit": "mg",
+      "basisUnit": "g",
       "foodId": "2217",
       "source": "CNF 2026"
     },
     {
       "foodName": "Avocado, raw, all commercial varieties",
       "displayName": "Avocado",
-      "nutrientAmountPer100g": 2.07,
+      "nutrientAmountPer100Units": 2.07,
       "unit": "mg",
+      "basisUnit": "g",
       "foodId": "1511",
       "source": "CNF 2026"
     }
@@ -506,41 +566,46 @@
   "vitaminK": [
     {
       "foodName": "Collards, frozen, boiled, drained",
-      "displayName": "Cooked frozen collard greens",
-      "nutrientAmountPer100g": 623.2,
+      "displayName": "Cooked collard greens",
+      "nutrientAmountPer100Units": 623.2,
       "unit": "mcg",
+      "basisUnit": "g",
       "foodId": "2066",
       "source": "CNF 2026"
     },
     {
       "foodName": "Spinach, boiled, drained",
       "displayName": "Cooked spinach",
-      "nutrientAmountPer100g": 493.6,
+      "nutrientAmountPer100Units": 493.6,
       "unit": "mcg",
+      "basisUnit": "g",
       "foodId": "2214",
       "source": "CNF 2026"
     },
     {
       "foodName": "Kale, boiled, drained",
       "displayName": "Cooked kale",
-      "nutrientAmountPer100g": 418.5,
+      "nutrientAmountPer100Units": 418.5,
       "unit": "mcg",
+      "basisUnit": "g",
       "foodId": "2105",
       "source": "CNF 2026"
     },
     {
       "foodName": "Brussels sprouts, frozen, boiled, drained",
-      "displayName": "Cooked frozen Brussels sprouts",
-      "nutrientAmountPer100g": 193.5,
+      "displayName": "Cooked Brussels sprouts",
+      "nutrientAmountPer100Units": 193.5,
       "unit": "mcg",
+      "basisUnit": "g",
       "foodId": "2028",
       "source": "CNF 2026"
     },
     {
       "foodName": "Broccoli, boiled, drained",
       "displayName": "Cooked broccoli",
-      "nutrientAmountPer100g": 141.1,
+      "nutrientAmountPer100Units": 141.1,
       "unit": "mcg",
+      "basisUnit": "g",
       "foodId": "2375",
       "source": "CNF 2026"
     }
@@ -549,40 +614,45 @@
     {
       "foodName": "Lentils, mature seeds, boiled",
       "displayName": "Cooked lentils",
-      "nutrientAmountPer100g": 181.0,
+      "nutrientAmountPer100Units": 181,
       "unit": "mcg",
+      "basisUnit": "g",
       "foodId": "3393",
       "source": "CNF 2026"
     },
     {
       "foodName": "Asparagus, boiled, drained",
       "displayName": "Cooked asparagus",
-      "nutrientAmountPer100g": 149.0,
+      "nutrientAmountPer100Units": 149,
       "unit": "mcg",
+      "basisUnit": "g",
       "foodId": "1991",
       "source": "CNF 2026"
     },
     {
       "foodName": "Spinach, boiled, drained",
       "displayName": "Cooked spinach",
-      "nutrientAmountPer100g": 146.0,
+      "nutrientAmountPer100Units": 146,
       "unit": "mcg",
+      "basisUnit": "g",
       "foodId": "2214",
       "source": "CNF 2026"
     },
     {
       "foodName": "Soybeans, green (edamame), boiled, drained",
       "displayName": "Cooked edamame",
-      "nutrientAmountPer100g": 111.0,
+      "nutrientAmountPer100Units": 111,
       "unit": "mcg",
+      "basisUnit": "g",
       "foodId": "2209",
       "source": "CNF 2026"
     },
     {
       "foodName": "Avocado, raw, all commercial varieties",
       "displayName": "Avocado",
-      "nutrientAmountPer100g": 81.0,
+      "nutrientAmountPer100Units": 81,
       "unit": "mcg",
+      "basisUnit": "g",
       "foodId": "1511",
       "source": "CNF 2026"
     }
@@ -590,41 +660,46 @@
   "vitaminB12": [
     {
       "foodName": "Mollusks, oyster, pacific, boiled or steamed",
-      "displayName": "Cooked Pacific oysters",
-      "nutrientAmountPer100g": 28.8,
+      "displayName": "Cooked oysters",
+      "nutrientAmountPer100Units": 28.8,
       "unit": "mcg",
+      "basisUnit": "g",
       "foodId": "3177",
       "source": "CNF 2026"
     },
     {
       "foodName": "Fish, salmon, coho, wild, baked or broiled",
-      "displayName": "Baked wild coho salmon",
-      "nutrientAmountPer100g": 5.0,
+      "displayName": "Baked salmon",
+      "nutrientAmountPer100Units": 5,
       "unit": "mcg",
+      "basisUnit": "g",
       "foodId": "3193",
       "source": "CNF 2026"
     },
     {
       "foodName": "Beef, loin, tenderloin, roast, lean, cooked, roasted",
       "displayName": "Roasted lean beef tenderloin",
-      "nutrientAmountPer100g": 3.24,
+      "nutrientAmountPer100Units": 3.24,
       "unit": "mcg",
+      "basisUnit": "g",
       "foodId": "6128",
       "source": "CNF 2026"
     },
     {
       "foodName": "Fish, tuna, light, canned in water, drained, unsalted",
-      "displayName": "Unsalted canned light tuna",
-      "nutrientAmountPer100g": 2.99,
+      "displayName": "Canned light tuna",
+      "nutrientAmountPer100Units": 2.99,
       "unit": "mcg",
+      "basisUnit": "g",
       "foodId": "3131",
       "source": "CNF 2026"
     },
     {
       "foodName": "Egg, chicken, whole, cooked, boiled in shell, hard-cooked",
       "displayName": "Hard-boiled egg",
-      "nutrientAmountPer100g": 1.62,
+      "nutrientAmountPer100Units": 1.62,
       "unit": "mcg",
+      "basisUnit": "g",
       "foodId": "130",
       "source": "CNF 2026"
     }
@@ -633,40 +708,45 @@
     {
       "foodName": "Seeds, flaxseed (linseed), whole and ground",
       "displayName": "Flaxseed",
-      "nutrientAmountPer100g": 1.644,
+      "nutrientAmountPer100Units": 1.644,
       "unit": "mg",
+      "basisUnit": "g",
       "foodId": "4528",
       "source": "CNF 2026"
     },
     {
       "foodName": "Pork, loin, tenderloin, lean, roasted",
       "displayName": "Roasted pork tenderloin",
-      "nutrientAmountPer100g": 1.4,
+      "nutrientAmountPer100Units": 1.4,
       "unit": "mg",
+      "basisUnit": "g",
       "foodId": "1932",
       "source": "CNF 2026"
     },
     {
-      "foodName": "Seeds, hemp seeds, hulled",
-      "displayName": "Hulled hemp seeds",
-      "nutrientAmountPer100g": 1.275,
+      "foodName": "Seeds, sunflower seed kernels, dried",
+      "displayName": "Sunflower seeds",
+      "nutrientAmountPer100Units": 1.48,
       "unit": "mg",
-      "foodId": "7568",
+      "basisUnit": "g",
+      "foodId": "2526",
       "source": "CNF 2026"
     },
     {
       "foodName": "Fish, trout, mixed species, baked or broiled",
       "displayName": "Baked trout",
-      "nutrientAmountPer100g": 0.426,
+      "nutrientAmountPer100Units": 0.426,
       "unit": "mg",
+      "basisUnit": "g",
       "foodId": "3215",
       "source": "CNF 2026"
     },
     {
       "foodName": "Beans, black, mature seeds, boiled",
       "displayName": "Cooked black beans",
-      "nutrientAmountPer100g": 0.244,
+      "nutrientAmountPer100Units": 0.244,
       "unit": "mg",
+      "basisUnit": "g",
       "foodId": "3377",
       "source": "CNF 2026"
     }
@@ -675,40 +755,45 @@
     {
       "foodName": "Nuts, almonds, dry roasted, unblanched",
       "displayName": "Dry-roasted almonds",
-      "nutrientAmountPer100g": 1.197,
+      "nutrientAmountPer100Units": 1.197,
       "unit": "mg",
+      "basisUnit": "g",
       "foodId": "2536",
       "source": "CNF 2026"
     },
     {
       "foodName": "Mushroom, brown, Italian (crimini), raw",
-      "displayName": "Raw cremini mushrooms",
-      "nutrientAmountPer100g": 0.49,
+      "displayName": "Cremini mushrooms",
+      "nutrientAmountPer100Units": 0.49,
       "unit": "mg",
+      "basisUnit": "g",
       "foodId": "4974",
       "source": "CNF 2026"
     },
     {
       "foodName": "Egg, chicken, whole, cooked, boiled in shell, hard-cooked",
       "displayName": "Hard-boiled egg",
-      "nutrientAmountPer100g": 0.47,
+      "nutrientAmountPer100Units": 0.47,
       "unit": "mg",
+      "basisUnit": "g",
       "foodId": "130",
       "source": "CNF 2026"
     },
     {
       "foodName": "Yogourt (yogurt), Greek style, rich, 8-12% M.F., plain",
       "displayName": "Plain full-fat Greek yogurt",
-      "nutrientAmountPer100g": 0.232,
+      "nutrientAmountPer100Units": 0.232,
       "unit": "mg",
+      "basisUnit": "g",
       "foodId": "6982",
       "source": "CNF 2026"
     },
     {
       "foodName": "Milk, fluid, partly skimmed, 2% M.F.",
       "displayName": "2% milk",
-      "nutrientAmountPer100g": 0.171,
+      "nutrientAmountPer100Units": 0.18,
       "unit": "mg",
+      "basisUnit": "mL",
       "foodId": "61",
       "source": "CNF 2026"
     }
@@ -717,40 +802,45 @@
     {
       "foodName": "Fish, tuna, yellowfin, baked or broiled",
       "displayName": "Cooked yellowfin tuna",
-      "nutrientAmountPer100g": 27.287,
+      "nutrientAmountPer100Units": 27.287,
       "unit": "mg NE",
+      "basisUnit": "g",
       "foodId": "3167",
       "source": "CNF 2026"
     },
     {
       "foodName": "Chicken, broiler, breast, meat, roasted",
       "displayName": "Roasted chicken breast",
-      "nutrientAmountPer100g": 19.745,
+      "nutrientAmountPer100Units": 19.745,
       "unit": "mg NE",
+      "basisUnit": "g",
       "foodId": "842",
       "source": "CNF 2026"
     },
     {
       "foodName": "Peanuts, all types, dry roasted",
       "displayName": "Dry-roasted peanuts",
-      "nutrientAmountPer100g": 18.188,
+      "nutrientAmountPer100Units": 18.188,
       "unit": "mg NE",
+      "basisUnit": "g",
       "foodId": "3362",
       "source": "CNF 2026"
     },
     {
       "foodName": "Fish, salmon, sockeye (red), baked or broiled",
       "displayName": "Baked sockeye salmon",
-      "nutrientAmountPer100g": 15.706,
+      "nutrientAmountPer100Units": 15.706,
       "unit": "mg NE",
+      "basisUnit": "g",
       "foodId": "3053",
       "source": "CNF 2026"
     },
     {
       "foodName": "Grains, rice, brown, long-grain, cooked",
-      "displayName": "Cooked long-grain brown rice",
-      "nutrientAmountPer100g": 3.111,
+      "displayName": "Cooked brown rice",
+      "nutrientAmountPer100Units": 3.111,
       "unit": "mg NE",
+      "basisUnit": "g",
       "foodId": "4497",
       "source": "CNF 2026"
     }
@@ -758,42 +848,94 @@
   "vitaminB6": [
     {
       "foodName": "Nuts, pistachio nuts, raw",
-      "displayName": "Raw pistachios",
-      "nutrientAmountPer100g": 1.7,
+      "displayName": "Pistachios",
+      "nutrientAmountPer100Units": 1.7,
       "unit": "mg",
+      "basisUnit": "g",
       "foodId": "2644",
       "source": "CNF 2026"
     },
     {
       "foodName": "Chicken, broiler, breast, skinless, boneless, meat, grilled",
       "displayName": "Grilled skinless chicken breast",
-      "nutrientAmountPer100g": 1.157,
+      "nutrientAmountPer100Units": 1.157,
       "unit": "mg",
+      "basisUnit": "g",
       "foodId": "7322",
       "source": "CNF 2026"
     },
     {
       "foodName": "Fish, salmon, atlantic, wild, baked or broiled",
-      "displayName": "Baked wild Atlantic salmon",
-      "nutrientAmountPer100g": 0.944,
+      "displayName": "Baked salmon",
+      "nutrientAmountPer100Units": 0.944,
       "unit": "mg",
+      "basisUnit": "g",
       "foodId": "3156",
       "source": "CNF 2026"
     },
     {
       "foodName": "Banana, raw",
       "displayName": "Banana",
-      "nutrientAmountPer100g": 0.367,
+      "nutrientAmountPer100Units": 0.367,
       "unit": "mg",
+      "basisUnit": "g",
       "foodId": "1704",
       "source": "CNF 2026"
     },
     {
       "foodName": "Potato, Russet, flesh and skin, baked",
       "displayName": "Baked Russet potato with skin",
-      "nutrientAmountPer100g": 0.354,
+      "nutrientAmountPer100Units": 0.354,
       "unit": "mg",
+      "basisUnit": "g",
       "foodId": "5706",
+      "source": "CNF 2026"
+    }
+  ],
+  "energy": [
+    {
+      "foodName": "Vegetable oil, olive",
+      "displayName": "Olive oil",
+      "nutrientAmountPer100Units": 807.94,
+      "unit": "kcal",
+      "basisUnit": "mL",
+      "foodId": "422",
+      "source": "CNF 2026"
+    },
+    {
+      "foodName": "Peanut butter, smooth type, fat, sugar and salt added",
+      "displayName": "Smooth peanut butter",
+      "nutrientAmountPer100Units": 598,
+      "unit": "kcal",
+      "basisUnit": "g",
+      "foodId": "3399",
+      "source": "CNF 2026"
+    },
+    {
+      "foodName": "Nuts, almonds, dry roasted, unblanched",
+      "displayName": "Dry-roasted almonds",
+      "nutrientAmountPer100Units": 598,
+      "unit": "kcal",
+      "basisUnit": "g",
+      "foodId": "2536",
+      "source": "CNF 2026"
+    },
+    {
+      "foodName": "Cheese, cheddar, medium",
+      "displayName": "Medium cheddar cheese",
+      "nutrientAmountPer100Units": 412,
+      "unit": "kcal",
+      "basisUnit": "g",
+      "foodId": "7737",
+      "source": "CNF 2026"
+    },
+    {
+      "foodName": "Avocado, raw, all commercial varieties",
+      "displayName": "Avocado",
+      "nutrientAmountPer100Units": 160,
+      "unit": "kcal",
+      "basisUnit": "g",
+      "foodId": "1511",
       "source": "CNF 2026"
     }
   ]
