@@ -938,5 +938,569 @@
       "foodId": "1511",
       "source": "CNF 2026"
     }
+  ],
+  "carbohydrate": [
+    {
+      "foodName": "Grains, oats, dry",
+      "displayName": "Dry oats",
+      "nutrientAmountPer100Units": 66.27,
+      "unit": "g",
+      "basisUnit": "g",
+      "foodId": "4421",
+      "source": "CNF 2026"
+    },
+    {
+      "foodName": "Bread, whole wheat, commercial",
+      "displayName": "Whole-wheat bread",
+      "nutrientAmountPer100Units": 45.64,
+      "unit": "g",
+      "basisUnit": "g",
+      "foodId": "4067",
+      "source": "CNF 2026"
+    },
+    {
+      "foodName": "Pasta, (spaghetti, macaroni), whole wheat, cooked",
+      "displayName": "Cooked whole-wheat pasta",
+      "nutrientAmountPer100Units": 30.07,
+      "unit": "g",
+      "basisUnit": "g",
+      "foodId": "4517",
+      "source": "CNF 2026"
+    },
+    {
+      "foodName": "Grains, rice, brown, long-grain, cooked",
+      "displayName": "Cooked brown rice",
+      "nutrientAmountPer100Units": 25.58,
+      "unit": "g",
+      "basisUnit": "g",
+      "foodId": "4497",
+      "source": "CNF 2026"
+    },
+    {
+      "foodName": "Banana, raw",
+      "displayName": "Banana",
+      "nutrientAmountPer100Units": 22.84,
+      "unit": "g",
+      "basisUnit": "g",
+      "foodId": "1704",
+      "source": "CNF 2026"
+    }
+  ],
+  "fat": [
+    {
+      "foodName": "Vegetable oil, olive",
+      "displayName": "Olive oil",
+      "nutrientAmountPer100Units": 91.29,
+      "unit": "g",
+      "basisUnit": "mL",
+      "foodId": "422",
+      "source": "CNF 2026"
+    },
+    {
+      "foodName": "Nuts, walnuts, English or Persian",
+      "displayName": "Walnuts",
+      "nutrientAmountPer100Units": 65.21,
+      "unit": "g",
+      "basisUnit": "g",
+      "foodId": "2590",
+      "source": "CNF 2026"
+    },
+    {
+      "foodName": "Nuts, almonds, dry roasted, unblanched",
+      "displayName": "Dry-roasted almonds",
+      "nutrientAmountPer100Units": 52.54,
+      "unit": "g",
+      "basisUnit": "g",
+      "foodId": "2536",
+      "source": "CNF 2026"
+    },
+    {
+      "foodName": "Avocado, raw, all commercial varieties",
+      "displayName": "Avocado",
+      "nutrientAmountPer100Units": 14.66,
+      "unit": "g",
+      "basisUnit": "g",
+      "foodId": "1511",
+      "source": "CNF 2026"
+    },
+    {
+      "foodName": "Fish, salmon, atlantic, wild, baked or broiled",
+      "displayName": "Baked salmon",
+      "nutrientAmountPer100Units": 8.13,
+      "unit": "g",
+      "basisUnit": "g",
+      "foodId": "3156",
+      "source": "CNF 2026"
+    }
+  ],
+  "linoleicAcid": [
+    {
+      "foodName": "Nuts, walnuts, English or Persian",
+      "displayName": "Walnuts",
+      "nutrientAmountPer100Units": 38.093,
+      "unit": "g",
+      "basisUnit": "g",
+      "foodId": "2590",
+      "source": "CNF 2026"
+    },
+    {
+      "foodName": "Seeds, sunflower seed kernels, dry roasted",
+      "displayName": "Dry-roasted sunflower seeds",
+      "nutrientAmountPer100Units": 32.78,
+      "unit": "g",
+      "basisUnit": "g",
+      "foodId": "2527",
+      "source": "CNF 2026"
+    },
+    {
+      "foodName": "Seeds, sesame butter, from whole seed, paste",
+      "displayName": "Whole-seed tahini",
+      "nutrientAmountPer100Units": 21.888,
+      "unit": "g",
+      "basisUnit": "g",
+      "foodId": "2596",
+      "source": "CNF 2026"
+    },
+    {
+      "foodName": "Seeds, pumpkin and squash seed kernels, roasted",
+      "displayName": "Roasted pumpkin seeds",
+      "nutrientAmountPer100Units": 19.559,
+      "unit": "g",
+      "basisUnit": "g",
+      "foodId": "2517",
+      "source": "CNF 2026"
+    },
+    {
+      "foodName": "Peanut butter, smooth type, fat, sugar and salt added",
+      "displayName": "Smooth peanut butter",
+      "nutrientAmountPer100Units": 12.215,
+      "unit": "g",
+      "basisUnit": "g",
+      "foodId": "3399",
+      "source": "CNF 2026"
+    }
+  ],
+  "alphaLinolenicAcid": [
+    {
+      "foodName": "Seeds, flaxseed (linseed), whole and ground",
+      "displayName": "Flaxseed",
+      "nutrientAmountPer100Units": 22.813,
+      "unit": "g",
+      "basisUnit": "g",
+      "foodId": "4528",
+      "source": "CNF 2026"
+    },
+    {
+      "foodName": "Seeds, chia seeds, dried",
+      "displayName": "Chia seeds",
+      "nutrientAmountPer100Units": 17.83,
+      "unit": "g",
+      "basisUnit": "g",
+      "foodId": "2511",
+      "source": "CNF 2026"
+    },
+    {
+      "foodName": "Nuts, walnuts, English or Persian",
+      "displayName": "Walnuts",
+      "nutrientAmountPer100Units": 9.08,
+      "unit": "g",
+      "basisUnit": "g",
+      "foodId": "2590",
+      "source": "CNF 2026"
+    },
+    {
+      "foodName": "Vegetable oil, canola",
+      "displayName": "Canola oil",
+      "nutrientAmountPer100Units": 8.42,
+      "unit": "g",
+      "basisUnit": "mL",
+      "foodId": "451",
+      "source": "CNF 2026"
+    },
+    {
+      "foodName": "Soybeans, green (edamame), boiled, drained",
+      "displayName": "Cooked edamame",
+      "nutrientAmountPer100Units": 0.354,
+      "unit": "g",
+      "basisUnit": "g",
+      "foodId": "2209",
+      "source": "CNF 2026"
+    }
+  ],
+  "water": [
+    {
+      "foodName": "Cucumber, raw",
+      "displayName": "Cucumber",
+      "nutrientAmountPer100Units": 95.23,
+      "unit": "g",
+      "basisUnit": "g",
+      "foodId": "2363",
+      "source": "CNF 2026"
+    },
+    {
+      "foodName": "Tomato, red, ripe, raw, year round average",
+      "displayName": "Tomato",
+      "nutrientAmountPer100Units": 94.52,
+      "unit": "g",
+      "basisUnit": "g",
+      "foodId": "2460",
+      "source": "CNF 2026"
+    },
+    {
+      "foodName": "Watermelon, raw",
+      "displayName": "Watermelon",
+      "nutrientAmountPer100Units": 91.45,
+      "unit": "g",
+      "basisUnit": "g",
+      "foodId": "1691",
+      "source": "CNF 2026"
+    },
+    {
+      "foodName": "Strawberry, raw",
+      "displayName": "Strawberries",
+      "nutrientAmountPer100Units": 90.95,
+      "unit": "g",
+      "basisUnit": "g",
+      "foodId": "1749",
+      "source": "CNF 2026"
+    },
+    {
+      "foodName": "Orange, all commercial varieties, raw",
+      "displayName": "Orange",
+      "nutrientAmountPer100Units": 86.75,
+      "unit": "g",
+      "basisUnit": "g",
+      "foodId": "1722",
+      "source": "CNF 2026"
+    }
+  ],
+  "vitaminB5": [
+    {
+      "foodName": "Egg, chicken, whole, cooked, boiled in shell, hard-cooked",
+      "displayName": "Hard-boiled egg",
+      "nutrientAmountPer100Units": 2.44,
+      "unit": "mg",
+      "basisUnit": "g",
+      "foodId": "130",
+      "source": "CNF 2026"
+    },
+    {
+      "foodName": "Mushroom, brown, Italian (crimini), raw",
+      "displayName": "Cremini mushrooms",
+      "nutrientAmountPer100Units": 1.5,
+      "unit": "mg",
+      "basisUnit": "g",
+      "foodId": "4974",
+      "source": "CNF 2026"
+    },
+    {
+      "foodName": "Avocado, raw, all commercial varieties",
+      "displayName": "Avocado",
+      "nutrientAmountPer100Units": 1.389,
+      "unit": "mg",
+      "basisUnit": "g",
+      "foodId": "1511",
+      "source": "CNF 2026"
+    },
+    {
+      "foodName": "Seeds, sunflower seed kernels, dried",
+      "displayName": "Sunflower seeds",
+      "nutrientAmountPer100Units": 1.13,
+      "unit": "mg",
+      "basisUnit": "g",
+      "foodId": "2526",
+      "source": "CNF 2026"
+    },
+    {
+      "foodName": "Chicken, broiler, breast, meat, roasted",
+      "displayName": "Roasted chicken breast",
+      "nutrientAmountPer100Units": 0.965,
+      "unit": "mg",
+      "basisUnit": "g",
+      "foodId": "842",
+      "source": "CNF 2026"
+    }
+  ],
+  "vitaminB7": [
+    {
+      "foodName": "Egg, chicken, whole, fresh or frozen, raw",
+      "displayName": "Whole egg",
+      "nutrientAmountPer100Units": 38.2,
+      "unit": "mcg",
+      "basisUnit": "g",
+      "foodId": "125",
+      "source": "CNF 2026"
+    },
+    {
+      "foodName": "Fish, salmon, sockeye (red), canned, drained solids with bone, unsalted",
+      "displayName": "Canned salmon",
+      "nutrientAmountPer100Units": 9.4,
+      "unit": "mcg",
+      "basisUnit": "g",
+      "foodId": "3226",
+      "source": "CNF 2026"
+    },
+    {
+      "foodName": "Cereal, hot, oats (oatmeal), instant: regular, prepared",
+      "displayName": "Cooked oatmeal",
+      "nutrientAmountPer100Units": 3.9,
+      "unit": "mcg",
+      "basisUnit": "g",
+      "foodId": "1414",
+      "source": "CNF 2026"
+    },
+    {
+      "foodName": "Cheese, cottage, 2% M.F.",
+      "displayName": "2% cottage cheese",
+      "nutrientAmountPer100Units": 2.9,
+      "unit": "mcg",
+      "basisUnit": "g",
+      "foodId": "120",
+      "source": "CNF 2026"
+    },
+    {
+      "foodName": "Cheese, parmesan, hard",
+      "displayName": "Parmesan cheese",
+      "nutrientAmountPer100Units": 2.7,
+      "unit": "mcg",
+      "basisUnit": "g",
+      "foodId": "40",
+      "source": "CNF 2026"
+    }
+  ],
+  "choline": [
+    {
+      "foodName": "Egg, chicken, whole, cooked, boiled in shell, hard-cooked",
+      "displayName": "Hard-boiled egg",
+      "nutrientAmountPer100Units": 293.8,
+      "unit": "mg",
+      "basisUnit": "g",
+      "foodId": "130",
+      "source": "CNF 2026"
+    },
+    {
+      "foodName": "Beef, chuck, cross rib roast, boneless, lean, cooked, braised",
+      "displayName": "Braised lean beef",
+      "nutrientAmountPer100Units": 132,
+      "unit": "mg",
+      "basisUnit": "g",
+      "foodId": "5984",
+      "source": "CNF 2026"
+    },
+    {
+      "foodName": "Fish, salmon, sockeye (red), baked or broiled",
+      "displayName": "Baked sockeye salmon",
+      "nutrientAmountPer100Units": 112.6,
+      "unit": "mg",
+      "basisUnit": "g",
+      "foodId": "3053",
+      "source": "CNF 2026"
+    },
+    {
+      "foodName": "Chicken, broiler, breast, meat, roasted",
+      "displayName": "Roasted chicken breast",
+      "nutrientAmountPer100Units": 85.3,
+      "unit": "mg",
+      "basisUnit": "g",
+      "foodId": "842",
+      "source": "CNF 2026"
+    },
+    {
+      "foodName": "Soybeans, mature seeds, dry, boiled",
+      "displayName": "Cooked soybeans",
+      "nutrientAmountPer100Units": 47.5,
+      "unit": "mg",
+      "basisUnit": "g",
+      "foodId": "3401",
+      "source": "CNF 2026"
+    }
+  ],
+  "copper": [
+    {
+      "foodName": "Mollusks, oyster, eastern (blue point), wild, boiled or steamed",
+      "displayName": "Cooked oysters",
+      "nutrientAmountPer100Units": 5.707,
+      "unit": "mg",
+      "basisUnit": "g",
+      "foodId": "3120",
+      "source": "CNF 2026"
+    },
+    {
+      "foodName": "Seeds, sesame butter, from whole seed, paste",
+      "displayName": "Whole-seed tahini",
+      "nutrientAmountPer100Units": 4.214,
+      "unit": "mg",
+      "basisUnit": "g",
+      "foodId": "2596",
+      "source": "CNF 2026"
+    },
+    {
+      "foodName": "Nuts, cashew nuts, dry roasted",
+      "displayName": "Dry-roasted cashews",
+      "nutrientAmountPer100Units": 2.22,
+      "unit": "mg",
+      "basisUnit": "g",
+      "foodId": "2546",
+      "source": "CNF 2026"
+    },
+    {
+      "foodName": "Seeds, sunflower seed kernels, dry roasted",
+      "displayName": "Dry-roasted sunflower seeds",
+      "nutrientAmountPer100Units": 1.83,
+      "unit": "mg",
+      "basisUnit": "g",
+      "foodId": "2527",
+      "source": "CNF 2026"
+    },
+    {
+      "foodName": "Mushroom, brown, Italian (crimini), raw",
+      "displayName": "Cremini mushrooms",
+      "nutrientAmountPer100Units": 0.5,
+      "unit": "mg",
+      "basisUnit": "g",
+      "foodId": "4974",
+      "source": "CNF 2026"
+    }
+  ],
+  "manganese": [
+    {
+      "foodName": "Grains, oats, dry",
+      "displayName": "Dry oats",
+      "nutrientAmountPer100Units": 4.916,
+      "unit": "mg",
+      "basisUnit": "g",
+      "foodId": "4421",
+      "source": "CNF 2026"
+    },
+    {
+      "foodName": "Nuts, almonds, dry roasted, unblanched",
+      "displayName": "Dry-roasted almonds",
+      "nutrientAmountPer100Units": 2.232,
+      "unit": "mg",
+      "basisUnit": "g",
+      "foodId": "2536",
+      "source": "CNF 2026"
+    },
+    {
+      "foodName": "Grains, rice, brown, long-grain, cooked",
+      "displayName": "Cooked brown rice",
+      "nutrientAmountPer100Units": 0.974,
+      "unit": "mg",
+      "basisUnit": "g",
+      "foodId": "4497",
+      "source": "CNF 2026"
+    },
+    {
+      "foodName": "Spinach, boiled, drained",
+      "displayName": "Cooked spinach",
+      "nutrientAmountPer100Units": 0.935,
+      "unit": "mg",
+      "basisUnit": "g",
+      "foodId": "2214",
+      "source": "CNF 2026"
+    },
+    {
+      "foodName": "Pineapple, raw",
+      "displayName": "Pineapple",
+      "nutrientAmountPer100Units": 0.927,
+      "unit": "mg",
+      "basisUnit": "g",
+      "foodId": "1734",
+      "source": "CNF 2026"
+    }
+  ],
+  "phosphorus": [
+    {
+      "foodName": "Seeds, pumpkin and squash seed kernels, roasted",
+      "displayName": "Roasted pumpkin seeds",
+      "nutrientAmountPer100Units": 1174,
+      "unit": "mg",
+      "basisUnit": "g",
+      "foodId": "2517",
+      "source": "CNF 2026"
+    },
+    {
+      "foodName": "Cheese, cheddar, medium",
+      "displayName": "Medium cheddar cheese",
+      "nutrientAmountPer100Units": 597,
+      "unit": "mg",
+      "basisUnit": "g",
+      "foodId": "7737",
+      "source": "CNF 2026"
+    },
+    {
+      "foodName": "Fish, salmon, sockeye (red), baked or broiled",
+      "displayName": "Baked sockeye salmon",
+      "nutrientAmountPer100Units": 305,
+      "unit": "mg",
+      "basisUnit": "g",
+      "foodId": "3053",
+      "source": "CNF 2026"
+    },
+    {
+      "foodName": "Chicken, broiler, breast, meat, roasted",
+      "displayName": "Roasted chicken breast",
+      "nutrientAmountPer100Units": 228,
+      "unit": "mg",
+      "basisUnit": "g",
+      "foodId": "842",
+      "source": "CNF 2026"
+    },
+    {
+      "foodName": "Lentils, mature seeds, boiled",
+      "displayName": "Cooked lentils",
+      "nutrientAmountPer100Units": 180,
+      "unit": "mg",
+      "basisUnit": "g",
+      "foodId": "3393",
+      "source": "CNF 2026"
+    }
+  ],
+  "sodium": [
+    {
+      "foodName": "Cheese, cheddar, medium",
+      "displayName": "Medium cheddar cheese",
+      "nutrientAmountPer100Units": 980,
+      "unit": "mg",
+      "basisUnit": "g",
+      "foodId": "7737",
+      "source": "CNF 2026"
+    },
+    {
+      "foodName": "Bread, whole wheat, commercial",
+      "displayName": "Whole-wheat bread",
+      "nutrientAmountPer100Units": 593,
+      "unit": "mg",
+      "basisUnit": "g",
+      "foodId": "4067",
+      "source": "CNF 2026"
+    },
+    {
+      "foodName": "Fish, sardine, Pacific, canned in tomato sauce, drained with bones",
+      "displayName": "Canned sardines with bones",
+      "nutrientAmountPer100Units": 414,
+      "unit": "mg",
+      "basisUnit": "g",
+      "foodId": "3054",
+      "source": "CNF 2026"
+    },
+    {
+      "foodName": "Cheese, cottage, 1% M.F.",
+      "displayName": "1% cottage cheese",
+      "nutrientAmountPer100Units": 406,
+      "unit": "mg",
+      "basisUnit": "g",
+      "foodId": "107",
+      "source": "CNF 2026"
+    },
+    {
+      "foodName": "Egg, chicken, whole, cooked, boiled in shell, hard-cooked",
+      "displayName": "Hard-boiled egg",
+      "nutrientAmountPer100Units": 125,
+      "unit": "mg",
+      "basisUnit": "g",
+      "foodId": "130",
+      "source": "CNF 2026"
+    }
   ]
 }

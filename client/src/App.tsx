@@ -9,8 +9,8 @@ type AppStage =
 
 type RecommendationSection = "nutrition" | "remaining";
 
-function formatNumber(value: number) {
-  return Number(value.toFixed(2));
+function formatNumber(value: number | string) {
+  return Number(Number(value).toFixed(2));
 }
 
 function getDailyNeedText(status: any) {
@@ -135,14 +135,15 @@ function App() {
 
   const recommendationNutrientKeys = [
     "energy",
+
     "protein",
+    "carbohydrate",
+    "fat",
     "fiber",
-    "calcium",
-    "iron",
-    "potassium",
-    "magnesium",
-    "zinc",
-    "selenium",
+    "linoleicAcid",
+    "alphaLinolenicAcid",
+    "water",
+
     "vitaminA",
     "vitaminC",
     "vitaminD",
@@ -151,9 +152,26 @@ function App() {
     "vitaminB1",
     "vitaminB2",
     "vitaminB3",
+    "vitaminB5",
     "vitaminB6",
+    "vitaminB7",
     "vitaminB9",
     "vitaminB12",
+    "choline",
+
+    "calcium",
+    "copper",
+    "fluoride",
+    "iodine",
+    "iron",
+    "magnesium",
+    "manganese",
+    "molybdenum",
+    "phosphorus",
+    "potassium",
+    "selenium",
+    "sodium",
+    "zinc",
   ];
 
   const nutrientDisplayNames: Record<string, string> = {
@@ -1167,15 +1185,14 @@ function App() {
                         (item: any) => item.nutrientKey === nutrientKey,
                       );
 
-                      if (!nutrient) {
-                        return null;
-                      }
-
                       const status = mealDetails[
                         meal.id
                       ]?.nutritionStatusThroughMeal?.find(
                         (item: any) => item.nutrientKey === nutrientKey,
                       );
+
+                      const consumed = nutrient?.amount ?? 0;
+                      const unit = nutrient?.unit ?? status?.unit ?? "";
 
                       const dailyNeed = getDailyNeedText(status);
 
@@ -1184,8 +1201,8 @@ function App() {
                           <strong>{getNutrientDisplayName(nutrientKey)}</strong>
 
                           <p>
-                            Consumed: {formatNumber(nutrient.amount)}{" "}
-                            {nutrient.unit}
+                            Consumed: {formatNumber(consumed)}{" "}
+                            {unit}
                           </p>
 
                           {status?.targetType === "monitor" ? (
@@ -1272,15 +1289,14 @@ function App() {
                         (item: any) => item.nutrientKey === nutrientKey,
                       );
 
-                      if (!nutrient) {
-                        return null;
-                      }
-
                       const status = mealDetails[
                         meal.id
                       ]?.nutritionStatusThroughMeal?.find(
                         (item: any) => item.nutrientKey === nutrientKey,
                       );
+
+                      const consumed = nutrient?.amount ?? 0;
+                      const unit = nutrient?.unit ?? status?.unit ?? "";
 
                       const dailyNeed = getDailyNeedText(status);
 
@@ -1289,8 +1305,8 @@ function App() {
                           <strong>{getNutrientDisplayName(nutrientKey)}</strong>
 
                           <p>
-                            Consumed: {formatNumber(nutrient.amount)}{" "}
-                            {nutrient.unit}
+                            Consumed: {formatNumber(consumed)}{" "}
+                            {unit}
                           </p>
 
                           {dailyNeed && <p>Daily Need: {dailyNeed}</p>}
@@ -1371,15 +1387,14 @@ function App() {
                         (item: any) => item.nutrientKey === nutrientKey,
                       );
 
-                      if (!nutrient) {
-                        return null;
-                      }
-
                       const status = mealDetails[
                         meal.id
                       ]?.nutritionStatusThroughMeal?.find(
                         (item: any) => item.nutrientKey === nutrientKey,
                       );
+
+                      const consumed = nutrient?.amount ?? 0;
+                      const unit = nutrient?.unit ?? status?.unit ?? "";
 
                       const dailyNeed = getDailyNeedText(status);
 
@@ -1388,8 +1403,8 @@ function App() {
                           <strong>{getNutrientDisplayName(nutrientKey)}</strong>
 
                           <p>
-                            Consumed: {formatNumber(nutrient.amount)}{" "}
-                            {nutrient.unit}
+                            Consumed: {formatNumber(consumed)}{" "}
+                            {unit}
                           </p>
 
                           {dailyNeed && <p>Daily Need: {dailyNeed}</p>}
@@ -1487,31 +1502,63 @@ function App() {
 
                     {mealDetails[meal.id].nutritionStatusThroughMeal
                       .filter(
-                        (nutrient: any) =>
-                          keyNutrients.includes(nutrient.nutrientKey) &&
-                          nutrient.remaining !== undefined,
+                        (nutrient: any) => nutrient.targetType !== "monitor",
                       )
                       .map((nutrient: any) => (
                         <div key={nutrient.nutrientKey}>
-                          <strong>{nutrient.nutrientKey}</strong>
+                          <strong>
+                            {getNutrientDisplayName(nutrient.nutrientKey)}
+                          </strong>
 
-                          <p>
-                            Remaining: {formatNumber(nutrient.remaining)}{" "}
-                            {nutrient.unit}
-                          </p>
+                          {nutrient.targetType === "target" && (
+                            <p>
+                              {nutrient.remaining > 0
+                                ? `Remaining: ${formatNumber(
+                                    nutrient.remaining,
+                                  )} ${nutrient.unit}`
+                                : "Daily target reached"}
+                            </p>
+                          )}
 
-                          <button
-                            type="button"
-                            onClick={() =>
-                              loadRecommendations(
-                                meal.id,
-                                nutrient.nutrientKey,
-                                "remaining",
-                              )
-                            }
-                          >
-                            See Food Suggestions
-                          </button>
+                          {nutrient.targetType === "range" &&
+                            nutrient.status === "below" && (
+                              <p>
+                                Remaining to recommended range:{" "}
+                                {formatNumber(nutrient.remainingToMin)}{" "}
+                                {nutrient.unit}
+                              </p>
+                            )}
+
+                          {nutrient.targetType === "range" &&
+                            nutrient.status === "within" && (
+                              <p>Within recommended range</p>
+                            )}
+
+                          {nutrient.targetType === "range" &&
+                            nutrient.status === "above" && (
+                              <p>
+                                Above recommended range by{" "}
+                                {formatNumber(nutrient.amountAboveMax)}{" "}
+                                {nutrient.unit}
+                              </p>
+                            )}
+
+                          {recommendationNutrientKeys.includes(
+                            nutrient.nutrientKey,
+                          ) && (
+                            <button
+                              type="button"
+                              onClick={() =>
+                                loadRecommendations(
+                                  meal.id,
+                                  nutrient.nutrientKey,
+                                  "remaining",
+                                )
+                              }
+                            >
+                              See Food Suggestions
+                            </button>
+                          )}
 
                           {expandedRecommendation?.mealId === meal.id &&
                             expandedRecommendation?.nutrientKey ===
@@ -1520,12 +1567,7 @@ function App() {
                             recommendations.length > 0 && (
                               <div>
                                 {recommendations
-                                  .slice(
-                                    0,
-                                    showAllRecommendations
-                                      ? recommendations.length
-                                      : 3,
-                                  )
+                                  .slice(0, showAllRecommendations ? 5 : 3)
                                   .map((recommendation: any) => (
                                     <div key={recommendation.foodId}>
                                       <strong>
@@ -1534,8 +1576,7 @@ function App() {
 
                                       <p>
                                         {formatNumber(
-                                          recommendation.recommendation
-                                            .nutrientAmountPer100Units,
+                                          recommendation.nutrientAmountPer100Units,
                                         )}{" "}
                                         {recommendation.unit} per 100{" "}
                                         {recommendation.basisUnit}
@@ -1561,7 +1602,7 @@ function App() {
                       ))}
                   </div>
                 )}
-
+              
               {addingMealId === meal.id ? (
                 <div>
                   <input
@@ -1611,40 +1652,45 @@ function App() {
         <button onClick={handleFinishDay}>Finish the Day</button>
       )}
       {activeDayId === null && nowDayId !== null && (
-        <button onClick={() => loadDayDetails(nowDayId)}>
+        <button
+          onClick={() => {
+            setHistoryTab(null);
+            loadDayDetails(nowDayId);
+          }}
+        >
           View Today's Summary
         </button>
       )}
       {activeDayId === null && nowDayId === null && previousDayId !== null && (
-        <button onClick={() => loadDayDetails(previousDayId)}>
+        <button
+          onClick={() => {
+            setHistoryTab(null);
+            loadDayDetails(previousDayId);
+          }}
+        >
           View Previous Day Summary
         </button>
       )}
-      {selectedDay && (
+      {selectedDay && historyTab === null && (
         <div>
           <h3>Daily Summary</h3>
+
           <p>{selectedDay.day.session_date.slice(0, 10)}</p>
 
+          <p>Summary based on your recorded food entries.</p>
+
           {selectedDay.nutritionStatus
-            .filter((nutrient: any) =>
-              keyNutrients.includes(nutrient.nutrientKey),
-            )
+            .filter((nutrient: any) => nutrient.consumed > 0)
             .map((nutrient: any) => (
               <div key={nutrient.nutrientKey}>
-                <strong>{nutrient.nutrientKey}</strong>
+                <strong>{getNutrientDisplayName(nutrient.nutrientKey)}</strong>
 
                 <p>
-                  Consumed: {formatNumber(nutrient.consumed)} {nutrient.unit}
+                  {formatNumber(nutrient.consumed)} {nutrient.unit}
                 </p>
-
-                {nutrient.target !== undefined && (
-                  <p>
-                    Daily target: {formatNumber(nutrient.target)}{" "}
-                    {nutrient.unit}
-                  </p>
-                )}
               </div>
             ))}
+
           <button type="button" onClick={() => setSelectedDay(null)}>
             Back
           </button>
@@ -1759,29 +1805,28 @@ function App() {
               {selectedDay && (
                 <div>
                   <h3>Daily Summary</h3>
+
                   <p>{selectedDay.day.session_date.slice(0, 10)}</p>
 
+                  <p>Summary based on your recorded food entries.</p>
+
                   {selectedDay.nutritionStatus
-                    .filter((nutrient: any) =>
-                      keyNutrients.includes(nutrient.nutrientKey),
-                    )
+                    .filter((nutrient: any) => nutrient.consumed > 0)
                     .map((nutrient: any) => (
                       <div key={nutrient.nutrientKey}>
-                        <strong>{nutrient.nutrientKey}</strong>
+                        <strong>
+                          {getNutrientDisplayName(nutrient.nutrientKey)}
+                        </strong>
 
                         <p>
-                          Consumed: {formatNumber(nutrient.consumed)}{" "}
-                          {nutrient.unit}
+                          {formatNumber(nutrient.consumed)} {nutrient.unit}
                         </p>
-
-                        {nutrient.target !== undefined && (
-                          <p>
-                            Daily target: {formatNumber(nutrient.target)}{" "}
-                            {nutrient.unit}
-                          </p>
-                        )}
                       </div>
                     ))}
+
+                  <button type="button" onClick={() => setSelectedDay(null)}>
+                    Back
+                  </button>
                 </div>
               )}
             </div>

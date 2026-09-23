@@ -1,6 +1,7 @@
 import { db } from "../db.js";
 import { getDailyTarget } from "./getDailyTarget.js";
 import { compareIntakeToTarget } from "./compareIntakeToTarget.js";
+import { nutrientConfig } from "./nutrientConfig.js";
 
 type NutrientEntry = {
   nutrientKey: string;
@@ -78,10 +79,14 @@ export async function getNutritionStatusThroughMeal(
     }
   }
 
-  const consumed = Object.values(totals);
+  return nutrientConfig.map((nutrient) => {
+    const item = {
+      nutrientKey: nutrient.key,
+      amount: totals[nutrient.key]?.amount ?? 0,
+      unit: nutrient.unit,
+    };
 
-  return consumed.map((item) => {
-    const target = getDailyTarget(item.nutrientKey, profile);
+    const target = getDailyTarget(nutrient.key, profile);
 
     return compareIntakeToTarget(item, target);
   });
