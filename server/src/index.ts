@@ -104,7 +104,10 @@ app.get("/api/days/current", requireAuth, async (req, res) => {
     }
 
     const { localDate, localHour } = getLocalDateAndHour(timeZone);
-    const previousDate = getPreviousDate(localDate);
+
+    const sessionDate = localHour < 5 ? getPreviousDate(localDate) : localDate;
+
+    const previousDate = getPreviousDate(sessionDate);
 
     const activeResult = await db.query(
       `
@@ -161,7 +164,7 @@ app.get("/api/days/current", requireAuth, async (req, res) => {
           AND session_date = $2
         LIMIT 1
         `,
-      [userId, localDate],
+      [userId, sessionDate],
     );
 
     const nowDay = todayResult.rows[0] ?? null;
@@ -184,7 +187,7 @@ app.get("/api/days/current", requireAuth, async (req, res) => {
 
     const previousDay = previousResult.rows[0] ?? null;
 
-    const canStartNewDay = localHour >= 5 && nowDay === null;
+    const canStartNewDay = activeDay === null && nowDay === null;
 
     return res.json({
       localDate,
@@ -622,10 +625,16 @@ app.post("/api/profile", requireAuth, async (req, res) => {
 
     if (
       typeof age !== "number" ||
-      typeof sex !== "string" ||
+      !Number.isFinite(age) ||
+      age <= 0 ||
+      (sex !== "female" && sex !== "male") ||
       typeof heightCm !== "number" ||
+      !Number.isFinite(heightCm) ||
+      heightCm <= 0 ||
       typeof weightKg !== "number" ||
-      typeof activityLevel !== "string"
+      !Number.isFinite(weightKg) ||
+      weightKg <= 0 ||
+      !["inactive", "lowActive", "active", "veryActive"].includes(activityLevel)
     ) {
       return res.status(400).json({
         error: "Invalid profile data",
@@ -846,6 +855,15 @@ app.post("/api/days/:daySessionId/foods", requireAuth, async (req, res) => {
       });
     }
 
+    const dbProfile = await getProfileByDaySession(daySessionId);
+
+    if (!dbProfile) {
+      return res.status(404).json({
+        error:
+          "Please complete your profile to calculate personalized nutrition targets.",
+      });
+    }
+
     const processedFood = await processFood(
       foodName,
       amount,
@@ -864,13 +882,6 @@ app.post("/api/days/:daySessionId/foods", requireAuth, async (req, res) => {
       processedFood.nutrients,
     );
 
-    const dbProfile = await getProfileByDaySession(daySessionId);
-
-    if (!dbProfile) {
-      return res.status(404).json({
-        error: "Profile not found",
-      });
-    }
 
     const profile = {
       age: dbProfile.age,
@@ -1141,7 +1152,8 @@ app.get("/api/days/:daySessionId/nutrition", requireAuth, async (req, res) => {
 
     if (!dbProfile) {
       return res.status(404).json({
-        error: "Profile not found",
+        error:
+          "Please complete your profile to calculate personalized nutrition targets.",
       });
     }
 
@@ -1184,13 +1196,7 @@ app.post("/api/days", requireAuth, async (req, res) => {
 
     const { localDate, localHour } = getLocalDateAndHour(timeZone);
 
-    if (localHour < 5) {
-      return res.status(400).json({
-        error: "A new day cannot be started before 5 AM local time",
-      });
-    }
-
-    const sessionDate = localDate;
+    const sessionDate = localHour < 5 ? getPreviousDate(localDate) : localDate;
 
     const daySession = await createDaySession(userId, sessionDate);
 

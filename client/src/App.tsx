@@ -1,10 +1,14 @@
 import { useEffect, useState } from "react";
+import { Link, Navigate, Route, Routes, useLocation, useNavigate } from "react-router-dom";
+import LoginPage from "./pages/LoginPage";
+import RegisterPage from "./pages/RegisterPage";
+import DashboardPage from "./pages/DashboardPage";
+import HomePage from "./pages/HomePage";
 
 type AppStage =
   | "checkingSession"
   | "loggedOut"
   | "newUserWelcome"
-  | "profileSetup"
   | "app";
 
 type RecommendationSection = "nutrition" | "remaining";
@@ -40,9 +44,10 @@ function getDailyNeedText(status: any) {
 }
 
 function App() {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [appStage, setAppStage] = useState<AppStage>("checkingSession");
   const [registrationSuccess, setRegistrationSuccess] = useState(false);
-  const [authMode, setAuthMode] = useState<"login" | "register">("login");
   const [email, setEmail] = useState("luna@example.com");
   const [password, setPassword] = useState("test123456");
   const [message, setMessage] = useState("");
@@ -85,6 +90,7 @@ function App() {
   const [profileWeight, setProfileWeight] = useState("");
   const [profileActivity, setProfileActivity] = useState("");
   const [isEditingProfile, setIsEditingProfile] = useState(false);
+  const [profileMessage, setProfileMessage] = useState("");
 
   const macronutrientPriority = [
     "protein",
@@ -255,6 +261,12 @@ function App() {
     restoreSession();
   }, []);
 
+  useEffect(() => {
+    if (location.pathname !== "/profile/setup") {
+      setProfileMessage("");
+    }
+  }, [location.pathname]);
+
   function toggleNutrientGroup(
     mealId: number,
     group: "macronutrients" | "vitamins" | "minerals",
@@ -291,8 +303,10 @@ function App() {
       }
 
       setRegistrationSuccess(true);
-      setAuthMode("login");
+      setEmail("");
+      setPassword("");
       setMessage("");
+      navigate("/login");
     } catch {
       setMessage("Registration failed");
     }
@@ -328,11 +342,13 @@ function App() {
       if (registrationSuccess) {
         setAppStage("newUserWelcome");
         setRegistrationSuccess(false);
+        setMessage("");
+        navigate("/welcome", { replace: true });
       } else {
         setAppStage("app");
+        setMessage("");
+        navigate("/", { replace: true });
       }
-
-      setMessage("");
     } catch {
       setMessage("Login failed");
     }
@@ -350,6 +366,12 @@ function App() {
 
     if (profileResponse.status === 404) {
       setProfile(null);
+
+      setProfileAge("");
+      setProfileSex("");
+      setProfileHeight("");
+      setProfileWeight("");
+      setProfileActivity("");
     } else {
       const profileData = await profileResponse.json();
 
@@ -439,17 +461,39 @@ function App() {
     localStorage.removeItem("token");
 
     setAppStage("loggedOut");
+    setEmail("");
+    setPassword("");
     setProfile(null);
+
+    setProfileAge("");
+    setProfileSex("");
+    setProfileHeight("");
+    setProfileWeight("");
+    setProfileActivity("");
+    setProfileMessage("");
 
     setDays([]);
     setFoodHistory([]);
     setSelectedDay(null);
     setHistoryTab(null);
 
+    setAddingMealId(null);
+    setFoodName("");
+    setFoodAmount("");
+    setFoodUnit("g");
+    setFoodMessage("");
+
     setIsEditingProfile(false);
     setRegistrationSuccess(false);
 
+    setExpandedRemainingMealId(null);
+    setExpandedRecommendation(null);
+    setRecommendations([]);
+    setShowAllRecommendations(false);
+    setExpandedNutrientGroups({});
+
     setMessage("");
+    navigate("/login", { replace: true });
   }
 
   async function loadRecommendations(
@@ -502,6 +546,33 @@ function App() {
   }
 
   async function handleCreateProfile() {
+    const age = Number(profileAge);
+    const heightCm = Number(profileHeight);
+    const weightKg = Number(profileWeight);
+
+    if (
+      !profileAge ||
+      !profileSex ||
+      !profileHeight ||
+      !profileWeight ||
+      !profileActivity
+    ) {
+      setProfileMessage("Please complete all profile fields.");
+      return;
+    }
+
+    if (
+      !Number.isFinite(age) ||
+      !Number.isFinite(heightCm) ||
+      !Number.isFinite(weightKg) ||
+      age <= 0 ||
+      heightCm <= 0 ||
+      weightKg <= 0
+    ) {
+      setProfileMessage("Please enter valid profile values.");
+      return;
+    }
+
     const token = localStorage.getItem("token");
 
     const response = await fetch(
@@ -513,10 +584,10 @@ function App() {
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          age: Number(profileAge),
+          age,
           sex: profileSex,
-          heightCm: Number(profileHeight),
-          weightKg: Number(profileWeight),
+          heightCm,
+          weightKg,
           activityLevel: profileActivity,
         }),
       },
@@ -525,13 +596,19 @@ function App() {
     const data = await response.json();
 
     if (!response.ok) {
-      setMessage(data.error ?? "Failed to create profile");
+      setProfileMessage(
+        data.error === "Invalid profile data"
+          ? "Please complete all profile fields with valid values."
+          : data.error ?? "Failed to create profile",
+      );
       return;
     }
 
+    setProfileMessage("");
     setProfile(data.profile);
     setAppStage("app");
     setMessage("Profile created");
+    navigate("/", { replace: true });
   }
 
   async function handleStartNewDay() {
@@ -865,974 +942,355 @@ function App() {
     setFoodMessage("");
   }
 
+  if (appStage === "checkingSession") {
+      return <p>Loading...</p>;
+    }
+
+  const defaultPath =
+    appStage === "loggedOut"
+      ? "/login"
+      : appStage === "newUserWelcome"
+        ? "/welcome"
+        : "/";
+
   return (
     <div>
-      {appStage === "checkingSession" && (
-        <div>
-          <p>Loading...</p>
-        </div>
-      )}
-      {appStage === "loggedOut" && (
-        <div>
-          <h1>Daily Nutrition</h1>
-          <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(event) => setEmail(event.target.value)}
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
-          />
-
-          {authMode === "login" ? (
-            <>
-              <button onClick={handleLogin}>Log in</button>
-
-              <p>
-                Don't have an account?{" "}
-                <button type="button" onClick={() => setAuthMode("register")}>
-                  Register
-                </button>
-              </p>
-            </>
-          ) : (
-            <>
-              <button onClick={handleRegister}>Create account</button>
-
-              <p>
-                Already have an account?{" "}
-                <button type="button" onClick={() => setAuthMode("login")}>
-                  Log in
-                </button>
-              </p>
-            </>
-          )}
-        </div>
-      )}
-
-      {appStage === "newUserWelcome" && (
-        <div>
-          <h2>Welcome to Daily Nutrition</h2>
-
-          <p>Your account is ready.</p>
-
-          <p>
-            Complete your profile to get personalized daily nutrition targets,
-            or skip for now and explore the app first.
-          </p>
-
-          <div>
-            <button type="button" onClick={() => setAppStage("app")}>
-              Skip for now
-            </button>
-
-            <button type="button" onClick={() => setAppStage("profileSetup")}>
-              Complete Profile
-            </button>
-          </div>
-        </div>
-      )}
-
-      {appStage === "profileSetup" && (
-        <div>
-          <h2>Complete your profile</h2>
-
-          <p>
-            To calculate your personalized daily nutrition targets, please
-            complete your profile first.
-          </p>
-
-          <input
-            type="number"
-            placeholder="Age"
-            value={profileAge}
-            onChange={(event) => setProfileAge(event.target.value)}
-          />
-
-          <select
-            value={profileSex}
-            onChange={(event) => setProfileSex(event.target.value)}
-          >
-            <option value="">Select sex</option>
-            <option value="female">Female</option>
-            <option value="male">Male</option>
-          </select>
-
-          <input
-            type="number"
-            placeholder="Height (cm)"
-            value={profileHeight}
-            onChange={(event) => setProfileHeight(event.target.value)}
-          />
-
-          <input
-            type="number"
-            placeholder="Weight (kg)"
-            value={profileWeight}
-            onChange={(event) => setProfileWeight(event.target.value)}
-          />
-
-          <div>
-            <h3>Activity Level</h3>
-
-            <p>
-              Choose the option that best matches your usual daily activity. If
-              none fits exactly, select the closest one.
-            </p>
-
-            <label>
-              <input
-                type="radio"
-                name="activityLevel"
-                value="inactive"
-                checked={profileActivity === "inactive"}
-                onChange={(event) => setProfileActivity(event.target.value)}
-              />
-
-              <span>
-                <strong>Inactive</strong>
-                <br />
-                Activities of daily living, such as about 30 minutes of walking
-                plus light-to-moderate household activity.
-              </span>
-            </label>
-
-            <label>
-              <input
-                type="radio"
-                name="activityLevel"
-                value="lowActive"
-                checked={profileActivity === "lowActive"}
-                onChange={(event) => setProfileActivity(event.target.value)}
-              />
-
-              <span>
-                <strong>Low active</strong>
-                <br />
-                Daily living activities plus about 60 to 80 minutes of walking
-                at 5 to 7 km/h.
-              </span>
-            </label>
-
-            <label>
-              <input
-                type="radio"
-                name="activityLevel"
-                value="active"
-                checked={profileActivity === "active"}
-                onChange={(event) => setProfileActivity(event.target.value)}
-              />
-
-              <span>
-                <strong>Active</strong>
-                <br />
-                Daily living activities plus additional moderate activity, such
-                as walking, cycling, and recreational sports.
-              </span>
-            </label>
-
-            <label>
-              <input
-                type="radio"
-                name="activityLevel"
-                value="veryActive"
-                checked={profileActivity === "veryActive"}
-                onChange={(event) => setProfileActivity(event.target.value)}
-              />
-
-              <span>
-                <strong>Very active</strong>
-                <br />
-                Daily living activities plus substantial additional activity,
-                such as cycling, jogging, and recreational sports.
-              </span>
-            </label>
-          </div>
-
-          <div>
-            <button type="button" onClick={() => setAppStage("app")}>
-              Skip for now
-            </button>
-
-            <button onClick={handleCreateProfile}>Finish</button>
-          </div>
-        </div>
-      )}
-
-      {appStage === "app" && <button onClick={handleLogout}>Log out</button>}
       {appStage === "app" && (
-        <button onClick={handleStartNewDay} disabled={!canStartNewDay}>
-          Start New Day
-        </button>
+        <nav>
+          <Link to="/">Home</Link> <Link to="/dashboard">Dashboard</Link>{" "}
+          <button onClick={handleLogout}>Log out</button>
+        </nav>
       )}
 
-      {appStage === "app" && activeDayId !== null && (
-        <div>
-          <button onClick={handleNewMeal}>New Meal</button>
-          {mealSessions.map((meal, index) => (
-            <div key={meal.id}>
-              <h3>Meal {index + 1}</h3>
-              <button type="button" onClick={() => handleDeleteMeal(meal.id)}>
-                Delete Meal
-              </button>
-              {mealDetails[meal.id]?.foods?.map((food: any) => (
-                <div key={food.id}>
-                  <span>
-                    {food.food_name} — {food.amount} {food.unit}
-                  </span>
+      {appStage === "app" &&
+        location.pathname !== "/profile/setup" &&
+        message && <p>{message}</p>}
+
+      <Routes>
+        <Route
+          path="/login"
+          element={
+            appStage === "loggedOut" ? (
+              <LoginPage
+                email={email}
+                password={password}
+                message={message}
+                onEmailChange={setEmail}
+                onPasswordChange={setPassword}
+                onLogin={handleLogin}
+              />
+            ) : (
+              <Navigate to={defaultPath} replace />
+            )
+          }
+        />
+
+        <Route
+          path="/register"
+          element={
+            appStage === "loggedOut" ? (
+              <RegisterPage
+                email={email}
+                password={password}
+                message={message}
+                onEmailChange={setEmail}
+                onPasswordChange={setPassword}
+                onRegister={handleRegister}
+              />
+            ) : (
+              <Navigate to={defaultPath} replace />
+            )
+          }
+        />
+
+        <Route
+          path="/welcome"
+          element={
+            appStage === "newUserWelcome" ? (
+              <div>
+                <h2>Welcome to Daily Nutrition</h2>
+
+                <p>Your account is ready.</p>
+
+                <p>
+                  Complete your profile to get personalized daily nutrition
+                  targets, or skip for now and explore the app first.
+                </p>
+
+                <div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setAppStage("app");
+                      navigate("/", { replace: true });
+                    }}
+                  >
+                    Skip for now
+                  </button>
 
                   <button
                     type="button"
-                    onClick={() => handleDeleteFood(food.id, meal.id)}
+                    onClick={() => {
+                      navigate("/profile/setup");
+                    }}
                   >
-                    Delete Food
+                    Complete Profile
                   </button>
                 </div>
-              ))}
-              {mealDetails[meal.id]?.nutrition?.length > 0 && (
-                <div>
-                  <h4>Meal Nutrition</h4>
-
-                  {mealDetails[meal.id]?.nutrition
-                    ?.filter(
-                      (nutrient: any) => nutrient.nutrientKey === "energy",
-                    )
-                    .map((nutrient: any) => {
-                      const status = mealDetails[
-                        meal.id
-                      ]?.nutritionStatusThroughMeal?.find(
-                        (item: any) => item.nutrientKey === "energy",
-                      );
-
-                      return (
-                        <div key={nutrient.nutrientKey}>
-                          <strong>Energy</strong>
-
-                          <p>
-                            Consumed: {formatNumber(nutrient.amount)}{" "}
-                            {nutrient.unit}
-                          </p>
-
-                          {getDailyNeedText(status) && (
-                            <p>Daily Need: {getDailyNeedText(status)}</p>
-                          )}
-
-                          <button
-                            type="button"
-                            onClick={() =>
-                              loadRecommendations(
-                                meal.id,
-                                "energy",
-                                "nutrition",
-                              )
-                            }
-                          >
-                            Food Suggestions
-                          </button>
-
-                          {expandedRecommendation?.mealId === meal.id &&
-                            expandedRecommendation?.nutrientKey === "energy" &&
-                            expandedRecommendation?.section === "nutrition" && (
-                              <div>
-                                {recommendations
-                                  .slice(0, showAllRecommendations ? 5 : 3)
-                                  .map((recommendation: any) => (
-                                    <div key={recommendation.foodId}>
-                                      <strong>
-                                        {recommendation.displayName}
-                                      </strong>
-
-                                      <p>
-                                        {formatNumber(
-                                          recommendation.nutrientAmountPer100Units,
-                                        )}{" "}
-                                        {recommendation.unit} per 100{" "}
-                                        {recommendation.basisUnit}
-                                      </p>
-                                    </div>
-                                  ))}
-
-                                {recommendations.length > 3 && (
-                                  <button
-                                    type="button"
-                                    onClick={() =>
-                                      setShowAllRecommendations(
-                                        !showAllRecommendations,
-                                      )
-                                    }
-                                  >
-                                    {showAllRecommendations ? "Less" : "More"}
-                                  </button>
-                                )}
-                              </div>
-                            )}
-                        </div>
-                      );
-                    })}
-
-                  <div>
-                    <h5>Macronutrients</h5>
-
-                    {(expandedNutrientGroups[`${meal.id}-macronutrients`]
-                      ? macronutrientPriority
-                      : macronutrientPriority.slice(0, 5)
-                    ).map((nutrientKey) => {
-                      const nutrient = mealDetails[meal.id]?.nutrition?.find(
-                        (item: any) => item.nutrientKey === nutrientKey,
-                      );
-
-                      const status = mealDetails[
-                        meal.id
-                      ]?.nutritionStatusThroughMeal?.find(
-                        (item: any) => item.nutrientKey === nutrientKey,
-                      );
-
-                      const consumed = nutrient?.amount ?? 0;
-                      const unit = nutrient?.unit ?? status?.unit ?? "";
-
-                      const dailyNeed = getDailyNeedText(status);
-
-                      return (
-                        <div key={nutrientKey}>
-                          <strong>{getNutrientDisplayName(nutrientKey)}</strong>
-
-                          <p>
-                            Consumed: {formatNumber(consumed)}{" "}
-                            {unit}
-                          </p>
-
-                          {status?.targetType === "monitor" ? (
-                            <p>{dailyNeed}</p>
-                          ) : (
-                            dailyNeed && <p>Daily Need: {dailyNeed}</p>
-                          )}
-
-                          {recommendationNutrientKeys.includes(nutrientKey) && (
-                            <button
-                              type="button"
-                              onClick={() =>
-                                loadRecommendations(
-                                  meal.id,
-                                  nutrientKey,
-                                  "nutrition",
-                                )
-                              }
-                            >
-                              Food Suggestions
-                            </button>
-                          )}
-
-                          {expandedRecommendation?.mealId === meal.id &&
-                            expandedRecommendation?.nutrientKey ===
-                              nutrientKey &&
-                            expandedRecommendation?.section === "nutrition" && (
-                              <div>
-                                {recommendations
-                                  .slice(0, showAllRecommendations ? 5 : 3)
-                                  .map((recommendation: any) => (
-                                    <div key={recommendation.foodId}>
-                                      <strong>
-                                        {recommendation.displayName}
-                                      </strong>
-
-                                      <p>
-                                        {formatNumber(
-                                          recommendation.nutrientAmountPer100Units,
-                                        )}{" "}
-                                        {recommendation.unit} per 100{" "}
-                                        {recommendation.basisUnit}
-                                      </p>
-                                    </div>
-                                  ))}
-
-                                {recommendations.length > 3 && (
-                                  <button
-                                    type="button"
-                                    onClick={() =>
-                                      setShowAllRecommendations(
-                                        !showAllRecommendations,
-                                      )
-                                    }
-                                  >
-                                    {showAllRecommendations ? "Less" : "More"}
-                                  </button>
-                                )}
-                              </div>
-                            )}
-                        </div>
-                      );
-                    })}
-
-                    <button
-                      type="button"
-                      onClick={() =>
-                        toggleNutrientGroup(meal.id, "macronutrients")
-                      }
-                    >
-                      {expandedNutrientGroups[`${meal.id}-macronutrients`]
-                        ? "See Less"
-                        : "See More"}
-                    </button>
-                  </div>
-                  <div>
-                    <h5>Vitamins</h5>
-
-                    {(expandedNutrientGroups[`${meal.id}-vitamins`]
-                      ? vitaminPriority
-                      : vitaminPriority.slice(0, 5)
-                    ).map((nutrientKey) => {
-                      const nutrient = mealDetails[meal.id]?.nutrition?.find(
-                        (item: any) => item.nutrientKey === nutrientKey,
-                      );
-
-                      const status = mealDetails[
-                        meal.id
-                      ]?.nutritionStatusThroughMeal?.find(
-                        (item: any) => item.nutrientKey === nutrientKey,
-                      );
-
-                      const consumed = nutrient?.amount ?? 0;
-                      const unit = nutrient?.unit ?? status?.unit ?? "";
-
-                      const dailyNeed = getDailyNeedText(status);
-
-                      return (
-                        <div key={nutrientKey}>
-                          <strong>{getNutrientDisplayName(nutrientKey)}</strong>
-
-                          <p>
-                            Consumed: {formatNumber(consumed)}{" "}
-                            {unit}
-                          </p>
-
-                          {dailyNeed && <p>Daily Need: {dailyNeed}</p>}
-
-                          {recommendationNutrientKeys.includes(nutrientKey) && (
-                            <button
-                              type="button"
-                              onClick={() =>
-                                loadRecommendations(
-                                  meal.id,
-                                  nutrientKey,
-                                  "nutrition",
-                                )
-                              }
-                            >
-                              Food Suggestions
-                            </button>
-                          )}
-
-                          {expandedRecommendation?.mealId === meal.id &&
-                            expandedRecommendation?.nutrientKey ===
-                              nutrientKey &&
-                            expandedRecommendation?.section === "nutrition" && (
-                              <div>
-                                {recommendations
-                                  .slice(0, showAllRecommendations ? 5 : 3)
-                                  .map((recommendation: any) => (
-                                    <div key={recommendation.foodId}>
-                                      <strong>
-                                        {recommendation.displayName}
-                                      </strong>
-
-                                      <p>
-                                        {formatNumber(
-                                          recommendation.nutrientAmountPer100Units,
-                                        )}{" "}
-                                        {recommendation.unit} per 100{" "}
-                                        {recommendation.basisUnit}
-                                      </p>
-                                    </div>
-                                  ))}
-
-                                {recommendations.length > 3 && (
-                                  <button
-                                    type="button"
-                                    onClick={() =>
-                                      setShowAllRecommendations(
-                                        !showAllRecommendations,
-                                      )
-                                    }
-                                  >
-                                    {showAllRecommendations ? "Less" : "More"}
-                                  </button>
-                                )}
-                              </div>
-                            )}
-                        </div>
-                      );
-                    })}
-
-                    <button
-                      type="button"
-                      onClick={() => toggleNutrientGroup(meal.id, "vitamins")}
-                    >
-                      {expandedNutrientGroups[`${meal.id}-vitamins`]
-                        ? "See Less"
-                        : "See More"}
-                    </button>
-                  </div>
-                  <div>
-                    <h5>Minerals</h5>
-
-                    {(expandedNutrientGroups[`${meal.id}-minerals`]
-                      ? mineralPriority
-                      : mineralPriority.slice(0, 5)
-                    ).map((nutrientKey) => {
-                      const nutrient = mealDetails[meal.id]?.nutrition?.find(
-                        (item: any) => item.nutrientKey === nutrientKey,
-                      );
-
-                      const status = mealDetails[
-                        meal.id
-                      ]?.nutritionStatusThroughMeal?.find(
-                        (item: any) => item.nutrientKey === nutrientKey,
-                      );
-
-                      const consumed = nutrient?.amount ?? 0;
-                      const unit = nutrient?.unit ?? status?.unit ?? "";
-
-                      const dailyNeed = getDailyNeedText(status);
-
-                      return (
-                        <div key={nutrientKey}>
-                          <strong>{getNutrientDisplayName(nutrientKey)}</strong>
-
-                          <p>
-                            Consumed: {formatNumber(consumed)}{" "}
-                            {unit}
-                          </p>
-
-                          {dailyNeed && <p>Daily Need: {dailyNeed}</p>}
-
-                          {recommendationNutrientKeys.includes(nutrientKey) && (
-                            <button
-                              type="button"
-                              onClick={() =>
-                                loadRecommendations(
-                                  meal.id,
-                                  nutrientKey,
-                                  "nutrition",
-                                )
-                              }
-                            >
-                              Food Suggestions
-                            </button>
-                          )}
-
-                          {expandedRecommendation?.mealId === meal.id &&
-                            expandedRecommendation?.nutrientKey ===
-                              nutrientKey &&
-                            expandedRecommendation?.section === "nutrition" && (
-                              <div>
-                                {recommendations
-                                  .slice(0, showAllRecommendations ? 5 : 3)
-                                  .map((recommendation: any) => (
-                                    <div key={recommendation.foodId}>
-                                      <strong>
-                                        {recommendation.displayName}
-                                      </strong>
-
-                                      <p>
-                                        {formatNumber(
-                                          recommendation.nutrientAmountPer100Units,
-                                        )}{" "}
-                                        {recommendation.unit} per 100{" "}
-                                        {recommendation.basisUnit}
-                                      </p>
-                                    </div>
-                                  ))}
-
-                                {recommendations.length > 3 && (
-                                  <button
-                                    type="button"
-                                    onClick={() =>
-                                      setShowAllRecommendations(
-                                        !showAllRecommendations,
-                                      )
-                                    }
-                                  >
-                                    {showAllRecommendations ? "Less" : "More"}
-                                  </button>
-                                )}
-                              </div>
-                            )}
-                        </div>
-                      );
-                    })}
-
-                    <button
-                      type="button"
-                      onClick={() => toggleNutrientGroup(meal.id, "minerals")}
-                    >
-                      {expandedNutrientGroups[`${meal.id}-minerals`]
-                        ? "See Less"
-                        : "See More"}
-                    </button>
-                  </div>
-                </div>
-              )}
-
-              <button
-                type="button"
-                onClick={() => {
-                  setExpandedRemainingMealId(
-                    expandedRemainingMealId === meal.id ? null : meal.id,
-                  );
-
-                  setExpandedRecommendation(null);
-                  setRecommendations([]);
-                  setShowAllRecommendations(false);
-                }}
-              >
-                {expandedRemainingMealId === meal.id
-                  ? "Hide Daily Remaining"
-                  : "View Daily Remaining"}
-              </button>
-
-              {expandedRemainingMealId === meal.id &&
-                mealDetails[meal.id]?.nutritionStatusThroughMeal?.length >
-                  0 && (
-                  <div>
-                    <h4>Daily Remaining After This Meal</h4>
-
-                    {mealDetails[meal.id].nutritionStatusThroughMeal
-                      .filter(
-                        (nutrient: any) => nutrient.targetType !== "monitor",
-                      )
-                      .map((nutrient: any) => (
-                        <div key={nutrient.nutrientKey}>
-                          <strong>
-                            {getNutrientDisplayName(nutrient.nutrientKey)}
-                          </strong>
-
-                          {nutrient.targetType === "target" && (
-                            <p>
-                              {nutrient.remaining > 0
-                                ? `Remaining: ${formatNumber(
-                                    nutrient.remaining,
-                                  )} ${nutrient.unit}`
-                                : "Daily target reached"}
-                            </p>
-                          )}
-
-                          {nutrient.targetType === "range" &&
-                            nutrient.status === "below" && (
-                              <p>
-                                Remaining to recommended range:{" "}
-                                {formatNumber(nutrient.remainingToMin)}{" "}
-                                {nutrient.unit}
-                              </p>
-                            )}
-
-                          {nutrient.targetType === "range" &&
-                            nutrient.status === "within" && (
-                              <p>Within recommended range</p>
-                            )}
-
-                          {nutrient.targetType === "range" &&
-                            nutrient.status === "above" && (
-                              <p>
-                                Above recommended range by{" "}
-                                {formatNumber(nutrient.amountAboveMax)}{" "}
-                                {nutrient.unit}
-                              </p>
-                            )}
-
-                          {recommendationNutrientKeys.includes(
-                            nutrient.nutrientKey,
-                          ) && (
-                            <button
-                              type="button"
-                              onClick={() =>
-                                loadRecommendations(
-                                  meal.id,
-                                  nutrient.nutrientKey,
-                                  "remaining",
-                                )
-                              }
-                            >
-                              See Food Suggestions
-                            </button>
-                          )}
-
-                          {expandedRecommendation?.mealId === meal.id &&
-                            expandedRecommendation?.nutrientKey ===
-                              nutrient.nutrientKey &&
-                            expandedRecommendation?.section === "remaining" &&
-                            recommendations.length > 0 && (
-                              <div>
-                                {recommendations
-                                  .slice(0, showAllRecommendations ? 5 : 3)
-                                  .map((recommendation: any) => (
-                                    <div key={recommendation.foodId}>
-                                      <strong>
-                                        {recommendation.displayName}
-                                      </strong>
-
-                                      <p>
-                                        {formatNumber(
-                                          recommendation.nutrientAmountPer100Units,
-                                        )}{" "}
-                                        {recommendation.unit} per 100{" "}
-                                        {recommendation.basisUnit}
-                                      </p>
-                                    </div>
-                                  ))}
-
-                                {recommendations.length > 3 && (
-                                  <button
-                                    type="button"
-                                    onClick={() =>
-                                      setShowAllRecommendations(
-                                        !showAllRecommendations,
-                                      )
-                                    }
-                                  >
-                                    {showAllRecommendations ? "Less" : "More"}
-                                  </button>
-                                )}
-                              </div>
-                            )}
-                        </div>
-                      ))}
-                  </div>
-                )}
-              
-              {addingMealId === meal.id ? (
-                <div>
-                  <input
-                    type="text"
-                    placeholder="Food"
-                    value={foodName}
-                    onChange={(event) => setFoodName(event.target.value)}
-                  />
-
-                  <input
-                    type="number"
-                    placeholder="Amount"
-                    value={foodAmount}
-                    onChange={(event) => setFoodAmount(event.target.value)}
-                  />
-
-                  <select
-                    value={foodUnit}
-                    onChange={(event) => setFoodUnit(event.target.value)}
-                  >
-                    <option value="g">g</option>
-                    <option value="mL">mL</option>
-                    <option value="L">L</option>
-                    <option value="tsp">tsp</option>
-                  </select>
-
-                  <button onClick={() => handleAddFood(meal.id)}>
-                    Save Food
-                  </button>
-
-                  <button type="button" onClick={handleCancelAddFood}>
-                    Cancel
-                  </button>
-                  {foodMessage && <p>{foodMessage}</p>}
-                </div>
-              ) : (
-                <button onClick={() => setAddingMealId(meal.id)}>
-                  Add Food
-                </button>
-              )}
-            </div>
-          ))}
-        </div>
-      )}
-
-      {appStage === "app" && activeDayId !== null && (
-        <button onClick={handleFinishDay}>Finish the Day</button>
-      )}
-      {activeDayId === null && nowDayId !== null && (
-        <button
-          onClick={() => {
-            setHistoryTab(null);
-            loadDayDetails(nowDayId);
-          }}
-        >
-          View Today's Summary
-        </button>
-      )}
-      {activeDayId === null && nowDayId === null && previousDayId !== null && (
-        <button
-          onClick={() => {
-            setHistoryTab(null);
-            loadDayDetails(previousDayId);
-          }}
-        >
-          View Previous Day Summary
-        </button>
-      )}
-      {selectedDay && historyTab === null && (
-        <div>
-          <h3>Daily Summary</h3>
-
-          <p>{selectedDay.day.session_date.slice(0, 10)}</p>
-
-          <p>Summary based on your recorded food entries.</p>
-
-          {selectedDay.nutritionStatus
-            .filter((nutrient: any) => nutrient.consumed > 0)
-            .map((nutrient: any) => (
-              <div key={nutrient.nutrientKey}>
-                <strong>{getNutrientDisplayName(nutrient.nutrientKey)}</strong>
+              </div>
+            ) : (
+              <Navigate to={defaultPath} replace />
+            )
+          }
+        />
+
+        <Route
+          path="/profile/setup"
+          element={
+            appStage === "loggedOut" ? (
+              <Navigate to="/login" replace />
+            ) : (
+              <div>
+                <h2>Complete your profile</h2>
 
                 <p>
-                  {formatNumber(nutrient.consumed)} {nutrient.unit}
+                  To calculate your personalized daily nutrition targets, please
+                  complete your profile first.
                 </p>
-              </div>
-            ))}
 
-          <button type="button" onClick={() => setSelectedDay(null)}>
-            Back
-          </button>
-        </div>
-      )}
+                {profileMessage && <p>{profileMessage}</p>}
 
-      <p>{message}</p>
-      {profile && !isEditingProfile && (
-        <div>
-          <h2>Profile</h2>
+                <input
+                  type="number"
+                  placeholder="Age"
+                  value={profileAge}
+                  onChange={(event) => setProfileAge(event.target.value)}
+                />
 
-          <p>Age: {profile.age}</p>
-          <p>Sex: {profile.sex}</p>
-          <p>Height: {profile.height_cm} cm</p>
-          <p>Weight: {profile.weight_kg} kg</p>
-          <p>Activity: {profile.activity_level}</p>
+                <select
+                  value={profileSex}
+                  onChange={(event) => setProfileSex(event.target.value)}
+                >
+                  <option value="">Select sex</option>
+                  <option value="female">Female</option>
+                  <option value="male">Male</option>
+                </select>
 
-          <button
-            onClick={() => {
-              setProfileAge(String(profile.age));
-              setProfileSex(profile.sex);
-              setProfileHeight(String(profile.height_cm));
-              setProfileWeight(String(profile.weight_kg));
-              setProfileActivity(profile.activity_level);
+                <input
+                  type="number"
+                  placeholder="Height (cm)"
+                  value={profileHeight}
+                  onChange={(event) => setProfileHeight(event.target.value)}
+                />
 
-              setIsEditingProfile(true);
-            }}
-          >
-            Edit Profile
-          </button>
-        </div>
-      )}
-      {profile && isEditingProfile && (
-        <div>
-          <h2>Edit Profile</h2>
+                <input
+                  type="number"
+                  placeholder="Weight (kg)"
+                  value={profileWeight}
+                  onChange={(event) => setProfileWeight(event.target.value)}
+                />
 
-          <input
-            type="number"
-            placeholder="Age"
-            value={profileAge}
-            onChange={(event) => setProfileAge(event.target.value)}
-          />
+                <div>
+                  <h3>Activity Level</h3>
 
-          <select
-            value={profileSex}
-            onChange={(event) => setProfileSex(event.target.value)}
-          >
-            <option value="female">Female</option>
-            <option value="male">Male</option>
-          </select>
-
-          <input
-            type="number"
-            placeholder="Height (cm)"
-            value={profileHeight}
-            onChange={(event) => setProfileHeight(event.target.value)}
-          />
-
-          <input
-            type="number"
-            placeholder="Weight (kg)"
-            value={profileWeight}
-            onChange={(event) => setProfileWeight(event.target.value)}
-          />
-
-          <select
-            value={profileActivity}
-            onChange={(event) => setProfileActivity(event.target.value)}
-          >
-            <option value="inactive">Inactive</option>
-            <option value="lowActive">Low active</option>
-            <option value="active">Active</option>
-            <option value="veryActive">Very active</option>
-          </select>
-
-          <button onClick={handleUpdateProfile}>Save</button>
-
-          <button onClick={() => setIsEditingProfile(false)}>Cancel</button>
-        </div>
-      )}
-      {profile && (
-        <div>
-          <h2>History</h2>
-
-          <button onClick={() => setHistoryTab("foods")}>Food Entries</button>
-
-          <button onClick={() => setHistoryTab("nutrition")}>
-            Daily Nutrition
-          </button>
-          {historyTab === "foods" && (
-            <div>
-              {foodHistory.map((food) => (
-                <div key={food.id}>
                   <p>
-                    {food.food_name} — {food.amount} {food.unit}
+                    Choose the option that best matches your usual daily
+                    activity. If none fits exactly, select the closest one.
                   </p>
 
-                  <p>{new Date(food.created_at).toLocaleString()}</p>
+                  <label>
+                    <input
+                      type="radio"
+                      name="activityLevel"
+                      value="inactive"
+                      checked={profileActivity === "inactive"}
+                      onChange={(event) =>
+                        setProfileActivity(event.target.value)
+                      }
+                    />
+
+                    <span>
+                      <strong>Inactive</strong>
+                      <br />
+                      Activities of daily living, such as about 30 minutes of
+                      walking plus light-to-moderate household activity.
+                    </span>
+                  </label>
+
+                  <label>
+                    <input
+                      type="radio"
+                      name="activityLevel"
+                      value="lowActive"
+                      checked={profileActivity === "lowActive"}
+                      onChange={(event) =>
+                        setProfileActivity(event.target.value)
+                      }
+                    />
+
+                    <span>
+                      <strong>Low active</strong>
+                      <br />
+                      Daily living activities plus about 60 to 80 minutes of
+                      walking at 5 to 7 km/h.
+                    </span>
+                  </label>
+
+                  <label>
+                    <input
+                      type="radio"
+                      name="activityLevel"
+                      value="active"
+                      checked={profileActivity === "active"}
+                      onChange={(event) =>
+                        setProfileActivity(event.target.value)
+                      }
+                    />
+
+                    <span>
+                      <strong>Active</strong>
+                      <br />
+                      Daily living activities plus additional moderate activity,
+                      such as walking, cycling, and recreational sports.
+                    </span>
+                  </label>
+
+                  <label>
+                    <input
+                      type="radio"
+                      name="activityLevel"
+                      value="veryActive"
+                      checked={profileActivity === "veryActive"}
+                      onChange={(event) =>
+                        setProfileActivity(event.target.value)
+                      }
+                    />
+
+                    <span>
+                      <strong>Very active</strong>
+                      <br />
+                      Daily living activities plus substantial additional
+                      activity, such as cycling, jogging, and recreational
+                      sports.
+                    </span>
+                  </label>
                 </div>
-              ))}
-            </div>
-          )}
 
-          {historyTab === "nutrition" && (
-            <div>
-              {days.map((day) => (
-                <button key={day.id} onClick={() => loadDayDetails(day.id)}>
-                  {day.session_date.slice(0, 10)}
-                </button>
-              ))}
-
-              {selectedDay && (
                 <div>
-                  <h3>Daily Summary</h3>
-
-                  <p>{selectedDay.day.session_date.slice(0, 10)}</p>
-
-                  <p>Summary based on your recorded food entries.</p>
-
-                  {selectedDay.nutritionStatus
-                    .filter((nutrient: any) => nutrient.consumed > 0)
-                    .map((nutrient: any) => (
-                      <div key={nutrient.nutrientKey}>
-                        <strong>
-                          {getNutrientDisplayName(nutrient.nutrientKey)}
-                        </strong>
-
-                        <p>
-                          {formatNumber(nutrient.consumed)} {nutrient.unit}
-                        </p>
-                      </div>
-                    ))}
-
-                  <button type="button" onClick={() => setSelectedDay(null)}>
-                    Back
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setAppStage("app");
+                      navigate("/", { replace: true });
+                    }}
+                  >
+                    Skip for now
                   </button>
+
+                  <button onClick={handleCreateProfile}>Finish</button>
                 </div>
-              )}
-            </div>
-          )}
-        </div>
-      )}
+              </div>
+            )
+          }
+        />
+
+        <Route
+          path="/"
+          element={
+            appStage === "app" ? (
+              <HomePage
+                activeDayId={activeDayId}
+                canStartNewDay={canStartNewDay}
+                nowDayId={nowDayId}
+                previousDayId={previousDayId}
+                mealSessions={mealSessions}
+                mealDetails={mealDetails}
+                addingMealId={addingMealId}
+                foodName={foodName}
+                foodAmount={foodAmount}
+                foodUnit={foodUnit}
+                foodMessage={foodMessage}
+                expandedRemainingMealId={expandedRemainingMealId}
+                expandedRecommendation={expandedRecommendation}
+                recommendations={recommendations}
+                showAllRecommendations={showAllRecommendations}
+                expandedNutrientGroups={expandedNutrientGroups}
+                selectedDay={selectedDay}
+                historyTab={historyTab}
+                macronutrientPriority={macronutrientPriority}
+                vitaminPriority={vitaminPriority}
+                mineralPriority={mineralPriority}
+                recommendationNutrientKeys={recommendationNutrientKeys}
+                setAddingMealId={setAddingMealId}
+                setFoodName={setFoodName}
+                setFoodAmount={setFoodAmount}
+                setFoodUnit={setFoodUnit}
+                setExpandedRemainingMealId={setExpandedRemainingMealId}
+                setExpandedRecommendation={setExpandedRecommendation}
+                setRecommendations={setRecommendations}
+                setShowAllRecommendations={setShowAllRecommendations}
+                setHistoryTab={setHistoryTab}
+                setSelectedDay={setSelectedDay}
+                onStartNewDay={handleStartNewDay}
+                onNewMeal={handleNewMeal}
+                onDeleteMeal={handleDeleteMeal}
+                onDeleteFood={handleDeleteFood}
+                onAddFood={handleAddFood}
+                onCancelAddFood={handleCancelAddFood}
+                onFinishDay={handleFinishDay}
+                onLoadDayDetails={loadDayDetails}
+                onLoadRecommendations={loadRecommendations}
+                onToggleNutrientGroup={toggleNutrientGroup}
+                getDailyNeedText={getDailyNeedText}
+                getNutrientDisplayName={getNutrientDisplayName}
+                formatNumber={formatNumber}
+              />
+            ) : (
+              <Navigate to={defaultPath} replace />
+            )
+          }
+        />
+
+        <Route
+          path="/dashboard"
+          element={
+            appStage === "app" ? (
+              <DashboardPage
+                profile={profile}
+                days={days}
+                foodHistory={foodHistory}
+                historyTab={historyTab}
+                selectedDay={selectedDay}
+                profileAge={profileAge}
+                profileSex={profileSex}
+                profileHeight={profileHeight}
+                profileWeight={profileWeight}
+                profileActivity={profileActivity}
+                isEditingProfile={isEditingProfile}
+                setProfileAge={setProfileAge}
+                setProfileSex={setProfileSex}
+                setProfileHeight={setProfileHeight}
+                setProfileWeight={setProfileWeight}
+                setProfileActivity={setProfileActivity}
+                setIsEditingProfile={setIsEditingProfile}
+                setHistoryTab={setHistoryTab}
+                setSelectedDay={setSelectedDay}
+                onUpdateProfile={handleUpdateProfile}
+                onLoadDayDetails={loadDayDetails}
+                onCompleteProfile={() => {
+                  navigate("/profile/setup");
+                }}
+                getNutrientDisplayName={getNutrientDisplayName}
+                formatNumber={formatNumber}
+              />
+            ) : (
+              <Navigate to={defaultPath} replace />
+            )
+          }
+        />
+
+        <Route path="*" element={<Navigate to={defaultPath} replace />} />
+      </Routes>
     </div>
   );
 }
