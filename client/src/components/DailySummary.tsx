@@ -4,6 +4,7 @@ type DailySummaryProps = {
   day: any;
   getNutrientDisplayName: (nutrientKey: string) => string;
   formatNumber: (value: any) => any;
+  showEndOfDayMessage?: boolean;
   onBack: () => void;
 };
 
@@ -11,6 +12,7 @@ function DailySummary({
   day,
   getNutrientDisplayName,
   formatNumber,
+  showEndOfDayMessage = false,
   onBack,
 }: DailySummaryProps) {
   const nutrients = Array.isArray(day?.nutritionStatus)
@@ -22,7 +24,11 @@ function DailySummary({
     : null;
 
   return (
-    <section className="daily-summary-page">
+    <section
+      className={`daily-summary-page ${
+        showEndOfDayMessage ? "with-end-message" : "without-end-message"
+      }`}
+    >
       <div className="daily-summary-main">
         <div className="daily-summary-header">
           <h2>Daily Summary</h2>
@@ -57,16 +63,21 @@ function DailySummary({
         </div>
       </div>
 
-      <aside className="daily-summary-message" aria-label="End of day message">
-        <div className="daily-summary-message-inner">
-          <p className="daily-summary-message-main">
-            Enjoy the rest of your day.
-          </p>
-          <p className="daily-summary-message-sub">
-            Your nutrition is logged for today.
-          </p>
-        </div>
-      </aside>
+      {showEndOfDayMessage && (
+        <aside
+          className="daily-summary-message"
+          aria-label="End of day message"
+        >
+          <div className="daily-summary-message-inner">
+            <p className="daily-summary-message-main">
+              Enjoy the rest of your day.
+            </p>
+            <p className="daily-summary-message-sub">
+              Your nutrition is logged for today.
+            </p>
+          </div>
+        </aside>
+      )}
     </section>
   );
 }

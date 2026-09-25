@@ -72,9 +72,9 @@ function App() {
   const location = useLocation();
   const [appStage, setAppStage] = useState<AppStage>("checkingSession");
   const [registrationSuccess, setRegistrationSuccess] = useState(false);
-  const [email, setEmail] = useState("luna@example.com");
+  const [email, setEmail] = useState("");
   const [accountEmail, setAccountEmail] = useState("");
-  const [password, setPassword] = useState("test123456");
+  const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
   const [profile, setProfile] = useState<any>(null);
   const [days, setDays] = useState<any[]>([]);
@@ -206,6 +206,7 @@ function App() {
   ];
 
   const nutrientDisplayNames: Record<string, string> = {
+    energy: "Energy",
     protein: "Protein",
     carbohydrate: "Carbohydrate",
     fat: "Fat",
@@ -1257,3 +1258,4 @@ function App() {
 }
 
 export default App;
+

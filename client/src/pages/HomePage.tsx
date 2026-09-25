@@ -197,7 +197,7 @@ function HomePage({
         </div>
       )}
 
-      {activeDayId === null && canStartNewDay && (
+      {activeDayId === null && canStartNewDay && !selectedDay && (
         <section className="home-empty-state">
           <div className="home-empty-content">
             <p className="home-empty-eyebrow">
@@ -383,10 +383,14 @@ function HomePage({
                             <strong>Energy</strong>
 
                             <span className="nutrient-value">
+                              Consumed&nbsp;&nbsp;
                               {formatNumber(nutrient.amount)} {nutrient.unit}
                             </span>
 
-                            <span>{getDailyNeedText(status) ?? "—"}</span>
+                            <span>
+                              Daily Need&nbsp;&nbsp;
+                              {getDailyNeedText(status) ?? "—"}
+                            </span>
 
                             <FoodSuggestions
                               mealId={meal.id}
@@ -686,6 +690,10 @@ function HomePage({
           day={selectedDay}
           getNutrientDisplayName={getNutrientDisplayName}
           formatNumber={formatNumber}
+          showEndOfDayMessage={
+            nowDayId !== null &&
+            Number(selectedDay?.day?.id) === Number(nowDayId)
+          }
           onBack={() => setSelectedDay(null)}
         />
       )}

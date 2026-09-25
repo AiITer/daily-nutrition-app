@@ -186,3 +186,19 @@
     grid-template-columns: 1fr;
   }
 }
+
+
+/* Historical/previous summaries do not use the end-of-day sign-off. */
+.daily-summary-page.without-end-message {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.daily-summary-page.without-end-message .daily-summary-main {
+  width: 100%;
+}
+
+@media (min-width: 1321px) {
+  .daily-summary-page.without-end-message .daily-summary-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
