@@ -7,15 +7,21 @@ type MealCardProps = {
 
 function MealCard({ meal, mealNumber, children, onDeleteMeal }: MealCardProps) {
   return (
-    <div>
-      <h3>Meal {mealNumber}</h3>
+    <section className="meal-card">
+      <div className="meal-card-header">
+        <h3>Meal {mealNumber}</h3>
 
-      <button type="button" onClick={() => onDeleteMeal(meal.id)}>
-        Delete Meal
-      </button>
+        <button
+          className="quiet-button delete-meal-button"
+          type="button"
+          onClick={() => onDeleteMeal(meal.id)}
+        >
+          Delete Meal
+        </button>
+      </div>
 
       {children}
-    </div>
+    </section>
   );
 }
 

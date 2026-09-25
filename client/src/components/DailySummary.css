@@ -1,0 +1,188 @@
+/* DailySummary.css
+   Compact one-screen desktop summary.
+*/
+
+.daily-summary-page {
+  width: min(1580px, calc(100% - 72px));
+  height: calc(100dvh - 112px);
+  margin: 10px auto 0;
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(300px, 0.75fr);
+  gap: 34px;
+  align-items: stretch;
+  overflow: hidden;
+}
+
+.daily-summary-main {
+  min-width: 0;
+  overflow: hidden;
+}
+
+.daily-summary-header {
+  min-height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 0 0 8px;
+  border-bottom: 2px solid #d9e9f1;
+}
+
+.daily-summary-header h2 {
+  margin: 0;
+  color: #233d49;
+  font-size: 21px;
+  line-height: 1.1;
+}
+
+.daily-summary-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 0 0 auto;
+}
+
+.daily-summary-date {
+  color: #71858f;
+  font-size: 12px;
+}
+
+.daily-summary-back {
+  min-height: 30px;
+  padding: 4px 12px;
+  color: #35515e !important;
+  background: #f5f8fa !important;
+  border: 1px solid #cddce4 !important;
+  border-radius: 8px;
+  box-shadow: none !important;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.daily-summary-back:hover {
+  background: #edf4f7 !important;
+  border-color: #b9cfd9 !important;
+}
+
+.daily-summary-grid {
+  margin-top: 8px;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  column-gap: 18px;
+  align-content: start;
+}
+
+.daily-summary-item {
+  min-width: 0;
+  min-height: 31px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 5px 3px;
+  border-bottom: 1px solid #e5edf1;
+  color: #2f4b58;
+  font-size: 12px;
+}
+
+.daily-summary-name {
+  min-width: 0;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.daily-summary-value {
+  flex: 0 0 auto;
+  color: #49636f;
+  font-variant-numeric: tabular-nums;
+}
+
+.daily-summary-message {
+  min-width: 0;
+  display: grid;
+  place-items: center;
+  padding: 26px;
+  border-left: 1px solid #edf2f5;
+}
+
+.daily-summary-message-inner {
+  max-width: 430px;
+  text-align: center;
+}
+
+.daily-summary-message-main {
+  margin: 0;
+  color: #86a9b9;
+  font-size: clamp(34px, 3.2vw, 52px);
+  font-weight: 650;
+  line-height: 1.08;
+  letter-spacing: -0.025em;
+}
+
+.daily-summary-message-sub {
+  margin: 16px 0 0;
+  color: #9aabb3;
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+@media (max-width: 1320px) {
+  .daily-summary-page {
+    width: calc(100% - 48px);
+    grid-template-columns: minmax(0, 1.7fr) minmax(270px, 0.65fr);
+    gap: 24px;
+  }
+
+  .daily-summary-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-height: 760px) and (min-width: 821px) {
+  .daily-summary-page {
+    height: calc(100dvh - 104px);
+    margin-top: 6px;
+  }
+
+  .daily-summary-header {
+    min-height: 40px;
+    padding-bottom: 6px;
+  }
+
+  .daily-summary-grid {
+    margin-top: 5px;
+  }
+
+  .daily-summary-item {
+    min-height: 27px;
+    padding: 3px;
+    font-size: 11.5px;
+  }
+}
+
+@media (max-width: 820px) {
+  .daily-summary-page {
+    width: calc(100% - 28px);
+    height: auto;
+    margin-top: 14px;
+    grid-template-columns: 1fr;
+    gap: 22px;
+    overflow: visible;
+  }
+
+  .daily-summary-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .daily-summary-message {
+    min-height: 190px;
+    border-left: 0;
+    border-top: 1px solid #edf2f5;
+  }
+}
+
+@media (max-width: 520px) {
+  .daily-summary-grid {
+    grid-template-columns: 1fr;
+  }
+}

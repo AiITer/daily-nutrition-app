@@ -1,0 +1,230 @@
+/* HomePage.css
+   Home page empty states only.
+   Existing meal/nutrition styling remains in index.css.
+*/
+
+.home-page {
+  min-height: calc(100dvh - 70px);
+}
+
+.home-empty-state {
+  width: min(1180px, calc(100% - 64px));
+  min-height: calc(100dvh - 150px);
+  margin: 28px auto 0;
+  display: grid;
+  place-items: center;
+  padding: 52px 40px;
+  background: #eef8fd;
+  border: 1px solid #d7eaf4;
+  border-radius: 18px;
+}
+
+.home-empty-content {
+  width: min(680px, 100%);
+  text-align: center;
+}
+
+.home-empty-eyebrow {
+  margin: 0 0 10px;
+  color: #5a7b8a;
+  font-size: 13px;
+  font-weight: 650;
+  letter-spacing: 0.045em;
+}
+
+.home-empty-content h1 {
+  margin: 0;
+  color: #233d49;
+  font-size: clamp(38px, 4.2vw, 64px);
+  font-weight: 720;
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+}
+
+.home-empty-description {
+  width: min(760px, 100%);
+  margin: 18px auto 0;
+  color: #607681;
+  font-size: 15px;
+  line-height: 1.55;
+}
+
+.home-empty-primary {
+  min-width: 160px;
+  min-height: 44px;
+  margin-top: 28px;
+  padding: 9px 22px;
+  color: #ffffff !important;
+  background: #58a9d6 !important;
+  border: 1px solid #58a9d6 !important;
+  border-radius: 10px;
+  box-shadow: none !important;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.home-empty-primary:hover {
+  background: #4499ca !important;
+  border-color: #4499ca !important;
+}
+
+.home-empty-steps {
+  width: min(620px, 100%);
+  margin: 28px auto 0;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  overflow: hidden;
+  color: #4f6672;
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px solid #cfe2ec;
+  border-radius: 12px;
+  font-size: 12.5px;
+  font-weight: 600;
+}
+
+.home-empty-steps span {
+  position: relative;
+  min-height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 14px;
+}
+
+.home-empty-steps span + span {
+  border-left: 1px solid #d7e7ef;
+}
+
+.home-empty-steps span::before {
+  display: inline-grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  margin-right: 8px;
+  flex: 0 0 22px;
+  border-radius: 50%;
+  color: #3f86ad;
+  background: #e8f5fb;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.home-empty-steps span:nth-child(1)::before {
+  content: "1";
+}
+
+.home-empty-steps span:nth-child(2)::before {
+  content: "2";
+}
+
+.home-empty-steps span:nth-child(3)::before {
+  content: "3";
+}
+
+.home-empty-steps span:nth-child(4)::before {
+  content: "4";
+}
+
+.home-empty-state-meal {
+  background: #f6fbfe;
+}
+
+@media (max-width: 760px) {
+  .home-empty-state {
+    width: calc(100% - 28px);
+    min-height: calc(100dvh - 130px);
+    margin-top: 18px;
+    padding: 40px 22px;
+    border-radius: 15px;
+  }
+
+  .home-empty-content h1 {
+    font-size: clamp(34px, 10vw, 48px);
+  }
+
+  .home-empty-steps {
+    grid-template-columns: 1fr;
+    width: min(360px, 100%);
+  }
+
+  .home-empty-steps span {
+    justify-content: flex-start;
+  }
+
+  .home-empty-steps span + span {
+    border-left: 0;
+    border-top: 1px solid #d7e7ef;
+  }
+}
+
+
+/* Safety rule: first-meal empty state must never show end-of-day actions. */
+.home-page.no-meals .finish-day-row,
+.home-page.no-meals .home-toolbar {
+  display: none !important;
+}
+
+
+.complete-profile-link,
+.complete-profile-link:visited {
+  margin-left: 4px;
+  color: #2f86b7;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.complete-profile-link:hover {
+  color: #246f9a;
+}
+
+
+/* Finished-day home state: keep the summary action, but use the empty space. */
+.finished-day-state {
+  min-height: calc(100dvh - 92px);
+  position: relative;
+}
+
+.finished-day-summary-button {
+  margin: 6px 0 0 28px;
+}
+
+.finished-day-message {
+  min-height: calc(100dvh - 190px);
+  display: grid;
+  place-content: center;
+  text-align: center;
+  padding: 24px;
+}
+
+.finished-day-message-main {
+  max-width: 760px;
+  margin: 0;
+  color: #86a9b9;
+  font-size: clamp(42px, 4.4vw, 70px);
+  font-weight: 650;
+  line-height: 1.06;
+  letter-spacing: -0.03em;
+}
+
+.finished-day-message-sub {
+  margin: 16px 0 0;
+  color: #9aabb3;
+  font-size: 14px;
+  line-height: 1.35;
+}
+
+@media (max-width: 760px) {
+  .finished-day-summary-button {
+    margin-left: 14px;
+  }
+
+  .finished-day-message {
+    min-height: calc(100dvh - 180px);
+    padding: 20px;
+  }
+
+  .finished-day-message-main {
+    font-size: clamp(34px, 10vw, 48px);
+  }
+}

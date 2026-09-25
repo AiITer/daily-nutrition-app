@@ -1,20 +1,44 @@
 import { useEffect, useState } from "react";
-import { Link, Navigate, Route, Routes, useLocation, useNavigate } from "react-router-dom";
+import {
+  Link,
+  Navigate,
+  Route,
+  Routes,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
+import WelcomePage from "./pages/WelcomePage";
+import CompleteProfilePage from "./pages/CompleteProfilePage";
 import DashboardPage from "./pages/DashboardPage";
 import HomePage from "./pages/HomePage";
 
-type AppStage =
-  | "checkingSession"
-  | "loggedOut"
-  | "newUserWelcome"
-  | "app";
+type AppStage = "checkingSession" | "loggedOut" | "newUserWelcome" | "app";
 
 type RecommendationSection = "nutrition" | "remaining";
 
 function formatNumber(value: number | string) {
   return Number(Number(value).toFixed(2));
+}
+
+function getWelcomeDismissedKey(email: string) {
+  return `daily-nutrition:welcome-dismissed:${email.trim().toLowerCase()}`;
+}
+
+function isWelcomeDismissed(email: string) {
+  return (
+    Boolean(email) &&
+    localStorage.getItem(getWelcomeDismissedKey(email)) === "true"
+  );
+}
+
+function markWelcomeDismissed(email: string) {
+  if (!email) {
+    return;
+  }
+
+  localStorage.setItem(getWelcomeDismissedKey(email), "true");
 }
 
 function getDailyNeedText(status: any) {
@@ -49,6 +73,7 @@ function App() {
   const [appStage, setAppStage] = useState<AppStage>("checkingSession");
   const [registrationSuccess, setRegistrationSuccess] = useState(false);
   const [email, setEmail] = useState("luna@example.com");
+  const [accountEmail, setAccountEmail] = useState("");
   const [password, setPassword] = useState("test123456");
   const [message, setMessage] = useState("");
   const [profile, setProfile] = useState<any>(null);
@@ -64,7 +89,7 @@ function App() {
   const [mealDetails, setMealDetails] = useState<Record<number, any>>({});
   const [expandedRemainingMealId, setExpandedRemainingMealId] = useState<
     number | null
-    >(null);
+  >(null);
   const [expandedRecommendation, setExpandedRecommendation] = useState<{
     mealId: number;
     nutrientKey: string;
@@ -249,9 +274,43 @@ function App() {
           return;
         }
 
-        await loadUserData(token);
+        const meData = await response.json();
+        const restoredEmail = meData.email ?? "";
+        setAccountEmail(restoredEmail);
+
+        const loadedProfile = await loadUserData(token);
+
+        // Profile setup is URL-driven: refreshing it must stay on that page.
+        // If the user is still onboarding, keep the onboarding stage too,
+        // so browser Back returns to /welcome instead of being redirected home.
+        if (location.pathname === "/profile/setup") {
+          if (loadedProfile === null && !isWelcomeDismissed(restoredEmail)) {
+            setAppStage("newUserWelcome");
+          } else {
+            setAppStage("app");
+          }
+
+          return;
+        }
+
+        // A user without a profile keeps seeing Welcome until they explicitly
+        // choose "Skip for now" or finish creating a profile.
+        if (loadedProfile === null && !isWelcomeDismissed(restoredEmail)) {
+          setAppStage("newUserWelcome");
+
+          if (location.pathname !== "/welcome") {
+            navigate("/welcome", { replace: true });
+          }
+
+          return;
+        }
 
         setAppStage("app");
+
+        // If Welcome is no longer applicable, do not leave a stale /welcome URL.
+        if (location.pathname === "/welcome") {
+          navigate("/", { replace: true });
+        }
       } catch {
         setMessage("Failed to restore session");
         setAppStage("loggedOut");
@@ -302,6 +361,9 @@ function App() {
         return;
       }
 
+      const registeredEmail = email.trim().toLowerCase();
+      localStorage.removeItem(getWelcomeDismissedKey(registeredEmail));
+
       setRegistrationSuccess(true);
       setEmail("");
       setPassword("");
@@ -337,16 +399,24 @@ function App() {
 
       localStorage.setItem("token", data.token);
 
-      await loadUserData(data.token);
+      const loggedInEmail = data.user?.email ?? email.trim().toLowerCase();
 
-      if (registrationSuccess) {
+      setAccountEmail(loggedInEmail);
+
+      const loadedProfile = await loadUserData(data.token);
+
+      const shouldShowWelcome =
+        registrationSuccess ||
+        (loadedProfile === null && !isWelcomeDismissed(loggedInEmail));
+
+      setRegistrationSuccess(false);
+      setMessage("");
+
+      if (shouldShowWelcome) {
         setAppStage("newUserWelcome");
-        setRegistrationSuccess(false);
-        setMessage("");
         navigate("/welcome", { replace: true });
       } else {
         setAppStage("app");
-        setMessage("");
         navigate("/", { replace: true });
       }
     } catch {
@@ -355,6 +425,8 @@ function App() {
   }
 
   async function loadUserData(token: string) {
+    let loadedProfile: any | null = null;
+
     const profileResponse = await fetch(
       `${import.meta.env.VITE_API_URL}/api/profile`,
       {
@@ -380,6 +452,7 @@ function App() {
         return;
       }
 
+      loadedProfile = profileData.profile;
       setProfile(profileData.profile);
     }
 
@@ -413,11 +486,6 @@ function App() {
     );
 
     const currentDayData = await currentDayResponse.json();
-    console.log(
-      "current day response:",
-      currentDayResponse.status,
-      currentDayResponse.ok,
-    );
 
     if (currentDayResponse.ok) {
       setCanStartNewDay(currentDayData.canStartNewDay);
@@ -425,10 +493,9 @@ function App() {
       setPreviousDayId(
         currentDayData.previousDay ? currentDayData.previousDay.id : null,
       );
-      console.log("setting nowDayId to:", currentDayData.nowDay?.id);
 
       if (currentDayData.activeDay) {
-        setActiveDayId(currentDayData.activeDay.id);        
+        setActiveDayId(currentDayData.activeDay.id);
         await loadMealSessions(currentDayData.activeDay.id);
       } else {
         setActiveDayId(null);
@@ -436,8 +503,6 @@ function App() {
         setMealDetails({});
       }
     }
-    console.log("currentDayData:", currentDayData);
-    console.log("nowDay:", currentDayData.nowDay);
     const foodHistoryResponse = await fetch(
       `${import.meta.env.VITE_API_URL}/api/history/foods`,
       {
@@ -455,6 +520,8 @@ function App() {
     }
 
     setFoodHistory(foodHistoryData.foods);
+
+    return loadedProfile;
   }
 
   function handleLogout() {
@@ -462,6 +529,7 @@ function App() {
 
     setAppStage("loggedOut");
     setEmail("");
+    setAccountEmail("");
     setPassword("");
     setProfile(null);
 
@@ -550,6 +618,27 @@ function App() {
     const heightCm = Number(profileHeight);
     const weightKg = Number(profileWeight);
 
+    if (profileAge && (!Number.isInteger(age) || age < 1 || age > 120)) {
+      setProfileMessage("Please enter a valid age, height, and weight.");
+      return;
+    }
+
+    if (
+      profileHeight &&
+      (!Number.isFinite(heightCm) || heightCm < 40 || heightCm > 250)
+    ) {
+      setProfileMessage("Please enter a valid age, height, and weight.");
+      return;
+    }
+
+    if (
+      profileWeight &&
+      (!Number.isFinite(weightKg) || weightKg < 2 || weightKg > 300)
+    ) {
+      setProfileMessage("Please enter a valid age, height, and weight.");
+      return;
+    }
+
     if (
       !profileAge ||
       !profileSex ||
@@ -558,18 +647,6 @@ function App() {
       !profileActivity
     ) {
       setProfileMessage("Please complete all profile fields.");
-      return;
-    }
-
-    if (
-      !Number.isFinite(age) ||
-      !Number.isFinite(heightCm) ||
-      !Number.isFinite(weightKg) ||
-      age <= 0 ||
-      heightCm <= 0 ||
-      weightKg <= 0
-    ) {
-      setProfileMessage("Please enter valid profile values.");
       return;
     }
 
@@ -598,16 +675,17 @@ function App() {
     if (!response.ok) {
       setProfileMessage(
         data.error === "Invalid profile data"
-          ? "Please complete all profile fields with valid values."
-          : data.error ?? "Failed to create profile",
+          ? "Please check the profile fields and try again."
+          : (data.error ?? "Failed to create profile"),
       );
       return;
     }
 
     setProfileMessage("");
     setProfile(data.profile);
+    markWelcomeDismissed(accountEmail);
     setAppStage("app");
-    setMessage("Profile created");
+    setMessage("");
     navigate("/", { replace: true });
   }
 
@@ -615,7 +693,7 @@ function App() {
     if (!canStartNewDay) {
       return;
     }
-    
+
     const token = localStorage.getItem("token");
     const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
@@ -642,7 +720,7 @@ function App() {
     setMealDetails({});
     setCanStartNewDay(false);
     setSelectedDay(null);
-    setMessage("New day started");
+    setMessage("");
   }
 
   async function loadMealSessions(daySessionId: number) {
@@ -683,7 +761,6 @@ function App() {
     );
 
     const data = await response.json();
-    console.log("meal nutrition:", data.nutrition);
 
     if (!response.ok) {
       setMessage(data.error ?? "Failed to load meal details");
@@ -725,7 +802,7 @@ function App() {
 
     await loadMealSessions(activeDayId);
 
-    setMessage("New meal created");
+    setMessage("");
   }
 
   async function handleDeleteFood(foodEntryId: number, mealSessionId: number) {
@@ -754,7 +831,7 @@ function App() {
 
     await loadMealDetails(mealSessionId);
 
-    setMessage("Food deleted");
+    setMessage("");
   }
 
   async function handleDeleteMeal(mealSessionId: number) {
@@ -787,7 +864,7 @@ function App() {
 
     await loadMealSessions(activeDayId);
 
-    setMessage("Meal deleted");
+    setMessage("");
   }
 
   async function loadDayDetails(daySessionId: number) {
@@ -860,7 +937,6 @@ function App() {
     setFoodAmount("");
     setAddingMealId(null);
     setFoodMessage("");
-
   }
 
   async function handleFinishDay() {
@@ -898,10 +974,30 @@ function App() {
 
     await loadUserData(token);
 
-    setMessage("Day finished");
+    setMessage("");
   }
 
   async function handleUpdateProfile() {
+    const age = Number(profileAge);
+    const heightCm = Number(profileHeight);
+    const weightKg = Number(profileWeight);
+
+    if (
+      !Number.isInteger(age) ||
+      age < 1 ||
+      age > 120 ||
+      !Number.isFinite(heightCm) ||
+      heightCm < 40 ||
+      heightCm > 250 ||
+      !Number.isFinite(weightKg) ||
+      weightKg < 2 ||
+      weightKg > 300
+    ) {
+      setMessage("");
+      setProfileMessage("Please enter a valid age, height, and weight.");
+      return;
+    }
+
     const token = localStorage.getItem("token");
 
     const response = await fetch(
@@ -913,10 +1009,10 @@ function App() {
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          age: Number(profileAge),
+          age,
           sex: profileSex,
-          heightCm: Number(profileHeight),
-          weightKg: Number(profileWeight),
+          heightCm,
+          weightKg,
           activityLevel: profileActivity,
         }),
       },
@@ -925,13 +1021,15 @@ function App() {
     const data = await response.json();
 
     if (!response.ok) {
-      setMessage(data.error ?? "Failed to update profile");
+      setMessage("");
+      setProfileMessage(data.error ?? "Failed to update profile");
       return;
     }
 
+    setProfileMessage("");
     setProfile(data.profile);
     setIsEditingProfile(false);
-    setMessage("Profile updated");
+    setMessage("");
   }
 
   function handleCancelAddFood() {
@@ -943,8 +1041,8 @@ function App() {
   }
 
   if (appStage === "checkingSession") {
-      return <p>Loading...</p>;
-    }
+    return <p>Loading...</p>;
+  }
 
   const defaultPath =
     appStage === "loggedOut"
@@ -955,7 +1053,7 @@ function App() {
 
   return (
     <div>
-      {appStage === "app" && (
+      {appStage === "app" && location.pathname !== "/profile/setup" && (
         <nav>
           <Link to="/">Home</Link> <Link to="/dashboard">Dashboard</Link>{" "}
           <button onClick={handleLogout}>Log out</button>
@@ -1007,37 +1105,17 @@ function App() {
           path="/welcome"
           element={
             appStage === "newUserWelcome" ? (
-              <div>
-                <h2>Welcome to Daily Nutrition</h2>
-
-                <p>Your account is ready.</p>
-
-                <p>
-                  Complete your profile to get personalized daily nutrition
-                  targets, or skip for now and explore the app first.
-                </p>
-
-                <div>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setAppStage("app");
-                      navigate("/", { replace: true });
-                    }}
-                  >
-                    Skip for now
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => {
-                      navigate("/profile/setup");
-                    }}
-                  >
-                    Complete Profile
-                  </button>
-                </div>
-              </div>
+              <WelcomePage
+                onSkip={() => {
+                  markWelcomeDismissed(accountEmail);
+                  setAppStage("app");
+                  navigate("/", { replace: true });
+                }}
+                onCompleteProfile={() => {
+                  navigate("/profile/setup");
+                }}
+                onBackToLogin={handleLogout}
+              />
             ) : (
               <Navigate to={defaultPath} replace />
             )
@@ -1050,146 +1128,26 @@ function App() {
             appStage === "loggedOut" ? (
               <Navigate to="/login" replace />
             ) : (
-              <div>
-                <h2>Complete your profile</h2>
-
-                <p>
-                  To calculate your personalized daily nutrition targets, please
-                  complete your profile first.
-                </p>
-
-                {profileMessage && <p>{profileMessage}</p>}
-
-                <input
-                  type="number"
-                  placeholder="Age"
-                  value={profileAge}
-                  onChange={(event) => setProfileAge(event.target.value)}
-                />
-
-                <select
-                  value={profileSex}
-                  onChange={(event) => setProfileSex(event.target.value)}
-                >
-                  <option value="">Select sex</option>
-                  <option value="female">Female</option>
-                  <option value="male">Male</option>
-                </select>
-
-                <input
-                  type="number"
-                  placeholder="Height (cm)"
-                  value={profileHeight}
-                  onChange={(event) => setProfileHeight(event.target.value)}
-                />
-
-                <input
-                  type="number"
-                  placeholder="Weight (kg)"
-                  value={profileWeight}
-                  onChange={(event) => setProfileWeight(event.target.value)}
-                />
-
-                <div>
-                  <h3>Activity Level</h3>
-
-                  <p>
-                    Choose the option that best matches your usual daily
-                    activity. If none fits exactly, select the closest one.
-                  </p>
-
-                  <label>
-                    <input
-                      type="radio"
-                      name="activityLevel"
-                      value="inactive"
-                      checked={profileActivity === "inactive"}
-                      onChange={(event) =>
-                        setProfileActivity(event.target.value)
-                      }
-                    />
-
-                    <span>
-                      <strong>Inactive</strong>
-                      <br />
-                      Activities of daily living, such as about 30 minutes of
-                      walking plus light-to-moderate household activity.
-                    </span>
-                  </label>
-
-                  <label>
-                    <input
-                      type="radio"
-                      name="activityLevel"
-                      value="lowActive"
-                      checked={profileActivity === "lowActive"}
-                      onChange={(event) =>
-                        setProfileActivity(event.target.value)
-                      }
-                    />
-
-                    <span>
-                      <strong>Low active</strong>
-                      <br />
-                      Daily living activities plus about 60 to 80 minutes of
-                      walking at 5 to 7 km/h.
-                    </span>
-                  </label>
-
-                  <label>
-                    <input
-                      type="radio"
-                      name="activityLevel"
-                      value="active"
-                      checked={profileActivity === "active"}
-                      onChange={(event) =>
-                        setProfileActivity(event.target.value)
-                      }
-                    />
-
-                    <span>
-                      <strong>Active</strong>
-                      <br />
-                      Daily living activities plus additional moderate activity,
-                      such as walking, cycling, and recreational sports.
-                    </span>
-                  </label>
-
-                  <label>
-                    <input
-                      type="radio"
-                      name="activityLevel"
-                      value="veryActive"
-                      checked={profileActivity === "veryActive"}
-                      onChange={(event) =>
-                        setProfileActivity(event.target.value)
-                      }
-                    />
-
-                    <span>
-                      <strong>Very active</strong>
-                      <br />
-                      Daily living activities plus substantial additional
-                      activity, such as cycling, jogging, and recreational
-                      sports.
-                    </span>
-                  </label>
-                </div>
-
-                <div>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setAppStage("app");
-                      navigate("/", { replace: true });
-                    }}
-                  >
-                    Skip for now
-                  </button>
-
-                  <button onClick={handleCreateProfile}>Finish</button>
-                </div>
-              </div>
+              <CompleteProfilePage
+                age={profileAge}
+                sex={profileSex}
+                height={profileHeight}
+                weight={profileWeight}
+                activity={profileActivity}
+                message={profileMessage}
+                onAgeChange={setProfileAge}
+                onSexChange={setProfileSex}
+                onHeightChange={setProfileHeight}
+                onWeightChange={setProfileWeight}
+                onActivityChange={setProfileActivity}
+                onClearMessage={() => setProfileMessage("")}
+                onSkip={() => {
+                  markWelcomeDismissed(accountEmail);
+                  setAppStage("app");
+                  navigate("/", { replace: true });
+                }}
+                onFinish={handleCreateProfile}
+              />
             )
           }
         />
@@ -1256,6 +1214,7 @@ function App() {
           element={
             appStage === "app" ? (
               <DashboardPage
+                accountEmail={accountEmail}
                 profile={profile}
                 days={days}
                 foodHistory={foodHistory}
@@ -1267,12 +1226,14 @@ function App() {
                 profileWeight={profileWeight}
                 profileActivity={profileActivity}
                 isEditingProfile={isEditingProfile}
+                profileMessage={profileMessage}
                 setProfileAge={setProfileAge}
                 setProfileSex={setProfileSex}
                 setProfileHeight={setProfileHeight}
                 setProfileWeight={setProfileWeight}
                 setProfileActivity={setProfileActivity}
                 setIsEditingProfile={setIsEditingProfile}
+                setProfileMessage={setProfileMessage}
                 setHistoryTab={setHistoryTab}
                 setSelectedDay={setSelectedDay}
                 onUpdateProfile={handleUpdateProfile}

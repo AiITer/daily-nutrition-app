@@ -1,0 +1,453 @@
+/* CompleteProfilePage.css
+   Formal utility-style profile form.
+   Centered, compact, blue/white, and designed to fit one desktop viewport.
+*/
+
+html:has(.complete-profile-page),
+body:has(.complete-profile-page),
+#root:has(.complete-profile-page),
+#root > div:has(.complete-profile-page) {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  overflow: hidden !important;
+}
+
+.complete-profile-page,
+.complete-profile-page * {
+  box-sizing: border-box;
+}
+
+.complete-profile-page {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100dvh;
+  min-height: 0;
+  display: grid;
+  place-items: center;
+  padding: 24px 34px;
+  overflow: hidden;
+  background: #f6fafc;
+  color: #233d49;
+}
+
+/* This is intentionally NOT a "card".
+   It behaves like a formal centered form area. */
+.complete-profile-card {
+  width: min(1040px, calc(100vw - 68px));
+  margin: 0;
+  padding: 0;
+  overflow: visible;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.complete-profile-header {
+  padding-bottom: 17px;
+  text-align: center;
+  border-bottom: 3px solid #86c6ec;
+}
+
+.complete-profile-header h1 {
+  margin: 0;
+  color: #233d49;
+  font-size: clamp(29px, 2.15vw, 35px);
+  font-weight: 720;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+}
+
+.complete-profile-header p {
+  margin: 7px auto 0;
+  color: #657a84;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+/* Four standard fields in one row on wide desktop.
+   This is what saves the vertical space. */
+.complete-profile-fields {
+  display: grid;
+  grid-template-columns: 0.72fr 1fr 1fr 1fr;
+  gap: 15px;
+  margin-top: 21px;
+}
+
+.complete-profile-field {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.complete-profile-field > span {
+  color: #304c59;
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.complete-profile-field input,
+.complete-profile-field select,
+.complete-profile-input-unit {
+  width: 100%;
+  min-width: 0;
+  min-height: 40px;
+  margin: 0;
+  color: #30454f;
+  background: #ffffff !important;
+  border: 1px solid #c8dbe5 !important;
+  border-radius: 9px;
+  box-shadow: none !important;
+  font: inherit;
+  font-size: 13px;
+}
+
+.complete-profile-field input,
+.complete-profile-field select {
+  padding: 8px 10px;
+}
+
+.complete-profile-field input:hover,
+.complete-profile-field select:hover {
+  background: #ffffff !important;
+  border-color: #9fc7dc !important;
+  box-shadow: none !important;
+}
+
+.complete-profile-field input:focus,
+.complete-profile-field select:focus {
+  outline: none !important;
+  background: #ffffff !important;
+  border-color: #58a9d6 !important;
+  box-shadow: 0 0 0 3px rgba(88, 169, 214, 0.12) !important;
+}
+
+.complete-profile-input-unit {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  overflow: hidden;
+}
+
+.complete-profile-input-unit input {
+  min-height: 38px;
+  padding-right: 3px;
+  border: 0 !important;
+  border-radius: 0;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.complete-profile-input-unit:focus-within {
+  border-color: #58a9d6 !important;
+  box-shadow: 0 0 0 3px rgba(88, 169, 214, 0.12) !important;
+}
+
+.complete-profile-input-unit > span {
+  padding: 0 10px 0 6px;
+  color: #728892;
+  font-size: 12px;
+}
+
+/* Formal section, not giant option cards. */
+.complete-profile-activity {
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 1px solid #d9e6ec;
+}
+
+.complete-profile-section-heading {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.complete-profile-section-heading h2 {
+  margin: 0;
+  color: #233d49;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.complete-profile-section-heading p {
+  margin: 0;
+  color: #71858f;
+  font-size: 11.5px;
+}
+
+/* Two columns, but these read as radio rows rather than separate cards. */
+.complete-profile-activity-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 26px;
+  row-gap: 0;
+  padding: 2px 0;
+}
+
+.complete-profile-activity-option {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  gap: 9px;
+  min-width: 0;
+  min-height: 55px;
+  margin: 0;
+  padding: 10px 6px;
+  cursor: pointer;
+  background: transparent !important;
+  border: 0 !important;
+  border-bottom: 1px solid #e2ebef !important;
+  border-radius: 0;
+  box-shadow: none !important;
+}
+
+.complete-profile-activity-option:hover {
+  background: #f1f8fc !important;
+  border-bottom-color: #c7dfe9 !important;
+  box-shadow: none !important;
+}
+
+.complete-profile-activity-option.is-selected {
+  background: #eef7fc !important;
+  border-bottom-color: #86c6ec !important;
+  box-shadow: none !important;
+}
+
+.complete-profile-activity-option input {
+  width: 15px;
+  height: 15px;
+  margin: 2px 0 0;
+  accent-color: #58a9d6;
+}
+
+.complete-profile-activity-option span {
+  min-width: 0;
+}
+
+.complete-profile-activity-option strong {
+  display: block;
+  color: #29434f;
+  font-size: 12.5px;
+  line-height: 1.15;
+}
+
+.complete-profile-activity-option small {
+  display: block;
+  margin-top: 2px;
+  color: #6d818a;
+  font-size: 10.5px;
+  line-height: 1.25;
+}
+
+/* Error always sits immediately above the action row. */
+.complete-profile-error {
+  margin: 10px 0 0;
+  color: #b42318;
+  text-align: right;
+  font-size: 11.5px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.complete-profile-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid #d9e6ec;
+}
+
+.complete-profile-button {
+  min-height: 39px;
+  padding: 8px 18px;
+  border-radius: 9px;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: none !important;
+}
+
+.complete-profile-button-primary {
+  min-width: 104px;
+  color: #ffffff !important;
+  background: #58a9d6 !important;
+  border: 1px solid #58a9d6 !important;
+}
+
+.complete-profile-button-primary:hover {
+  background: #4499ca !important;
+  border-color: #4499ca !important;
+}
+
+.complete-profile-button-secondary {
+  min-width: 118px;
+  color: #334f5c !important;
+  background: #ffffff !important;
+  border: 1px solid #bfd2dc !important;
+}
+
+.complete-profile-button-secondary:hover {
+  color: #334f5c !important;
+  background: #f3f9fc !important;
+  border-color: #9fc4d7 !important;
+}
+
+/* Neutralize browser autofill colors. */
+.complete-profile-field input:-webkit-autofill,
+.complete-profile-field input:-webkit-autofill:hover,
+.complete-profile-field input:-webkit-autofill:focus {
+  -webkit-text-fill-color: #30454f !important;
+  -webkit-box-shadow: 0 0 0 1000px #ffffff inset !important;
+  transition: background-color 9999s ease-out 0s;
+}
+
+/* Medium laptops: 2x2 fields, still compact enough for one screen. */
+@media (max-width: 1050px) and (min-width: 701px) {
+  .complete-profile-card {
+    width: min(820px, calc(100vw - 54px));
+  }
+
+  .complete-profile-fields {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 11px 14px;
+    margin-top: 17px;
+  }
+
+  .complete-profile-activity {
+    margin-top: 17px;
+    padding-top: 14px;
+  }
+
+  .complete-profile-activity-option {
+    min-height: 50px;
+    padding-block: 8px;
+  }
+
+  .complete-profile-actions {
+    margin-top: 11px;
+    padding-top: 11px;
+  }
+}
+
+/* Short desktop screens: tighten vertical rhythm rather than hide buttons. */
+@media (max-height: 720px) and (min-width: 701px) {
+  .complete-profile-page {
+    padding-block: 14px;
+  }
+
+  .complete-profile-header {
+    padding-bottom: 11px;
+  }
+
+  .complete-profile-header h1 {
+    font-size: 27px;
+  }
+
+  .complete-profile-header p {
+    margin-top: 4px;
+    font-size: 12px;
+  }
+
+  .complete-profile-fields {
+    margin-top: 14px;
+  }
+
+  .complete-profile-field input,
+  .complete-profile-field select,
+  .complete-profile-input-unit {
+    min-height: 36px;
+  }
+
+  .complete-profile-activity {
+    margin-top: 14px;
+    padding-top: 11px;
+  }
+
+  .complete-profile-section-heading {
+    margin-bottom: 5px;
+  }
+
+  .complete-profile-activity-option {
+    min-height: 45px;
+    padding: 6px;
+  }
+
+  .complete-profile-activity-option small {
+    font-size: 10px;
+  }
+
+  .complete-profile-error {
+    margin-top: 7px;
+  }
+
+  .complete-profile-actions {
+    margin-top: 8px;
+    padding-top: 9px;
+  }
+}
+
+/* Mobile: scrolling is allowed because forcing a desktop form into one phone
+   viewport would hurt usability. */
+@media (max-width: 700px) {
+  html:has(.complete-profile-page),
+  body:has(.complete-profile-page),
+  #root:has(.complete-profile-page),
+  #root > div:has(.complete-profile-page) {
+    height: auto;
+    overflow: auto !important;
+  }
+
+  .complete-profile-page {
+    position: static;
+    width: 100%;
+    height: auto;
+    min-height: 100dvh;
+    display: block;
+    padding: 24px 18px;
+    overflow: visible;
+  }
+
+  .complete-profile-card {
+    width: 100%;
+  }
+
+  .complete-profile-fields,
+  .complete-profile-activity-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .complete-profile-section-heading {
+    display: block;
+  }
+
+  .complete-profile-section-heading p {
+    margin-top: 3px;
+  }
+
+  .complete-profile-error {
+    text-align: left;
+  }
+
+  .complete-profile-actions {
+    flex-direction: column-reverse;
+  }
+
+  .complete-profile-button {
+    width: 100%;
+  }
+}
+
+.complete-profile-activity-option input[type="radio"] {
+  accent-color: #6f7f86 !important;
+}

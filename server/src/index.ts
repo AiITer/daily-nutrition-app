@@ -325,13 +325,16 @@ app.get("/api/days/:daySessionId", requireAuth, async (req, res) => {
       });
     }
 
-    const nutritionStatus = await getDailyNutritionStatus(daySessionId, {
-      age: profile.age,
-      sex: profile.sex,
-      heightCm: profile.height_cm,
-      weightKg: profile.weight_kg,
-      activityLevel: profile.activity_level,
-    });
+    const nutritionStatus =
+      profile.age >= 19
+        ? await getDailyNutritionStatus(daySessionId, {
+            age: profile.age,
+            sex: profile.sex,
+            heightCm: profile.height_cm,
+            weightKg: profile.weight_kg,
+            activityLevel: profile.activity_level,
+          })
+        : [];
 
     res.json({
       day,
@@ -510,10 +513,11 @@ app.get("/api/meal-sessions/:mealSessionId", requireAuth, async (req, res) => {
       };
     }
 
-    const nutritionStatusThroughMeal = profile
-      ? await getNutritionStatusThroughMeal(mealSessionId, profile)
-      : null;
-    
+    const nutritionStatusThroughMeal =
+      profile && profile.age >= 19
+        ? await getNutritionStatusThroughMeal(mealSessionId, profile)
+        : [];
+
     return res.json({
       mealSession: mealSessionResult.rows[0],
       foods: foodsResult.rows,
@@ -625,19 +629,22 @@ app.post("/api/profile", requireAuth, async (req, res) => {
 
     if (
       typeof age !== "number" ||
-      !Number.isFinite(age) ||
-      age <= 0 ||
+      !Number.isInteger(age) ||
+      age < 1 ||
+      age > 120 ||
       (sex !== "female" && sex !== "male") ||
       typeof heightCm !== "number" ||
       !Number.isFinite(heightCm) ||
-      heightCm <= 0 ||
+      heightCm < 40 ||
+      heightCm > 250 ||
       typeof weightKg !== "number" ||
       !Number.isFinite(weightKg) ||
-      weightKg <= 0 ||
+      weightKg < 2 ||
+      weightKg > 300 ||
       !["inactive", "lowActive", "active", "veryActive"].includes(activityLevel)
     ) {
       return res.status(400).json({
-        error: "Invalid profile data",
+        error: "Use age 1–120, height 40–250 cm, and weight 2–300 kg.",
       });
     }
 
@@ -676,13 +683,22 @@ app.put("/api/profile", requireAuth, async (req, res) => {
 
     if (
       typeof age !== "number" ||
-      typeof sex !== "string" ||
+      !Number.isInteger(age) ||
+      age < 1 ||
+      age > 120 ||
+      (sex !== "female" && sex !== "male") ||
       typeof heightCm !== "number" ||
+      !Number.isFinite(heightCm) ||
+      heightCm < 40 ||
+      heightCm > 250 ||
       typeof weightKg !== "number" ||
-      typeof activityLevel !== "string"
+      !Number.isFinite(weightKg) ||
+      weightKg < 2 ||
+      weightKg > 300 ||
+      !["inactive", "lowActive", "active", "veryActive"].includes(activityLevel)
     ) {
       return res.status(400).json({
-        error: "Invalid profile data",
+        error: "Use age 1–120, height 40–250 cm, and weight 2–300 kg.",
       });
     }
 
@@ -722,11 +738,37 @@ app.put("/api/profile", requireAuth, async (req, res) => {
 });
 
 app.get("/api/me", requireAuth, async (req, res) => {
-  const userId = res.locals.userId;
+  try {
+    const userId = res.locals.userId;
 
-  res.json({
-    userId,
-  });
+    const result = await db.query(
+      `
+        SELECT email
+        FROM users
+        WHERE id = $1
+      `,
+      [userId],
+    );
+
+    const user = result.rows[0];
+
+    if (!user) {
+      return res.status(404).json({
+        error: "User not found",
+      });
+    }
+
+    return res.json({
+      userId,
+      email: user.email,
+    });
+  } catch (error) {
+    console.error("Failed to load current user:", error);
+
+    return res.status(500).json({
+      error: "Failed to load current user",
+    });
+  }
 });
 
 app.post("/api/auth/login", async (req, res) => {
@@ -882,7 +924,6 @@ app.post("/api/days/:daySessionId/foods", requireAuth, async (req, res) => {
       processedFood.nutrients,
     );
 
-
     const profile = {
       age: dbProfile.age,
       sex: dbProfile.sex,
@@ -891,10 +932,10 @@ app.post("/api/days/:daySessionId/foods", requireAuth, async (req, res) => {
       activityLevel: dbProfile.activity_level,
     };
 
-    const nutritionStatus = await getDailyNutritionStatus(
-      daySessionId,
-      profile,
-    );
+    const nutritionStatus =
+      profile.age >= 19
+        ? await getDailyNutritionStatus(daySessionId, profile)
+        : [];
 
     res.status(201).json({
       foodEntry,
@@ -1165,10 +1206,10 @@ app.get("/api/days/:daySessionId/nutrition", requireAuth, async (req, res) => {
       activityLevel: dbProfile.activity_level,
     };
 
-    const nutritionStatus = await getDailyNutritionStatus(
-      daySessionId,
-      profile,
-    );
+    const nutritionStatus =
+      profile.age >= 19
+        ? await getDailyNutritionStatus(daySessionId, profile)
+        : [];
 
     res.json({
       daySessionId,

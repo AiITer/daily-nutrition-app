@@ -5,34 +5,27 @@ type NutrientGroupProps = {
   groupName: "macronutrients" | "vitamins" | "minerals";
   nutrientKeys: string[];
   mealId: number;
-
   nutrition: any[];
   nutritionStatus: any[];
   isExpanded: boolean;
-
   recommendationNutrientKeys: string[];
   expandedRecommendation: {
     mealId: number;
     nutrientKey: string;
     section: "nutrition" | "remaining";
   } | null;
-
   recommendations: any[];
   showAllRecommendations: boolean;
-
   onToggle: (
     mealId: number,
     group: "macronutrients" | "vitamins" | "minerals",
   ) => void;
-
   onLoadRecommendations: (
     mealId: number,
     nutrientKey: string,
     section: "nutrition" | "remaining",
   ) => void;
-
   setShowAllRecommendations: (value: boolean) => void;
-
   getDailyNeedText: (status: any) => string | null;
   getNutrientDisplayName: (nutrientKey: string) => string;
   formatNumber: (value: number | string) => number;
@@ -57,59 +50,102 @@ function NutrientGroup({
   getNutrientDisplayName,
   formatNumber,
 }: NutrientGroupProps) {
-  const visibleNutrientKeys = isExpanded
-    ? nutrientKeys
-    : nutrientKeys.slice(0, 5);
+  const orderedKeys = nutrientKeys
+    .map((nutrientKey, index) => {
+      const nutrient = nutrition.find(
+        (item: any) => item.nutrientKey === nutrientKey,
+      );
+      const status = nutritionStatus.find(
+        (item: any) => item.nutrientKey === nutrientKey,
+      );
+
+      const consumed = Number(nutrient?.amount ?? status?.consumed ?? 0);
+
+      return {
+        nutrientKey,
+        index,
+        consumed: Number.isFinite(consumed) ? consumed : 0,
+      };
+    })
+    .sort((a, b) => {
+      const aIsZero = a.consumed === 0;
+      const bIsZero = b.consumed === 0;
+
+      if (aIsZero !== bIsZero) {
+        return aIsZero ? 1 : -1;
+      }
+
+      return a.index - b.index;
+    })
+    .map((item) => item.nutrientKey);
+
+  const visibleKeys = isExpanded ? orderedKeys : orderedKeys.slice(0, 7);
 
   return (
-    <div>
-      <h4>{title}</h4>
+    <section className="nutrient-group">
+      <div className="nutrient-table-header">
+        <strong>{title}</strong>
+        <span>Consumed</span>
+        <span>Daily Need</span>
+        <span aria-hidden="true" />
+      </div>
 
-      {visibleNutrientKeys.map((nutrientKey) => {
-        const nutrient = nutrition.find(
-          (item: any) => item.nutrientKey === nutrientKey,
-        );
+      <div className="nutrient-list">
+        {visibleKeys.map((nutrientKey) => {
+          const nutrient = nutrition.find(
+            (item: any) => item.nutrientKey === nutrientKey,
+          );
 
-        const status = nutritionStatus.find(
-          (item: any) => item.nutrientKey === nutrientKey,
-        );
+          const status = nutritionStatus.find(
+            (item: any) => item.nutrientKey === nutrientKey,
+          );
 
-        const consumed = nutrient?.amount ?? 0;
-        const unit = nutrient?.unit ?? status?.unit ?? "";
-        const dailyNeed = getDailyNeedText(status);
+          const consumed = Number(nutrient?.amount ?? status?.consumed ?? 0);
+          const unit = nutrient?.unit ?? status?.unit ?? "";
+          const dailyNeed = getDailyNeedText(status);
 
-        return (
-          <div key={nutrientKey}>
-            <p>
-              {getNutrientDisplayName(nutrientKey)}: {formatNumber(consumed)}{" "}
-              {unit}
-            </p>
+          return (
+            <div className="nutrient-row" key={nutrientKey}>
+              <strong className="nutrient-name">
+                {getNutrientDisplayName(nutrientKey)}
+              </strong>
 
-            {dailyNeed && <p>Daily Need: {dailyNeed}</p>}
+              <span className="nutrient-value">
+                {formatNumber(consumed)} {unit}
+              </span>
 
-            {recommendationNutrientKeys.includes(nutrientKey) && (
-              <FoodSuggestions
-                mealId={mealId}
-                nutrientKey={nutrientKey}
-                section="nutrition"
-                expandedRecommendation={expandedRecommendation}
-                recommendations={recommendations}
-                showAllRecommendations={showAllRecommendations}
-                onLoadRecommendations={onLoadRecommendations}
-                setShowAllRecommendations={setShowAllRecommendations}
-                formatNumber={formatNumber}
-              />
-            )}
-          </div>
-        );
-      })}
+              <span className="nutrient-need">{dailyNeed ?? "—"}</span>
 
-      {nutrientKeys.length > 5 && (
-        <button type="button" onClick={() => onToggle(mealId, groupName)}>
+              {recommendationNutrientKeys.includes(nutrientKey) ? (
+                <FoodSuggestions
+                  mealId={mealId}
+                  nutrientKey={nutrientKey}
+                  section="nutrition"
+                  expandedRecommendation={expandedRecommendation}
+                  recommendations={recommendations}
+                  showAllRecommendations={showAllRecommendations}
+                  onLoadRecommendations={onLoadRecommendations}
+                  setShowAllRecommendations={setShowAllRecommendations}
+                  formatNumber={formatNumber}
+                />
+              ) : (
+                <span />
+              )}
+            </div>
+          );
+        })}
+      </div>
+
+      {orderedKeys.length > 7 && (
+        <button
+          className="group-toggle-button"
+          type="button"
+          onClick={() => onToggle(mealId, groupName)}
+        >
           {isExpanded ? "See Less" : "See More"}
         </button>
       )}
-    </div>
+    </section>
   );
 }
 

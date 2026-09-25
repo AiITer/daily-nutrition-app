@@ -1,0 +1,62 @@
+/* AuthPages.css
+   Login/Register only: force blue/neutral input interaction states.
+*/
+
+.auth-field input {
+  background: #fbfdff !important;
+  border-color: #cbdde6 !important;
+  box-shadow: none !important;
+}
+
+.auth-field input:hover {
+  background: #fbfdff !important;
+  border-color: #aecbd9 !important;
+  box-shadow: none !important;
+}
+
+.auth-field input:focus {
+  outline: none !important;
+  background: #ffffff !important;
+  border-color: #58a9d6 !important;
+  box-shadow: 0 0 0 3px rgba(88, 169, 214, 0.14) !important;
+}
+
+.auth-field input:-webkit-autofill,
+.auth-field input:-webkit-autofill:hover,
+.auth-field input:-webkit-autofill:focus {
+  -webkit-text-fill-color: #33464f !important;
+  -webkit-box-shadow: 0 0 0 1000px #fbfdff inset !important;
+  transition: background-color 9999s ease-out 0s;
+}
+
+
+/* Final auth cleanup:
+   override the old global label:hover green background completely. */
+.auth-card .auth-field,
+.auth-card .auth-field:hover,
+.auth-card .auth-field:focus-within,
+.auth-form .auth-field,
+.auth-form .auth-field:hover,
+.auth-form .auth-field:focus-within {
+  margin: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+/* Keep every auth interaction in the blue/neutral palette. */
+.auth-card .auth-field input,
+.auth-card .auth-field input:hover {
+  background: #fbfdff !important;
+  border-color: #cbdde6 !important;
+  box-shadow: none !important;
+}
+
+.auth-card .auth-field input:focus {
+  outline: none !important;
+  background: #ffffff !important;
+  border-color: #58a9d6 !important;
+  box-shadow: 0 0 0 3px rgba(88, 169, 214, 0.14) !important;
+}

@@ -1,8 +1,10 @@
+import "./DailySummary.css";
+
 type DailySummaryProps = {
   day: any;
   getNutrientDisplayName: (nutrientKey: string) => string;
-  formatNumber: (value: number | string) => number;
-  onBack?: () => void;
+  formatNumber: (value: any) => any;
+  onBack: () => void;
 };
 
 function DailySummary({
@@ -11,27 +13,61 @@ function DailySummary({
   formatNumber,
   onBack,
 }: DailySummaryProps) {
+  const nutrients = Array.isArray(day?.nutritionStatus)
+    ? day.nutritionStatus
+    : [];
+
+  const sessionDate = day?.day?.session_date
+    ? String(day.day.session_date).slice(0, 10)
+    : null;
+
   return (
-    <div>
-      <h2>Daily Summary</h2>
+    <section className="daily-summary-page">
+      <div className="daily-summary-main">
+        <div className="daily-summary-header">
+          <h2>Daily Summary</h2>
 
-      <p>Summary based on your recorded food entries.</p>
+          <div className="daily-summary-header-actions">
+            {sessionDate && (
+              <span className="daily-summary-date">{sessionDate}</span>
+            )}
 
-      {day.nutritionStatus
-        ?.filter((nutrient: any) => Number(nutrient.consumed) > 0)
-        .map((nutrient: any) => (
-          <p key={nutrient.nutrientKey}>
-            {getNutrientDisplayName(nutrient.nutrientKey)}:{" "}
-            {formatNumber(nutrient.consumed)} {nutrient.unit}
+            <button
+              className="daily-summary-back"
+              type="button"
+              onClick={onBack}
+            >
+              Back
+            </button>
+          </div>
+        </div>
+
+        <div className="daily-summary-grid">
+          {nutrients.map((nutrient: any) => (
+            <div className="daily-summary-item" key={nutrient.nutrientKey}>
+              <span className="daily-summary-name">
+                {getNutrientDisplayName(nutrient.nutrientKey)}
+              </span>
+
+              <span className="daily-summary-value">
+                {formatNumber(nutrient.consumed)} {nutrient.unit}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <aside className="daily-summary-message" aria-label="End of day message">
+        <div className="daily-summary-message-inner">
+          <p className="daily-summary-message-main">
+            Enjoy the rest of your day.
           </p>
-        ))}
-
-      {onBack && (
-        <button type="button" onClick={onBack}>
-          Back
-        </button>
-      )}
-    </div>
+          <p className="daily-summary-message-sub">
+            Your nutrition is logged for today.
+          </p>
+        </div>
+      </aside>
+    </section>
   );
 }
 
