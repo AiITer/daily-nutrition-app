@@ -774,6 +774,23 @@ function App() {
     }));
   }
 
+  async function reloadMealAndFollowing(mealSessionId: number) {
+    const currentIndex = mealSessions.findIndex(
+      (meal) => meal.id === mealSessionId,
+    );
+
+    if (currentIndex === -1) {
+      await loadMealDetails(mealSessionId);
+      return;
+    }
+
+    const affectedMeals = mealSessions.slice(currentIndex);
+
+    await Promise.all(
+      affectedMeals.map((meal: any) => loadMealDetails(meal.id)),
+    );
+  }
+
   async function handleNewMeal() {
     if (activeDayId === null) {
       setMessage("Start a day first");
@@ -830,7 +847,7 @@ function App() {
       return;
     }
 
-    await loadMealDetails(mealSessionId);
+    await reloadMealAndFollowing(mealSessionId);
 
     setMessage("");
   }
@@ -932,7 +949,7 @@ function App() {
       return;
     }
 
-    await loadMealDetails(mealSessionId);
+    await reloadMealAndFollowing(mealSessionId);
 
     setFoodName("");
     setFoodAmount("");
@@ -1258,4 +1275,3 @@ function App() {
 }
 
 export default App;
-

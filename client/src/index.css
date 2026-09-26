@@ -922,6 +922,11 @@ code {
   font-weight: 600;
 }
 
+.met-remaining-name {
+  color: #2f86b7;
+  font-weight: 600;
+}
+
 .finish-day-row {
   margin-top: 8px;
 }
