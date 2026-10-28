@@ -28,6 +28,7 @@ import {
 import { getNutritionStatusThroughMeal } from "./nutrition/getNutritionStatusThroughMeal.js";
 import { getNutrientRecommendations } from "./recommendations/getNutrientRecommendations.js";
 import { db } from "./db.js";
+import { validatePassword } from "./auth/validatePassword.js";
 
 const app = express();
 const port = Number(process.env.PORT) || 3000;
@@ -807,6 +808,14 @@ app.post("/api/auth/register", async (req, res) => {
     if (typeof email !== "string" || typeof password !== "string") {
       return res.status(400).json({
         error: "Email and password are required",
+      });
+    }
+
+    const passwordError = validatePassword(password);
+
+    if (passwordError) {
+      return res.status(400).json({
+        error: passwordError,
       });
     }
 
