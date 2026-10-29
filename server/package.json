@@ -14,7 +14,9 @@
     "db:test-food": "tsx src/testCreateFoodEntry.ts",
     "db:test-food-list": "tsx src/testGetFoodEntries.ts",
     "db:test-daily-status": "tsx src/testDailyNutritionStatus.ts",
-    "migrate": "tsx src/runMigrations.ts"
+    "migrate": "tsx src/runMigrations.ts",
+    "build": "tsc",
+    "start": "node dist/index.js"
   },
   "keywords": [],
   "author": "",
