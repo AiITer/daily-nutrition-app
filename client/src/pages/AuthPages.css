@@ -60,3 +60,21 @@
   border-color: #58a9d6 !important;
   box-shadow: 0 0 0 3px rgba(88, 169, 214, 0.14) !important;
 }
+
+.password-strength {
+  margin: -4px 0 4px;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.password-strength.weak {
+  color: #c94b4b;
+}
+
+.password-strength.medium {
+  color: #c58a1a;
+}
+
+.password-strength.strong {
+  color: #2f8f5b;
+}

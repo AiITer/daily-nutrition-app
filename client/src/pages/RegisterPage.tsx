@@ -1,5 +1,6 @@
 import "./AuthPages.css";
 import { Link } from "react-router-dom";
+import { getPasswordStrength } from "../passwordStrength";
 
 type RegisterPageProps = {
   email: string;
@@ -58,6 +59,7 @@ function RegisterPage({
   onPasswordChange,
   onRegister,
 }: RegisterPageProps) {
+  const passwordStrength = getPasswordStrength(password);
   return (
     <main className="auth-page">
       <div className="auth-nutrient-field" aria-hidden="true">
@@ -132,6 +134,12 @@ function RegisterPage({
                   required
                 />
               </label>
+
+              {password && (
+                <p className={`password-strength ${passwordStrength}`}>
+                  Password strength: {passwordStrength}
+                </p>
+              )}
 
               {message && <p className="auth-message">{message}</p>}
 
