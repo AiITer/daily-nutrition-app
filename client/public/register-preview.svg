@@ -1,0 +1,322 @@
+<svg
+  width="620"
+  height="500"
+  viewBox="0 0 620 500"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <!-- Main vertical guide -->
+  <line
+    x1="310"
+    y1="78"
+    x2="310"
+    y2="323"
+    stroke="#8EC7E6"
+    stroke-width="3"
+    stroke-linecap="round"
+  />
+
+  <!-- Tomato node outer circle -->
+  <circle
+    cx="310"
+    cy="50"
+    r="28"
+    fill="#FFFFFF"
+    stroke="#B8D9EA"
+    stroke-width="2"
+  />
+
+  <!-- Tomato icon -->
+  <g transform="translate(310 50)">
+    <!-- tomato body -->
+    <circle
+      cx="0"
+      cy="4"
+      r="17"
+      fill="#E74C3C"
+    />
+
+    <!-- soft shadow / top dip -->
+    <ellipse
+      cx="0"
+      cy="-7"
+      rx="7"
+      ry="3.5"
+      fill="#D94A3B"
+      opacity="0.45"
+    />
+
+    <!-- calyx leaves -->
+    <!-- <path
+      d="M0 -10
+        C-2 -12 -4 -13 -6 -12
+        C-5 -10 -3 -8 -2 -6
+        C-4 -7 -6 -6 -8 -4
+        C-5 -4 -3 -2 -1 0
+        C0 -2 2 -3 3 -4
+        C5 -2 7 -2 9 -4
+        C7 -5 5 -6 3 -6
+        C4 -8 4 -10 2 -12
+        C1 -11 0 -10 0 -10Z"
+      fill="#7F9874"
+    /> -->
+
+    <path
+      d="M1 -11 C4 -14 8 -15 12 -14"
+      stroke="#6F8767"
+      stroke-width="2.5"
+      stroke-linecap="round"
+      fill="none"
+    />
+
+    <!-- highlight -->
+    <!-- <ellipse
+      cx="-6"
+      cy="0"
+      rx="4"
+      ry="7"
+      fill="#FFFFFF"
+      opacity="0.16"
+    /> -->
+  </g>
+
+  <!-- Tomato label -->
+  <text
+    x="360"
+    y="47"
+    fill="#243B46"
+    font-size="21"
+    font-family="Arial, sans-serif"
+    font-weight="700"
+  >
+    Tomato
+  </text>
+
+  <text
+    x="360"
+    y="70"
+    fill="#5D7280"
+    font-size="16"
+    font-family="Arial, sans-serif"
+  >
+    100 g
+  </text>
+
+  <!-- Top connector dot -->
+  <circle
+    cx="310"
+    cy="98"
+    r="7"
+    fill="#58A9D6"
+  />
+
+  <!-- Nutrition card -->
+  <rect
+    x="160"
+    y="118"
+    width="300"
+    height="165"
+    rx="18"
+    fill="#FFFFFF"
+    stroke="#D8E6EE"
+  />
+
+  <text
+    x="310"
+    y="150"
+    text-anchor="middle"
+    fill="#243B46"
+    font-size="18"
+    font-family="Arial, sans-serif"
+    font-weight="700"
+  >
+    Nutrition
+  </text>
+
+  <text
+    x="195"
+    y="184"
+    fill="#5D7280"
+    font-size="16"
+    font-family="Arial, sans-serif"
+  >
+    Protein
+  </text>
+
+  <text
+    x="425"
+    y="184"
+    text-anchor="end"
+    fill="#243B46"
+    font-size="16"
+    font-family="Arial, sans-serif"
+    font-weight="700"
+  >
+    0.88 g
+  </text>
+
+  <text
+    x="195"
+    y="216"
+    fill="#5D7280"
+    font-size="16"
+    font-family="Arial, sans-serif"
+  >
+    Vitamin C
+  </text>
+
+  <text
+    x="425"
+    y="216"
+    text-anchor="end"
+    fill="#243B46"
+    font-size="16"
+    font-family="Arial, sans-serif"
+    font-weight="700"
+  >
+    13.7 mg
+  </text>
+
+  <text
+    x="195"
+    y="248"
+    fill="#5D7280"
+    font-size="16"
+    font-family="Arial, sans-serif"
+  >
+    Potassium
+  </text>
+
+  <text
+    x="425"
+    y="248"
+    text-anchor="end"
+    fill="#243B46"
+    font-size="16"
+    font-family="Arial, sans-serif"
+    font-weight="700"
+  >
+    237 mg
+  </text>
+
+  <!-- More nutrients -->
+  <text
+    x="310"
+    y="271"
+    text-anchor="middle"
+    fill="#9AA8AE"
+    font-size="18"
+    font-family="Arial, sans-serif"
+  >
+    ...
+  </text>
+
+  <!-- Bottom connector dot -->
+  <circle
+    cx="310"
+    cy="303"
+    r="7"
+    fill="#58A9D6"
+  />
+
+  <!-- Remaining card -->
+  <rect
+    x="160"
+    y="323"
+    width="300"
+    height="165"
+    rx="18"
+    fill="#FFFFFF"
+    stroke="#D8E6EE"
+  />
+
+  <text
+    x="310"
+    y="355"
+    text-anchor="middle"
+    fill="#243B46"
+    font-size="18"
+    font-family="Arial, sans-serif"
+    font-weight="700"
+  >
+    Today you still need
+  </text>
+
+  <text
+    x="195"
+    y="389"
+    fill="#5D7280"
+    font-size="16"
+    font-family="Arial, sans-serif"
+  >
+    Protein
+  </text>
+
+  <text
+    x="425"
+    y="389"
+    text-anchor="end"
+    fill="#243B46"
+    font-size="16"
+    font-family="Arial, sans-serif"
+    font-weight="700"
+  >
+    54 g
+  </text>
+
+  <text
+    x="195"
+    y="421"
+    fill="#5D7280"
+    font-size="16"
+    font-family="Arial, sans-serif"
+  >
+    Calcium
+  </text>
+
+  <text
+    x="425"
+    y="421"
+    text-anchor="end"
+    fill="#243B46"
+    font-size="16"
+    font-family="Arial, sans-serif"
+    font-weight="700"
+  >
+    680 mg
+  </text>
+
+  <text
+    x="195"
+    y="453"
+    fill="#5D7280"
+    font-size="16"
+    font-family="Arial, sans-serif"
+  >
+    Iron
+  </text>
+
+  <text
+    x="425"
+    y="453"
+    text-anchor="end"
+    fill="#243B46"
+    font-size="16"
+    font-family="Arial, sans-serif"
+    font-weight="700"
+  >
+    6.2 mg
+  </text>
+
+  <!-- More remaining nutrients -->
+  <text
+    x="310"
+    y="476"
+    text-anchor="middle"
+    fill="#9AA8AE"
+    font-size="18"
+    font-family="Arial, sans-serif"
+  >
+    ...
+  </text>
+</svg>

@@ -23,7 +23,7 @@ export function getPasswordStrength(password: string): PasswordStrength {
     return "weak";
   }
 
-  if (characterTypes <= 3) {
+  if (characterTypes <= 2) {
     return "medium";
   }
 
