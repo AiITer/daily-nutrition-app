@@ -1,12 +1,14 @@
 import "./CompleteProfilePage.css";
 
 type CompleteProfilePageProps = {
+  displayName: string;
   age: string;
   sex: string;
   height: string;
   weight: string;
   activity: string;
   message: string;
+  onDisplayNameChange: (value: string) => void;
   onAgeChange: (value: string) => void;
   onSexChange: (value: string) => void;
   onHeightChange: (value: string) => void;
@@ -42,12 +44,14 @@ const activityOptions = [
 ];
 
 function CompleteProfilePage({
+  displayName,
   age,
   sex,
   height,
   weight,
   activity,
   message,
+  onDisplayNameChange,
   onAgeChange,
   onSexChange,
   onHeightChange,
@@ -77,66 +81,88 @@ function CompleteProfilePage({
         </header>
 
         <div className="complete-profile-fields">
-          <label className="complete-profile-field">
-            <span>Age</span>
-            <input
-              type="number"
-              min={1}
-              max={120}
-              step={1}
-              value={age}
-              placeholder="Age"
-              onChange={(event) => updateField(onAgeChange, event.target.value)}
-            />
-          </label>
-
-          <label className="complete-profile-field">
-            <span>Sex</span>
-            <select
-              value={sex}
-              onChange={(event) => updateField(onSexChange, event.target.value)}
-            >
-              <option value="">Select sex</option>
-              <option value="female">Female</option>
-              <option value="male">Male</option>
-            </select>
-          </label>
-
-          <label className="complete-profile-field">
-            <span>Height</span>
-            <div className="complete-profile-input-unit">
+          <div className="complete-profile-identity">
+            <label className="complete-profile-field">
+              <span>
+                Name <small>(optional)</small>
+              </span>
               <input
-                type="number"
-                min={40}
-                max={250}
-                step={0.1}
-                value={height}
-                placeholder="Height"
+                type="text"
+                value={displayName}
+                placeholder="What should we call you?"
                 onChange={(event) =>
-                  updateField(onHeightChange, event.target.value)
+                  updateField(onDisplayNameChange, event.target.value)
                 }
               />
-              <span>cm</span>
-            </div>
-          </label>
+            </label>
 
-          <label className="complete-profile-field">
-            <span>Weight</span>
-            <div className="complete-profile-input-unit">
+            <label className="complete-profile-field">
+              <span>Sex</span>
+              <select
+                value={sex}
+                onChange={(event) =>
+                  updateField(onSexChange, event.target.value)
+                }
+              >
+                <option value="">Select sex</option>
+                <option value="female">Female</option>
+                <option value="male">Male</option>
+              </select>
+            </label>
+
+            <label className="complete-profile-field">
+              <span>Age</span>
               <input
                 type="number"
-                min={2}
-                max={300}
-                step={0.1}
-                value={weight}
-                placeholder="Weight"
+                min={1}
+                max={120}
+                step={1}
+                value={age}
+                placeholder="Age"
                 onChange={(event) =>
-                  updateField(onWeightChange, event.target.value)
+                  updateField(onAgeChange, event.target.value)
                 }
               />
-              <span>kg</span>
-            </div>
-          </label>
+            </label>
+          </div>
+
+          <div className="complete-profile-body-fields">
+            <label className="complete-profile-field">
+              <span>Height</span>
+              <div className="complete-profile-input-unit">
+                <input
+                  type="number"
+                  min={40}
+                  max={250}
+                  step={0.1}
+                  value={height}
+                  placeholder="Height"
+                  onChange={(event) =>
+                    updateField(onHeightChange, event.target.value)
+                  }
+                />
+                <span>cm</span>
+              </div>
+            </label>
+
+            <label className="complete-profile-field">
+              <span>Weight</span>
+              <div className="complete-profile-input-unit">
+                <input
+                  type="number"
+                  min={2}
+                  max={300}
+                  step={0.1}
+                  value={weight}
+                  placeholder="Weight"
+                  onChange={(event) =>
+                    updateField(onWeightChange, event.target.value)
+                  }
+                />
+                <span>kg</span>
+              </div>
+            </label>
+          </div>
         </div>
 
         <section className="complete-profile-activity">

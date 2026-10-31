@@ -587,6 +587,7 @@ app.get("/api/profile", requireAuth, async (req, res) => {
     const result = await db.query(
       `
         SELECT
+          display_name,
           age,
           sex,
           height_cm,
@@ -622,7 +623,13 @@ app.post("/api/profile", requireAuth, async (req, res) => {
   try {
     const userId = res.locals.userId;
 
-    const { age, sex, heightCm, weightKg, activityLevel } = req.body;
+    const { displayName, age, sex, heightCm, weightKg, activityLevel } =
+      req.body;
+    
+    const normalizedDisplayName =
+      typeof displayName === "string" && displayName.trim()
+        ? displayName.trim()
+        : null;
 
     if (
       typeof age !== "number" ||
@@ -647,6 +654,7 @@ app.post("/api/profile", requireAuth, async (req, res) => {
 
     const profile = await createProfile(
       userId,
+      normalizedDisplayName,
       age,
       sex as Sex,
       heightCm,
@@ -676,7 +684,13 @@ app.put("/api/profile", requireAuth, async (req, res) => {
   try {
     const userId = res.locals.userId;
 
-    const { age, sex, heightCm, weightKg, activityLevel } = req.body;
+    const { displayName, age, sex, heightCm, weightKg, activityLevel } =
+      req.body;
+    
+    const normalizedDisplayName =
+      typeof displayName === "string" && displayName.trim()
+        ? displayName.trim()
+        : null;
 
     if (
       typeof age !== "number" ||
@@ -703,15 +717,24 @@ app.put("/api/profile", requireAuth, async (req, res) => {
       `
         UPDATE profiles
         SET
-          age = $1,
-          sex = $2,
-          height_cm = $3,
-          weight_kg = $4,
-          activity_level = $5
-        WHERE user_id = $6
+          display_name = $1,
+          age = $2,
+          sex = $3,
+          height_cm = $4,
+          weight_kg = $5,
+          activity_level = $6
+        WHERE user_id = $7
         RETURNING *
-        `,
-      [age, sex, heightCm, weightKg, activityLevel, userId],
+      `,
+      [
+        normalizedDisplayName,
+        age,
+        sex,
+        heightCm,
+        weightKg,
+        activityLevel,
+        userId,
+      ],
     );
 
     const profile = result.rows[0];
@@ -805,6 +828,16 @@ app.post("/api/auth/register", async (req, res) => {
   try {
     const { email, password } = req.body;
 
+    const normalizedEmail = email.trim().toLowerCase();
+
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!emailPattern.test(normalizedEmail)) {
+      return res.status(400).json({
+        error: "Please enter a valid email address.",
+      });
+    }
+
     if (typeof email !== "string" || typeof password !== "string") {
       return res.status(400).json({
         error: "Email and password are required",
@@ -819,7 +852,7 @@ app.post("/api/auth/register", async (req, res) => {
       });
     }
 
-    const user = await registerUser(email.trim().toLowerCase(), password);
+    const user = await registerUser(normalizedEmail, password);
 
     res.status(201).json({
       user,

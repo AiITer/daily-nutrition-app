@@ -109,6 +109,7 @@ function App() {
   );
   const [selectedDay, setSelectedDay] = useState<any>(null);
 
+  const [profileDisplayName, setProfileDisplayName] = useState("");
   const [profileAge, setProfileAge] = useState("");
   const [profileSex, setProfileSex] = useState("");
   const [profileHeight, setProfileHeight] = useState("");
@@ -252,6 +253,14 @@ function App() {
   function getNutrientDisplayName(nutrientKey: string) {
     return nutrientDisplayNames[nutrientKey] ?? nutrientKey;
   }
+
+  useEffect(() => {
+    if (location.pathname === "/login" || location.pathname === "/register") {
+      setEmail("");
+      setPassword("");
+      setMessage("");
+    }
+  }, [location.pathname]);
 
   useEffect(() => {
     async function restoreSession() {
@@ -440,6 +449,7 @@ function App() {
     if (profileResponse.status === 404) {
       setProfile(null);
 
+      setProfileDisplayName("");
       setProfileAge("");
       setProfileSex("");
       setProfileHeight("");
@@ -454,7 +464,8 @@ function App() {
       }
 
       loadedProfile = profileData.profile;
-      setProfile(profileData.profile);
+      setProfile(loadedProfile);
+      setProfileDisplayName(loadedProfile.display_name ?? "");
     }
 
     const daysResponse = await fetch(
@@ -534,6 +545,7 @@ function App() {
     setPassword("");
     setProfile(null);
 
+    setProfileDisplayName("");
     setProfileAge("");
     setProfileSex("");
     setProfileHeight("");
@@ -662,6 +674,7 @@ function App() {
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
+          displayName: profileDisplayName,
           age,
           sex: profileSex,
           heightCm,
@@ -684,6 +697,7 @@ function App() {
 
     setProfileMessage("");
     setProfile(data.profile);
+    setProfileDisplayName(data.profile.display_name ?? "");
     markWelcomeDismissed(accountEmail);
     setAppStage("app");
     setMessage("");
@@ -1027,6 +1041,7 @@ function App() {
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
+          displayName: profileDisplayName,
           age,
           sex: profileSex,
           heightCm,
@@ -1046,6 +1061,7 @@ function App() {
 
     setProfileMessage("");
     setProfile(data.profile);
+    setProfileDisplayName(data.profile.display_name ?? "");
     setIsEditingProfile(false);
     setMessage("");
   }
@@ -1147,12 +1163,14 @@ function App() {
               <Navigate to="/login" replace />
             ) : (
               <CompleteProfilePage
+                displayName={profileDisplayName}
                 age={profileAge}
                 sex={profileSex}
                 height={profileHeight}
                 weight={profileWeight}
                 activity={profileActivity}
                 message={profileMessage}
+                onDisplayNameChange={setProfileDisplayName}
                 onAgeChange={setProfileAge}
                 onSexChange={setProfileSex}
                 onHeightChange={setProfileHeight}
@@ -1238,6 +1256,7 @@ function App() {
                 foodHistory={foodHistory}
                 historyTab={historyTab}
                 selectedDay={selectedDay}
+                profileDisplayName={profileDisplayName}
                 profileAge={profileAge}
                 profileSex={profileSex}
                 profileHeight={profileHeight}
@@ -1245,6 +1264,7 @@ function App() {
                 profileActivity={profileActivity}
                 isEditingProfile={isEditingProfile}
                 profileMessage={profileMessage}
+                setProfileDisplayName={setProfileDisplayName}
                 setProfileAge={setProfileAge}
                 setProfileSex={setProfileSex}
                 setProfileHeight={setProfileHeight}

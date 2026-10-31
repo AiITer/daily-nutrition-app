@@ -9,6 +9,7 @@ async function testCreateAccount() {
 
     const profile = await createProfile(
       user.id,
+      "Test User",
       35,
       "female",
       165,

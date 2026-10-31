@@ -28,7 +28,7 @@ body:has(.complete-profile-page),
   min-height: 0;
   display: grid;
   place-items: center;
-  padding: 24px 34px;
+  padding: 14px 34px;
   overflow: hidden;
   background: #f6fafc;
   color: #233d49;
@@ -37,7 +37,9 @@ body:has(.complete-profile-page),
 /* This is intentionally NOT a "card".
    It behaves like a formal centered form area. */
 .complete-profile-card {
-  width: min(1040px, calc(100vw - 68px));
+  width: 50vw;
+  /* max-width: 900px;
+  min-width: 680px; */
   margin: 0;
   padding: 0;
   overflow: visible;
@@ -48,7 +50,7 @@ body:has(.complete-profile-page),
 }
 
 .complete-profile-header {
-  padding-bottom: 17px;
+  padding-bottom: 10px;
   text-align: center;
   border-bottom: 3px solid #86c6ec;
 }
@@ -63,19 +65,47 @@ body:has(.complete-profile-page),
 }
 
 .complete-profile-header p {
-  margin: 7px auto 0;
+  margin: 4px auto 0;
   color: #657a84;
   font-size: 13px;
   line-height: 1.4;
 }
 
-/* Four standard fields in one row on wide desktop.
-   This is what saves the vertical space. */
 .complete-profile-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+/* Name / Sex / Age */
+.complete-profile-identity {
   display: grid;
-  grid-template-columns: 0.72fr 1fr 1fr 1fr;
-  gap: 15px;
-  margin-top: 21px;
+  grid-template-columns: minmax(0, 1.8fr) minmax(140px, 0.8fr) 110px;
+  gap: 16px;
+  align-items: end;
+  width: 100%;
+}
+
+/* Height / Weight */
+.complete-profile-body-fields {
+  display: grid;
+  grid-template-columns: minmax(0, 1.8fr) minmax(140px, 0.8fr) 110px;
+  gap: 16px;
+  width: 100%;
+}
+
+.complete-profile-body-fields .complete-profile-field:first-child {
+  grid-column: 1;
+}
+
+.complete-profile-body-fields .complete-profile-field:last-child {
+  grid-column: 2 / 4;
+}
+
+.complete-profile-identity,
+.complete-profile-body-fields {
+  min-width: 0;
 }
 
 .complete-profile-field {
@@ -161,7 +191,7 @@ body:has(.complete-profile-page),
 /* Formal section, not giant option cards. */
 .complete-profile-activity {
   margin-top: 22px;
-  padding-top: 18px;
+  padding-top: 20px;
   border-top: 1px solid #d9e6ec;
 }
 
@@ -189,8 +219,8 @@ body:has(.complete-profile-page),
 .complete-profile-activity-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  column-gap: 26px;
-  row-gap: 0;
+  column-gap: 16px;
+  row-gap: 16px;
   padding: 2px 0;
 }
 
@@ -198,29 +228,29 @@ body:has(.complete-profile-page),
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
   align-items: start;
-  gap: 9px;
+  gap: 12px;
+
   min-width: 0;
-  min-height: 55px;
+  min-height: 72px;
   margin: 0;
-  padding: 10px 6px;
+  padding: 14px 16px;
+
   cursor: pointer;
-  background: transparent !important;
-  border: 0 !important;
-  border-bottom: 1px solid #e2ebef !important;
-  border-radius: 0;
+
+  background: #ffffff !important;
+  border: 1px solid #c8dbe5 !important;
+  border-radius: 9px;
   box-shadow: none !important;
 }
 
 .complete-profile-activity-option:hover {
-  background: #f1f8fc !important;
-  border-bottom-color: #c7dfe9 !important;
-  box-shadow: none !important;
+  background: #ffffff !important;
+  border-color: #9fc7dc !important;
 }
 
 .complete-profile-activity-option.is-selected {
   background: #eef7fc !important;
-  border-bottom-color: #86c6ec !important;
-  box-shadow: none !important;
+  border-color: #58a9d6 !important;
 }
 
 .complete-profile-activity-option input {
@@ -263,8 +293,8 @@ body:has(.complete-profile-page),
   display: flex;
   justify-content: flex-end;
   gap: 10px;
-  margin-top: 14px;
-  padding-top: 14px;
+  margin-top: 20px;
+  padding-top: 18px;
   border-top: 1px solid #d9e6ec;
 }
 
@@ -315,13 +345,9 @@ body:has(.complete-profile-page),
 /* Medium laptops: 2x2 fields, still compact enough for one screen. */
 @media (max-width: 1050px) and (min-width: 701px) {
   .complete-profile-card {
-    width: min(820px, calc(100vw - 54px));
-  }
-
-  .complete-profile-fields {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 11px 14px;
-    margin-top: 17px;
+    width: 50vw;
+    /* max-width: 900px;
+    min-width: 680px; */
   }
 
   .complete-profile-activity {
@@ -357,10 +383,6 @@ body:has(.complete-profile-page),
   .complete-profile-header p {
     margin-top: 4px;
     font-size: 12px;
-  }
-
-  .complete-profile-fields {
-    margin-top: 14px;
   }
 
   .complete-profile-field input,
@@ -420,11 +442,6 @@ body:has(.complete-profile-page),
 
   .complete-profile-card {
     width: 100%;
-  }
-
-  .complete-profile-fields,
-  .complete-profile-activity-grid {
-    grid-template-columns: 1fr;
   }
 
   .complete-profile-section-heading {

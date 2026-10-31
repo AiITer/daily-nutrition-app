@@ -1,4 +1,5 @@
 import "./AuthPages.css";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { getPasswordStrength } from "../passwordStrength";
 
@@ -20,12 +21,11 @@ function RegisterPage({
   onRegister,
 }: RegisterPageProps) {
   const passwordStrength = getPasswordStrength(password);
+  const [showPassword, setShowPassword] = useState(false);
 
   return (
     <main className="register-page">
       <section className="register-form-side">
-        <div className="register-monogram">DN</div>
-
         <div className="register-form-content">
           <h1>Sign up</h1>
 
@@ -44,29 +44,86 @@ function RegisterPage({
                 onChange={(event) => onEmailChange(event.target.value)}
                 placeholder="you@example.com"
                 autoComplete="email"
+                pattern="^[^\s@]+@[^\s@]+\.[^\s@]+$"
+                title="Please enter a valid email address, such as name@example.com"
                 required
               />
             </label>
 
-            <label className="register-field">
-              <span>Password</span>
+            <div className="password-input-wrap">
               <input
-                type="password"
+                type={showPassword ? "text" : "password"}
                 value={password}
                 onChange={(event) => onPasswordChange(event.target.value)}
                 placeholder="Password"
                 autoComplete="new-password"
                 required
               />
-            </label>
 
-            {password && password.length < 8 && (
-              <p className="password-requirement">
-                Password must be at least 8 characters long.
-              </p>
-            )}
+              <button
+                type="button"
+                className="password-toggle"
+                onClick={() => setShowPassword((prev) => !prev)}
+                aria-label={showPassword ? "Hide password" : "Show password"}
+              >
+                {showPassword ? (
+                  <svg
+                    viewBox="0 0 24 24"
+                    width="22"
+                    height="22"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+                    <path d="M21 12c-2.4 4 -5.4 6 -9 6c-3.6 0 -6.6 -2 -9 -6c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6" />
+                  </svg>
+                ) : (
+                  <svg
+                    viewBox="0 0 24 24"
+                    width="22"
+                    height="22"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path d="M21 9c-2.4 2.667 -5.4 4 -9 4c-3.6 0 -6.6 -1.333 -9 -4" />
+                    <path d="M3 15l2.5 -3.8" />
+                    <path d="M21 14.976l-2.492 -3.776" />
+                    <path d="M9 17l.5 -4" />
+                    <path d="M15 17l-.5 -4" />
+                  </svg>
+                )}
+              </button>
+            </div>
 
-            {password.length >= 8 && (
+            <div className="password-rules">
+              <p>Include at least 8 characters;</p>
+              <p>Include at least two of the following:</p>
+
+              <div className="password-rule-options">
+                <p>
+                  <span>○</span> Number
+                </p>
+                <p>
+                  <span>○</span> Uppercase letter
+                </p>
+                <p>
+                  <span>○</span> Lowercase letter
+                </p>
+                <p>
+                  <span>○</span> Symbol (@#$%^&...)
+                </p>
+              </div>
+            </div>
+
+            {password && (
               <p className={`password-strength ${passwordStrength}`}>
                 Password strength:{" "}
                 {passwordStrength.charAt(0).toUpperCase() +
@@ -81,12 +138,6 @@ function RegisterPage({
                 </span>
               </p>
             )}
-
-            {message &&
-              !(
-                password.length < 8 &&
-                message === "Password must be at least 8 characters long."
-              ) && <p className="register-message">{message}</p>}
 
             <button className="register-submit-button" type="submit">
               Sign up

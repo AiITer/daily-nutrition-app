@@ -9,6 +9,7 @@ type DashboardPageProps = {
   historyTab: "foods" | "nutrition" | null;
   selectedDay: any;
 
+  profileDisplayName: string;
   profileAge: string;
   profileSex: string;
   profileHeight: string;
@@ -17,6 +18,7 @@ type DashboardPageProps = {
   isEditingProfile: boolean;
   profileMessage: string;
 
+  setProfileDisplayName: (value: string) => void;
   setProfileAge: (value: string) => void;
   setProfileSex: (value: string) => void;
   setProfileHeight: (value: string) => void;
@@ -41,9 +43,9 @@ function DashboardPage({
   profile,
   days,
   foodHistory,
-  historyTab,
   selectedDay,
 
+  profileDisplayName,
   profileAge,
   profileSex,
   profileHeight,
@@ -52,6 +54,7 @@ function DashboardPage({
   isEditingProfile,
   profileMessage,
 
+  setProfileDisplayName,
   setProfileAge,
   setProfileSex,
   setProfileHeight,
@@ -105,6 +108,7 @@ function DashboardPage({
 
   function startEditingProfile() {
     setProfileMessage("");
+    setProfileDisplayName(profile.display_name ?? "");
     setProfileAge(String(profile.age));
     setProfileSex(profile.sex);
     setProfileHeight(String(profile.height_cm));
@@ -117,6 +121,7 @@ function DashboardPage({
     setProfileMessage("");
 
     if (profile) {
+      setProfileDisplayName(profile.display_name ?? "");
       setProfileAge(String(profile.age));
       setProfileSex(profile.sex);
       setProfileHeight(String(profile.height_cm));
@@ -128,6 +133,10 @@ function DashboardPage({
   }
 
   function getAccountDisplayName() {
+    const displayName = profile?.display_name?.trim();
+    if (displayName) {
+      return displayName;
+    }
     const emailName = accountEmail.split("@")[0].trim();
 
     if (!emailName || /^\d+$/.test(emailName)) {
@@ -198,6 +207,10 @@ function DashboardPage({
               </div>
 
               <div className="profile-details-grid">
+                <div className="profile-detail-wide">
+                  <span>Name</span>
+                  <strong>{profile.display_name || "—"}</strong>
+                </div>
                 <div>
                   <span>Age</span>
                   <strong>{profile.age}</strong>
@@ -233,6 +246,17 @@ function DashboardPage({
               </div>
 
               <div className="profile-edit-grid">
+                <input
+                  className="profile-edit-wide"
+                  type="text"
+                  placeholder="Name (optional)"
+                  value={profileDisplayName}
+                  onChange={(event) => {
+                    setProfileDisplayName(event.target.value);
+                    setProfileMessage("");
+                  }}
+                />
+
                 <input
                   type="number"
                   placeholder="Age"

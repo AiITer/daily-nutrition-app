@@ -6,6 +6,7 @@ async function testCreateFoodEntry() {
   try {
     const foodEntry = await createFoodEntry(
       4,
+      1,
       "Milk",
       2705413,
       250,
