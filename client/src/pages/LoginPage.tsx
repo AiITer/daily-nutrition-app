@@ -41,6 +41,8 @@ function LoginPage({
                 value={email}
                 onChange={(event) => onEmailChange(event.target.value)}
                 placeholder="you@example.com"
+                autoCapitalize="none"
+                spellCheck={false}
                 autoComplete="email"
                 required
               />
@@ -66,7 +68,6 @@ function LoginPage({
                   aria-label={showPassword ? "Hide password" : "Show password"}
                 >
                   {showPassword ? (
-                    // 睁眼
                     <svg
                       viewBox="0 0 24 24"
                       width="22"
@@ -82,7 +83,6 @@ function LoginPage({
                       <path d="M21 12c-2.4 4 -5.4 6 -9 6c-3.6 0 -6.6 -2 -9 -6c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6" />
                     </svg>
                   ) : (
-                    // 闭眼
                     <svg
                       viewBox="0 0 24 24"
                       width="22"
