@@ -46,6 +46,8 @@ function RegisterPage({
                 autoComplete="email"
                 pattern="^[^\s@]+@[^\s@]+\.[^\s@]+$"
                 title="Please enter a valid email address, such as name@example.com"
+                autoCapitalize="none"
+                spellCheck={false}
                 required
               />
             </label>
