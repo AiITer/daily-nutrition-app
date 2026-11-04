@@ -90,6 +90,7 @@ function CompleteProfilePage({
                 type="text"
                 value={displayName}
                 placeholder="What should we call you?"
+                autoComplete="name"
                 onChange={(event) =>
                   updateField(onDisplayNameChange, event.target.value)
                 }

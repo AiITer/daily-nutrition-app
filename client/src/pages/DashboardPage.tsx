@@ -250,6 +250,7 @@ function DashboardPage({
                   className="profile-edit-wide"
                   type="text"
                   placeholder="Name (optional)"
+                  autoComplete="name"
                   value={profileDisplayName}
                   onChange={(event) => {
                     setProfileDisplayName(event.target.value);
