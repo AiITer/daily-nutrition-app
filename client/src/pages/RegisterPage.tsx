@@ -141,6 +141,13 @@ function RegisterPage({
               </p>
             )}
 
+            {message &&
+              message !== "Password must be at least 8 characters long." &&
+              message !==
+                "Password is too weak. Use a mix of letters, numbers, or special characters." && (
+                <p className="register-message">{message}</p>
+              )}
+
             <button className="register-submit-button" type="submit">
               Sign up
             </button>

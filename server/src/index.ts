@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import "dotenv/config";
+import { isValidEmail, normalizeEmail } from "./auth/validateEmail.js";
 import { normalizeUsdaNutrients } from "./nutrition/normalizeUsdaNutrients.js";
 import { calculateFoodIntake } from "./nutrition/calculateFoodIntake.js";
 import { getDailyTarget } from "./nutrition/getDailyTarget.js";
@@ -30,7 +31,7 @@ import { getNutrientRecommendations } from "./recommendations/getNutrientRecomme
 import { db } from "./db.js";
 import { validatePassword } from "./auth/validatePassword.js";
 
-const app = express();
+export const app = express();
 const port = Number(process.env.PORT) || 3000;
 
 function getLocalDateAndHour(timeZone: string, now = new Date()) {
@@ -828,19 +829,17 @@ app.post("/api/auth/register", async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    const normalizedEmail = email.trim().toLowerCase();
-
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-    if (!emailPattern.test(normalizedEmail)) {
-      return res.status(400).json({
-        error: "Please enter a valid email address.",
-      });
-    }
-
     if (typeof email !== "string" || typeof password !== "string") {
       return res.status(400).json({
         error: "Email and password are required",
+      });
+    }
+
+    const normalizedEmail = normalizeEmail(email);
+
+    if (!isValidEmail(normalizedEmail)) {
+      return res.status(400).json({
+        error: "Please enter a valid email address.",
       });
     }
 
@@ -1159,6 +1158,8 @@ app.post("/api/days", requireAuth, async (req, res) => {
   }
 });
 
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
-});
+if (process.env.NODE_ENV !== "test") {
+  app.listen(port, () => {
+    console.log(`Server running on port ${port}`);
+  });
+}
