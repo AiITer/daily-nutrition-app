@@ -12,7 +12,7 @@ node_modules/
 server/dist/
 
 # Local database / tooling
-.neon/
+.neon
 
 # IDE / editor
 .vscode/
