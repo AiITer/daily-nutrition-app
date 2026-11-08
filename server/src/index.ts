@@ -1159,7 +1159,11 @@ app.post("/api/days", requireAuth, async (req, res) => {
 });
 
 if (process.env.NODE_ENV !== "test") {
-  app.listen(port, () => {
-    console.log(`Server running on port ${port}`);
+  const [host = "localhost", lambdaPort = String(port)] = (
+    process.env.AWS_LAMBDA_HTTP_ENDPOINT || `localhost:${port}`
+  ).split(":");
+
+  app.listen(Number(lambdaPort), host, () => {
+    console.log(`Server running on ${host}:${lambdaPort}`);
   });
 }

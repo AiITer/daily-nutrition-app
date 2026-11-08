@@ -11,10 +11,10 @@ jobs:
 
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: 22
 
@@ -29,6 +29,20 @@ jobs:
       - name: Build server
         working-directory: server
         run: npm run build
+
+      - name: Install server production dependencies
+        working-directory: server
+        run: npm ci --omit=dev
+
+      - name: Package Lambda backend
+        working-directory: server
+        run: zip -r ../daily-nutrition-lambda.zip index.js dist package.json package-lock.json node_modules
+
+      - name: Upload Lambda package
+        uses: actions/upload-artifact@v7
+        with:
+          name: daily-nutrition-lambda
+          path: daily-nutrition-lambda.zip
 
       - name: Install client dependencies
         working-directory: client
