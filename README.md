@@ -118,6 +118,26 @@ Food entries are also retained in a separate chronological history.
 - Neon
 - USDA FoodData Central API
 
+## Testing and CI
+
+The project includes automated tests for core application behavior, including:
+
+- password and email validation
+- nutrition calculation and unit conversion
+- authentication routes for registration and login
+
+Tests are implemented with Vitest and Supertest.
+
+GitHub Actions runs automatically on pushes to `main` to:
+
+- install dependencies in a clean Linux environment
+- run backend automated tests
+- build the TypeScript backend
+- create a production-ready AWS Lambda deployment package
+- build the React frontend
+
+The Lambda deployment artifact is generated on an Ubuntu runner so platform-specific dependencies such as bcrypt are packaged for the Linux runtime.
+
 ## Architecture
 
 ```text
