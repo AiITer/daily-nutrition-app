@@ -263,6 +263,16 @@ The primary desktop workflows have been manually tested, including:
 
 Production security hardening, deployment, and final mobile/responsive validation are currently in progress.
 
+### Deployment
+
+AWS deployment is in progress.
+
+- GitHub Actions runs automated tests and production builds on pushes to `main`.
+- The backend is prepared for AWS Lambda Web Functions.
+- CI generates a Linux-compatible Lambda deployment artifact with production dependencies.
+- The production database remains hosted on Neon PostgreSQL.
+- Public AWS deployment is pending AWS account verification.
+
 ## Next Steps
 
 - Production authentication and API hardening
