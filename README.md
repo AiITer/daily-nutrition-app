@@ -271,7 +271,7 @@ AWS deployment is in progress.
 - The backend is prepared for AWS Lambda Web Functions.
 - CI generates a Linux-compatible Lambda deployment artifact with production dependencies.
 - The production database remains hosted on Neon PostgreSQL.
-- Public AWS deployment is pending AWS account verification.
+- AWS CLI access and a public Lambda Web Function endpoint have been validated; deployment of the application backend is in progress.
 
 ## Next Steps
 
