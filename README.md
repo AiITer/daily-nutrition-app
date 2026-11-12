@@ -265,13 +265,9 @@ Production security hardening, deployment, and final mobile/responsive validatio
 
 ### Deployment
 
-AWS deployment is in progress.
-
-- GitHub Actions runs automated tests and production builds on pushes to `main`.
-- The backend is prepared for AWS Lambda Web Functions.
-- CI generates a Linux-compatible Lambda deployment artifact with production dependencies.
-- The production database remains hosted on Neon PostgreSQL.
-- AWS CLI access and a public Lambda Web Function endpoint have been validated; deployment of the application backend is in progress.
+- The Express backend is live on AWS Lambda Web Functions.
+- Lambda has been validated with Neon PostgreSQL, authentication, and JWT-protected routes.
+- The production React frontend build is ready for S3 and CloudFront deployment.
 
 ## Next Steps
 
