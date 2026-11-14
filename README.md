@@ -268,6 +268,7 @@ Production security hardening, deployment, and final mobile/responsive validatio
 - The Express backend is live on AWS Lambda Web Functions.
 - Lambda has been validated with Neon PostgreSQL, authentication, and JWT-protected routes.
 - The production React frontend build is ready for S3 and CloudFront deployment.
+- AWS resources are currently deployed in `us-east-2`.
 
 ## Next Steps
 
