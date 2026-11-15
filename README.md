@@ -269,6 +269,7 @@ Production security hardening, deployment, and final mobile/responsive validatio
 - Lambda has been validated with Neon PostgreSQL, authentication, and JWT-protected routes.
 - The production React frontend build is ready for S3 and CloudFront deployment.
 - AWS resources are currently deployed in `us-east-2`.
+- The production frontend has been uploaded to a private S3 bucket, and CloudFront OAC configuration is in progress.
 
 ## Next Steps
 
