@@ -261,16 +261,16 @@ The primary desktop workflows have been manually tested, including:
 - daily summaries
 - nutrition and food history
 
-Production security hardening, deployment, and final mobile/responsive validation are currently in progress.
+V1 deployment is complete. Final mobile/responsive validation and further production hardening remain as future improvements.
 
 ### Deployment
 
-- The Express backend is live on AWS Lambda Web Functions.
-- Lambda has been validated with Neon PostgreSQL, authentication, and JWT-protected routes.
-- The production React frontend build is ready for S3 and CloudFront deployment.
-- AWS resources are currently deployed in `us-east-2`.
-- - The production frontend has been uploaded to a private S3 bucket, and a CloudFront OAC has been created successfully.
-- CloudFront distribution creation is currently blocked by AWS account verification.
+- The Express backend is deployed on AWS Lambda Web Functions.
+- The backend is connected to Neon PostgreSQL and has been validated with authentication and JWT-protected routes.
+- The React frontend is deployed to a private Amazon S3 bucket and served through Amazon CloudFront using Origin Access Control (OAC).
+- The production application is available over HTTPS through CloudFront.
+- AWS resources are deployed in `us-east-2`.
+- Production smoke testing confirmed registration, login, USDA food lookup, nutrition calculation, and persistent user data.
 
 ## Next Steps
 
